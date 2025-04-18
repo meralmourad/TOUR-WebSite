@@ -11,4 +11,11 @@ public class User
     public Place Address { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    // Navigation properties
+    public List<Message>? ReceivedMessages { get; set; }
+    public List<Message>? SentMessages { get; set; }
+    public List<Notification>? ReceivedNotifications { get; set; }
+    public List<Notification>? SentNotifications { get; set; }
+    public List<Report>? Reports { get; set; }
+
 }

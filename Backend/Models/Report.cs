@@ -4,7 +4,6 @@ namespace Backend.Models;
 
 public class Report
 {
-    public int Id { get; set; }
     public int TripId { get; set; } 
     public Trip? Trip { get; set; }
     public int SenderId { get; set; }

@@ -2,8 +2,7 @@ using System;
 
 namespace Backend.Models;
 
-public class Tourist
+public class Tourist:User
 {
         public ICollection<Booking>? Bookings { get; set; }
-
 }

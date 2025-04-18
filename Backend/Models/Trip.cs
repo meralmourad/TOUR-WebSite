@@ -11,7 +11,7 @@ public class Trip
             /*-------*/
             /* category of the trip */
     public List<Category> Categories { get; set; }
-    public int[] CategoryIds { get; set; }
+//     public int[] CategoryIds { get; set; }
             /*-------*/
     public int Price { get; set; } = 0;
     public DateTime StartDate { get; set; }
@@ -19,7 +19,7 @@ public class Trip
     public string Description { get; set; } = string.Empty;
             /* list of Destination */
     public List<Place> Locations { get; set; }
-    public int[] LocationIds { get; set; }
+//     public int[] LocationIds { get; set; }
             /*-------*/
     public string[] Images { get; set; } = Array.Empty<string>();
     public double Rating { get; set; } = 0;
@@ -28,6 +28,9 @@ public class Trip
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
+    // relation with booking
+        public List<Booking> Bookings { get; set; }
+        public List<Report> Reports { get; set; }
 }
 /*
 
