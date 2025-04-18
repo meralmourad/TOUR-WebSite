@@ -23,7 +23,7 @@ public class Trip
             /*-------*/
     public string[] Images { get; set; } = Array.Empty<string>();
     public double Rating { get; set; } = 0;
-    public int Staus { get; set; } = 0; // 0: pending, 1: approved, 2: rejected 3: canceled 4:finished 5: on going 6:hidden
+    public int Status { get; set; } = 0; // 0: pending, 1: approved, 2: rejected 3: canceled 4:finished 5: on going 6:hidden
     public int AvailableSets { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
