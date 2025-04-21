@@ -81,6 +81,6 @@ public class AppDbContext : DbContext
         .HasOne(r => r.Sender)
         .WithMany(u => u.Reports)
         .HasForeignKey(r => r.SenderId)
-        .OnDelete(DeleteBehavior.Restrict); // Prevent deleting user if there are reports        
+        .OnDelete(DeleteBehavior.Restrict); // Prevent deleting user if there are reports 
     }
 }

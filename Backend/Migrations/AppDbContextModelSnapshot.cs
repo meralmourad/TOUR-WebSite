@@ -103,10 +103,6 @@ namespace Backend.Migrations
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReceiverId");
@@ -169,7 +165,7 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.PrimitiveCollection<string>("Images")
+                    b.PrimitiveCollection<string>("ImagesURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -247,7 +243,7 @@ namespace Backend.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Staus")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -279,7 +275,7 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddressId")
+                    b.Property<int?>("AddressId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -303,7 +299,6 @@ namespace Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
@@ -443,9 +438,7 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Models.Place", "Address")
                         .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AddressId");
 
                     b.Navigation("Address");
                 });
