@@ -7,9 +7,9 @@ namespace Backend.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    protected readonly DbContext _context;
+    protected readonly AppDbContext _context;
     protected readonly DbSet<T> _dbSet;
-    GenericRepository(AppDbContext context)
+    public GenericRepository(AppDbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
