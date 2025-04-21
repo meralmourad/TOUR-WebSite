@@ -1,5 +1,7 @@
+using Backend.Models;
+
 namespace Backend.DTOs.UserDTOs;
-public record class UpdateUserDto
+public class UpdateUserDto
 {
     public int Id { get; init; }
     public string? Name { get; init; }
@@ -8,4 +10,26 @@ public record class UpdateUserDto
     public string? ConfirmPassword { get; init; }
     public string? PhoneNumber { get; init; }
     public string? Address { get; init; }
+    //mappers
+    public static UpdateUserDto FromUserDto(UserDTO userDto)
+    {
+        return new UpdateUserDto
+        {
+            Id = userDto.Id,
+            Name = userDto.Name,
+            Email = userDto.Email,
+            PhoneNumber = userDto.PhoneNumber,
+            Address = userDto.Address
+        };
+    }
+    public static User ToDb(UpdateUserDto userDto)
+    {
+        return new User
+        {
+            Id = userDto.Id,
+            Name = userDto.Name,
+            Email = userDto.Email,
+            PhoneNumber = userDto.PhoneNumber,
+        };
+    }
 }

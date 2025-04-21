@@ -8,6 +8,6 @@ namespace Backend.Models
         public string Name { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string[] Images { get; set; } = Array.Empty<string>();
+        public string[] ImagesURL { get; set; } = Array.Empty<string>();
     }
 }
