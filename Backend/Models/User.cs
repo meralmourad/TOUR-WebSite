@@ -8,7 +8,7 @@ public class User
     public string Password { get; set; } = string.Empty;
     public string Role { get; set; } = "User";
     public string? PhoneNumber { get; set; } = string.Empty;
-    public Place? Address { get; set; }
+    public string? Address { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     // Navigation properties

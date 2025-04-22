@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.DTOs.UserDTOs;
+using Backend.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -8,91 +9,50 @@ namespace Backend.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        public UserController(UnitOfWork unitOfWork)
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            _unitOfWork = unitOfWork;         
+            _userService = userService;
         }
         // GET: api/user
         [HttpGet]
-    public async Task<IActionResult> GetUsers(){
-        var users =await _unitOfWork.User.GetAllAsync();
-        if (users == null || !users.Any())
+        public async Task<IActionResult> GetUsers()
         {
-                return NotFound("No users found.");
+            var users = await _userService.GetAllUsersAsync();
+            if (!users.Any()) return NotFound("No users found.");
+            return Ok(users);
         }
-        var userDtos = users.Select(user => new UserDTO
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Address = user.Address?.ToString(),
-            Role = user.Role
-        }).ToList();
-        return Ok(userDtos);
-    }
-        // POST: api/user
+
         [HttpPost("signup")]
-        public async Task<IActionResult> CreateUser([FromBody] UserSignupDto user){
-            if (user.Password != user.ConfirmPassword)
-                return BadRequest("Password and Confirm Password do not match.");
-
-        var userEntity = UserSignupDto.ToDb(user); 
-        var isUserExists = await _unitOfWork.User.GetUserByEmailAsync(userEntity.Email);
-        if (isUserExists != null)
-            return BadRequest("User with this email already exists.");
-        
-        await _unitOfWork.User.AddAsync(userEntity);
-        await _unitOfWork.CompleteAsync(); 
-        return CreatedAtAction(nameof(GetUsers), new { id = userEntity.Id }, user);
-    }
-    //login
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDto)
-    {
-        var user = await _unitOfWork.User.GetUserByEmailAsync(userLoginDto.Email);
-        if (user == null)
-            return NotFound("User not found.");
-        if (user.Password != userLoginDto.Password)
-            return Unauthorized("Invalid password.");
-        var userDto = new UserDTO
+        public async Task<IActionResult> CreateUser([FromBody] UserSignupDto user)
         {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Address = user.Address?.ToString(),
-            Role = user.Role
-        };
-        return Ok(userDto);
-    }
-        // PUT: api/user/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto user)
-    {
-        if (id != user.Id) return BadRequest("User ID mismatch.");
-        var existingUser = await _unitOfWork.User.GetByIdAsync(id);
-        if (existingUser == null)
-            return NotFound("User not found.");
-        // Update logic here    
-        return NoContent();
-    }
+            var result = await _userService.RegisterUserAsync(user);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Message);
+        }
 
-    // DELETE: api/user/5
-    [HttpDelete("{id}")]
-    public IActionResult DeleteUser(int id)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
         {
-            var user = _unitOfWork.User.GetByIdAsync(id).Result;
-            if (user == null)
-                return NotFound("User not found.");
-            _unitOfWork.User.Delete(user);
-            _unitOfWork.CompleteAsync().Wait();     
-            return NoContent();
+            var result = await _userService.LoginAsync(loginDto);
+            if (!result.Success) return Unauthorized(result.Message);
+            return Ok(result.User);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var success = await _userService.DeleteUserAsync(id);
+            return success ? NoContent() : NotFound("User not found.");
+        }
+        //update user
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userUpdateDto,int id)
+        {
+            var result = await _userService.UpdateUserAsync(userUpdateDto, id);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Success);
         }
     }
 }
-
-//------------------------------------------------
-// TODO :
-// hash password
