@@ -1,0 +1,13 @@
+using System;
+using Backend.DTOs.UserDTOs;
+
+namespace Backend.IServices;
+
+public interface IUserService
+{
+    Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+    Task<(bool Success, string Message)> RegisterUserAsync(UserSignupDto signupDto);
+    Task<(bool Success, UserDTO? User, string Message)> LoginAsync(UserLoginDTO loginDto);
+    Task<(bool Success, string Message)> UpdateUserAsync(UpdateUserDto userDto,int id);
+    Task<bool> DeleteUserAsync(int id);
+}

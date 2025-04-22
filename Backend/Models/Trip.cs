@@ -6,7 +6,7 @@ public class Trip
     public string Title { get; set; } = string.Empty;
     
             /* The travel agency that created the trip */
-    public string VendorId { get; set; } = string.Empty;
+    public int VendorId { get; set; }
     public TravelAgency Vendor { get; set; }
             /*-------*/
             /* category of the trip */
