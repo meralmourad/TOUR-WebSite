@@ -6,20 +6,20 @@ public class Trip
     public string Title { get; set; } = string.Empty;
     
             /* The travel agency that created the trip */
-    public int VendorId { get; set; }
+    public required int VendorId { get; set; }
     public TravelAgency Vendor { get; set; }
             /*-------*/
             /* category of the trip */
     public List<Category> Categories { get; set; }
-//     public int[] CategoryIds { get; set; }
+    public required List<int> CategoryIds { get; set; }
             /*-------*/
-    public int Price { get; set; } = 0;
+    public required int Price { get; set; } = 0;
     public DateTime StartDate { get; set; }
-    public List<DateTime> Duration { get; set; }
+    public  List<DateTime>? Duration { get; set; } = new List<DateTime>();
     public string Description { get; set; } = string.Empty;
             /* list of Destination */
     public List<Place> Locations { get; set; }
-//     public int[] LocationIds { get; set; }
+    public required List<int> LocationIds { get; set; }
             /*-------*/
     public string[] Images { get; set; } = Array.Empty<string>();
     public double Rating { get; set; } = 0;

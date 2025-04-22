@@ -24,7 +24,31 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
                 /*relationships*/ 
-        
+            // ----- Trips -----
+            modelBuilder.Entity<Trip>()
+                .HasOne(t => t.Vendor)
+                .WithMany(v => v.Trips)
+                .HasForeignKey(t => t.VendorId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent deleting vendor if there are trips
+
+            //places
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.Locations)
+                .WithMany(p => p.Trips)
+                .UsingEntity(j => j.ToTable("TripPlaces"));
+            //categories
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.Categories)
+                .WithMany(c => c.Trips)
+                .UsingEntity(j => j.ToTable("TripCategories"));
+            // ----- Travel Agencies -----
+            modelBuilder.Entity<TravelAgency>()
+                .HasMany(v => v.Trips)
+                .WithOne(t => t.Vendor)
+                .HasForeignKey(t => t.VendorId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent deleting vendor if there are trips                
+
+            
         // Bookings
             modelBuilder.Entity<Booking>()
         .HasKey(b => new { b.TouristId, b.TripId });
@@ -82,5 +106,6 @@ public class AppDbContext : DbContext
         .WithMany(u => u.Reports)
         .HasForeignKey(r => r.SenderId)
         .OnDelete(DeleteBehavior.Restrict); // Prevent deleting user if there are reports 
+
     }
 }
