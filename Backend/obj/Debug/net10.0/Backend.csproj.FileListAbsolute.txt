@@ -208,3 +208,8 @@ D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\com
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\compressed\m2wwz0dch8-m9qm4tazc0.gz
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\compressed\eyvzienvne-jjsuc0puko.gz
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\compressed\hgwjzod4jz-9vr69e8ynj.gz
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Microsoft.OpenApi.dll
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\Backend.MvcApplicationPartsAssemblyInfo.cs
