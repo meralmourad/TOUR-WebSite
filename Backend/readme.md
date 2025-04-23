@@ -36,6 +36,14 @@ Before running the project, ensure you have the following installed:
    - The API will be available at `https://localhost:<port>` or `http://localhost:<port>`.
    - Use tools like [Postman](https://www.postman.com/) or a browser to test the endpoints.
 
+## Access API Documentation
+
+After running the application, you can access the Swagger UI for API documentation at:
+
+- `http://localhost:<port>/swagger`
+
+Use this interface to explore and test the available API endpoints.
+
 ## Project Structure
 
 - **Controllers**: Contains API controllers for handling HTTP requests.
