@@ -9,8 +9,8 @@ namespace Backend.Services;
 
 public class TripService : ITripService
 {
-    private readonly UnitOfWork _unitOfWork;
-    public TripService(UnitOfWork unitOfWork)
+    private readonly IUnitOfWork _unitOfWork;
+    public TripService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

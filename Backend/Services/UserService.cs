@@ -10,9 +10,9 @@ namespace Backend.Services;
 
 public class UserService :IUserService 
 {
-private readonly UnitOfWork _unitOfWork;
+private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(UnitOfWork unitOfWork)
+    public UserService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
