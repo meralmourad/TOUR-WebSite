@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.IServices;
+using Backend.Repositories.Interfaces;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +22,7 @@ builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
-
+builder.Services.AddScoped<IPlaceService, PlaceService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
