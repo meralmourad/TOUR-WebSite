@@ -1,1 +1,157 @@
-@import url(../../assets/_Colors.scss);
+// Normalize base styles
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:inherit;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  
+  input, select, button {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  
+  // Your original SCSS starts here
+  @import '../../assets/Colors';
+  
+  h1 {
+    text-align: center;
+    color: $logincard;
+    margin: 1rem 0 1rem 7rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    font-family: 'Arial', sans-serif;
+    padding: 2rem;
+  }
+  
+  .Register-container {
+    height: 44em;
+    max-width: 330px;
+    margin-left: 50rem;
+    padding: 2rem;
+    background: $logincard;
+    border-radius: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  
+    .input-group {
+      ::placeholder {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $logincard;
+      }
+  
+      input {
+        margin-bottom: 1.5rem;
+        width: 16rem;
+        padding: 1.5rem;
+        border: 1px solid #f7f7f7;
+        border-radius: 22px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+  
+        &:focus {
+          border-color: #3072bd;
+          outline: none;
+        }
+      }
+    }
+  
+    .custom-select {
+      position: relative;
+  
+      select {
+        font-weight: 600;
+        background-color: $white;
+        font-size: 1rem;
+        color: $logincard;
+        cursor: pointer;
+        transition: border-color 0.3s;
+        width: 16rem;
+        padding: 1.5rem;
+        border: 1px solid #f7f7f7;
+        border-radius: 22px;
+  
+        &:focus {
+          outline: none;
+          border-color: #4a90e2;
+          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+  
+        &::after {
+          content: '▼';
+          position: absolute;
+          top: 50%;
+          right: 15px;
+          transform: translateY(-50%);
+          font-size: 12px;
+          pointer-events: none;
+        }
+      }
+    }
+  
+    select option {
+      padding: 12px 16px;
+      background-color: white;
+      color: $logincard;
+      transition: all 0.2s ease;
+    }
+  
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5rem;
+  
+      button {
+        width: 7rem;
+        padding: 4%;
+        border: none;
+        border-radius: 21px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+  
+        &:first-child {
+          background-color: $white;
+          color: $logincard;
+          font-family: 'Arial', sans-serif;
+          font-weight: 600;
+  
+          &:hover {
+            background-color: rgb(187, 187, 209);
+          }
+        }
+  
+        &:last-child {
+          background-color: $white;
+          color: $logincard;
+          font-family: 'Arial', sans-serif;
+          font-weight: 600;
+  
+          &:hover {
+            background-color: $confirm;
+          }
+        }
+      }
+    }
+  }
+  
