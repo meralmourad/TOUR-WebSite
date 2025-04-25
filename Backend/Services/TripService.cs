@@ -14,8 +14,17 @@ public class TripService : ITripService
     {
         _unitOfWork = unitOfWork;
     }
+
+    private void ThrowIfErrorFound(bool condition, string errorMessage)
+    {
+        if (condition)
+            throw new Exception(errorMessage);
+    }
+
     public async Task<(bool Success, string Message)> CreateTripAsync(CreateTripDTO tripDto)
     {
+        ThrowIfErrorFound(tripDto.Price <= 0, "Price must be greater than zero.");
+
         var trip = new Trip
         {
             VendorId = tripDto.AgenceId,
@@ -38,8 +47,7 @@ public class TripService : ITripService
     public async Task<(bool Success, string Message)> DeleteTripAsync(int id)
     {
         var trip = await _unitOfWork.Trip.GetByIdAsync(id);
-        if (trip == null)
-            return (false, "Trip not found.");
+        ThrowIfErrorFound(trip == null, "Trip not found.");
 
         _unitOfWork.Trip.Delete(trip);
         await _unitOfWork.CompleteAsync();
@@ -48,8 +56,8 @@ public class TripService : ITripService
     public async Task<IEnumerable<TripDto>> GetAllTripsAsync()
     {
         var trips = await _unitOfWork.Trip.GetAllAsync();
-        if (trips == null)
-            return new List<TripDto>();
+        ThrowIfErrorFound(trips == null || !trips.Any(), "No trips found.");
+
         return trips.Select(t => new TripDto
         {
             Id = t.Id,
@@ -70,8 +78,8 @@ public class TripService : ITripService
     public async Task<TripDto?> GetTripByIdAsync(int id)
     {
         var trip =await _unitOfWork.Trip.GetByIdAsync(id);
-        if (trip == null)
-            return null;
+        ThrowIfErrorFound(trip == null, "Trip not found.");
+
         return new TripDto
         {
             Id = trip.Id,
@@ -92,8 +100,7 @@ public class TripService : ITripService
     public async Task<(bool Success, string Message)> UpdateTripAsync(int id, UpdateTripDTO tripDto)
     {
         var curTrip = await _unitOfWork.Trip.GetByIdAsync(id);
-        if (curTrip == null)
-            return (false, "Trip not found.");
+        ThrowIfErrorFound(curTrip == null, "Trip not found.");
 
         curTrip.Title = tripDto.Title ?? curTrip.Title;
         curTrip.Price = tripDto.Price ?? curTrip.Price;
