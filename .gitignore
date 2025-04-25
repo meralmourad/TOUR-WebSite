@@ -1,0 +1,11 @@
+/backend/obj
+
+# Ignore backend binary files
+/backend/*.exe
+/backend/*.dll
+/backend/*.so
+/backend/*.out
+
+# Ignore object files
+/backend/**/*.o
+/backend/**/*.obj

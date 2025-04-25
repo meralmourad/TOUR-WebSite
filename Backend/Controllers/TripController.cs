@@ -19,35 +19,71 @@ public class TripController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTrip([FromBody] CreateTripDTO tripDto)
     {
-        var result = await _tripService.CreateTripAsync(tripDto);
-        return result.Success ? Ok(result) : BadRequest(result);
+        try
+        {
+            var result = await _tripService.CreateTripAsync(tripDto);
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTripById(int id)
     {
-        var trip = await _tripService.GetTripByIdAsync(id);
-        return trip != null ? Ok(trip) : NotFound("Trip not found.");
+        try
+        {
+            var trip = await _tripService.GetTripByIdAsync(id);
+            return trip != null ? Ok(trip) : NotFound("Trip not found.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
     [HttpGet]
     public async Task<IActionResult> GetAllTrips()
     {
-        var trips = await _tripService.GetAllTripsAsync();
-        return Ok(trips);
+        try
+        {
+            var trips = await _tripService.GetAllTripsAsync();
+            return Ok(trips);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTrip(int id, [FromBody] UpdateTripDTO tripDto)
     {
-        var result = await _tripService.UpdateTripAsync(id, tripDto);
-        return result.Success ? Ok(result) : BadRequest(result);
+        try
+        {
+            var result = await _tripService.UpdateTripAsync(id, tripDto);
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTrip(int id)
     {
-        var result = await _tripService.DeleteTripAsync(id);
-        return result.Success ? Ok(result) : NotFound(result);
+        try
+        {
+            var result = await _tripService.DeleteTripAsync(id);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 }
+
 }
