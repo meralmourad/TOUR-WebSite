@@ -1,1 +1,90 @@
-@import url(../../assets/_Colors.scss);
+@import '../../assets/Colors' ;
+  
+h1 {
+    text-align: center;
+    color:$logincard ;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 7rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    font-family: 'Arial', sans-serif;
+    padding: 2rem;
+  }
+
+.login-container {
+    height: 33em;
+    max-width: 300px;
+    margin-left: 50rem;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: $logincard ;
+    border-radius: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  
+    .input-group {
+
+      ::placeholder{
+        font-size: 2rem;
+        font-weight: 600;
+        color: $logincard ;
+        font-size: 0.9rem;
+      }
+  
+      input {
+        margin-bottom: 2rem;
+        margin-top: 2.5rem;
+        width: 16rem;
+        padding: 1.5rem;
+        border: 1px solid #f7f7f7;
+        border-radius: 22px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+  
+        &:focus {
+          border-color: #3072bd;
+          outline: none;
+        }
+      }
+    }
+  
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8rem;
+  
+      button {
+        width: 7rem;
+        padding:4% ;
+        border: none;
+        border-radius: 21px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+  
+        &:first-child {
+          background-color: $white;
+          color: $logincard ;
+          font-family: 'Arial', sans-serif;
+          font-weight: 600;
+          
+          &:hover {
+            background-color: $confirm;
+          }
+        }
+  
+        &:last-child {
+          background-color:  $white;
+          color: $logincard ;
+          font-family: 'Arial', sans-serif;
+          font-weight: 600;
+          
+          &:hover {
+            background-color: rgb(187, 187, 209);
+          }
+        }
+      }
+    }
+  }
