@@ -39,12 +39,13 @@ private readonly IUnitOfWork _unitOfWork;
         var existing = await _unitOfWork.User.GetUserByEmailAsync(signupDto.Email);
         if (existing != null)
             return (false, "User already exists.");
-
+        if(signupDto.Role != null && signupDto.Role != "User" && signupDto.Role != "vendor" )
+            return (false, "Invalid role. Only 'User' and 'Vendor' are allowed.");
         var userEntity = new User
         {
             Name = signupDto.FullName,
             Email = signupDto.Email,
-            PhoneNumber = signupDto.PhoneNumber,
+            PhoneNumber = signupDto.PhoneNumber ?? null,
             Address = signupDto.Address,
             Role = signupDto.Role ?? "User",
         };
