@@ -1,6 +1,6 @@
 import './form.scss';
-import RegisterForm from '../RegisterForm/Register'
 import { useState, ChangeEvent, FormEvent } from "react";
+import axios from 'axios';
 
 interface FormData {
     email: string ;
@@ -9,6 +9,8 @@ interface FormData {
 
 
 function LoginForm() {
+
+    const [error, setError] = useState('');
 
     const [Data, setData] = useState<FormData>({
         email: "",
@@ -25,44 +27,43 @@ function LoginForm() {
     
     };
       
-    // const SubmitHandler = async (event : FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-    
-    //     try {
-    //       const response = await fetch("https:://Tourist-App/api/person/login", {
-    //         method: "POST",
-    //         body: JSON.stringify(Data)
-    //       });
-    
-    //       const data = await response.json();
-    
-    //       if (response.ok) {
-    //         sessionStorage.setItem("token", data.token);
-    //       } 
-    //       else {
-                // return (
-                // 
-                // <RegisterForm/>
-                // 
-                // ) ;
-    //       }
-    //     }
-    //      catch (error) {
-    //       console.error("Fetch error:", error);
-    //     }
+    const SubmitHandler = async (event : FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-    //   };
+        try {
+          const response = await axios.post("http://localhost:5129/api/User/login", {
+            headers : {
+            email: Data.email,
+            password: Data.password 
+            }
+          });
+    
+          if (response.status == 200 ) {
+           return (<> <h1>hello</h1></>)
+          } 
+
+          else {
+            setError("Please SignUp first!")
+          }
+
+        }
+         catch (error) {
+            setError("Please SignUp first!")
+          console.error("Fetch error:", error);
+        }
+
+      };
     
     return(
         <>
-        console.log(Data);
         
-            <title>LoginForm</title>
+          <title>LoginForm</title>
             <h1>LOGIN</h1>
             <title>LoginForm</title>
             <div className="login-container">
-                <form>
+                <form onSubmit={SubmitHandler}>
                     <div className="input-group">
+                        { error && <p style={{ color: 'white' }} > {error} </p> }
                         <input placeholder ="E-mail" type="email" id="email" name="email" value= {Data.email}
                             onChange={OnChangeHandler}
                         required/>
