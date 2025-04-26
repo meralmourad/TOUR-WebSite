@@ -81,7 +81,6 @@ function RegisterForm() {
             <title>RegisterForm</title>
             <h1>Register</h1>
             <title>RegisterForm</title>
-            {/* <h1>{error}</h1> */}
             <div className="Register-container">
                 <form onSubmit={SubmitHandler}>
                     <div className="input-group">

@@ -35,7 +35,7 @@
   h1 {
     text-align: center;
     color: $logincard;
-    margin: 1rem 0 1rem 7rem;
+    margin: 1rem auto;
     font-size: 2.5rem;
     font-weight: 600;
     font-family: 'Arial', sans-serif;
@@ -43,9 +43,9 @@
   }
   
   .Register-container {
+    margin: 2rem auto 0 auto;
     height: 44em;
     max-width: 330px;
-    margin-left: 50rem;
     padding: 2rem;
     background: $logincard;
     border-radius: 22px;

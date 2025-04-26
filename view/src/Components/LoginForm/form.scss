@@ -1,24 +1,29 @@
 @import '../../assets/Colors' ;
   
 h1 {
-    text-align: center;
-    color:$logincard ;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-left: 7rem;
-    font-size: 2.5rem;
-    font-weight: 600;
-    font-family: 'Arial', sans-serif;
-    padding: 2rem;
+  text-align: center;
+  color: $logincard;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto; /* Centering the element horizontally */
+  font-size: 2.5rem;
+  font-weight: 600;
+  font-family: 'Arial', sans-serif;
+  padding: 2rem;
+  display: block;
   }
 
 .login-container {
-    height: 33em;
+  height: 33em;
     max-width: 300px;
-    margin-left: 50rem;
-    margin-top: 2rem;
+    margin: 2rem auto; /* top and bottom margin is 2rem, auto left and right to center horizontally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically inside the container */
     padding: 2rem;
-    background: $logincard ;
+    background: $logincard;
     border-radius: 22px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     font-family: 'Arial', sans-serif;
