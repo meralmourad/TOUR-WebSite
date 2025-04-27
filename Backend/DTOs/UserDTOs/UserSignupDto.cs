@@ -24,7 +24,7 @@ public class UserSignupDto
     [Phone]
     public string? PhoneNumber { get; init; }
 
-    public string? Role { get; init; } = "User";
+    public string? Role { get; init; } = "Tourist";
 
     [StringLength(200)]
     public string? Address { get; init; }
