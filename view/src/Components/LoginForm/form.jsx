@@ -44,8 +44,7 @@ function LoginForm() {
       dispatch(setUser(response.data));
 
     } catch (error) {
-      setError("Please SignUp first!");
-      console.error("Fetch error:", error);
+      setError("invalid username or password!");
     }
   };
   
