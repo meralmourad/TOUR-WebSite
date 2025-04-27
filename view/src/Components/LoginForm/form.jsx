@@ -44,7 +44,8 @@ function LoginForm() {
       dispatch(setUser(response.data));
 
     } catch (error) {
-      setError("invalid username or password!");
+      setError("Please SignUp first!");
+      console.error("Fetch error:", error);
     }
   };
   
@@ -55,7 +56,7 @@ function LoginForm() {
       <div className="login-container">
         <form onSubmit={SubmitHandler}>
           <div className="input-group">
-            {error && <p style={{ color: 'white' }}>{error}</p>}
+            {error && <p className='error'>{error}</p>}
             <input 
               placeholder="E-mail" 
               type="email" 
