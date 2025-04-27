@@ -120,6 +120,12 @@
       justify-content: space-between;
       margin-top: 5rem;
   
+      .btn{
+        text-decoration: none;
+        color: $logincard;
+        font-family: 'Arial', sans-serif;
+      }
+      
       button {
         width: 7rem;
         padding: 4%;

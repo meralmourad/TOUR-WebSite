@@ -55,7 +55,6 @@ function LoginForm() {
       <div className="login-container">
         <form onSubmit={SubmitHandler}>
           <div className="input-group">
-            {error && <p className='error'>{error}</p>}
             <input 
               placeholder="E-mail" 
               type="email" 
@@ -64,7 +63,7 @@ function LoginForm() {
               value={Data.email}
               onChange={OnChangeHandler}
               required
-            />
+              />
             <input 
               placeholder="Password" 
               type="password" 
@@ -73,12 +72,15 @@ function LoginForm() {
               value={Data.password} 
               onChange={OnChangeHandler} 
               required
-            />
+              />
+              {error && <><p className='error'>{error}</p>
+              <p className='error'>signup if you don't have an account </p>
+              </>}
             <div className='button-group'>
-              <button type="button" className="btn">
+              <button type="button" >
                 <Link to="/signup" style={{textDecoration: "none"}} className="btn">SIGN UP</Link>
               </button>
-              <button type="submit" className="btn">LOGIN</button>
+              <button type="submit" >LOGIN</button>
             </div>
           </div>
         </form>

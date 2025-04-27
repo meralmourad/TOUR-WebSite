@@ -2,6 +2,8 @@
 import './Register.scss'
 import { useState, ChangeEvent , FormEvent } from "react";
 import axios from 'axios';
+import { Link , useNavigate } from 'react-router-dom';
+
 
 
 interface FormData {
@@ -17,6 +19,7 @@ interface FormData {
 function RegisterForm() {
     
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const [Data, setData] = useState<FormData>({
         name: "" ,
@@ -62,6 +65,7 @@ function RegisterForm() {
             
           if (response.status == 200) {
            console.log("aregato");
+           navigate('/login');
            
           } 
             else {
@@ -93,13 +97,13 @@ function RegisterForm() {
                         <div className="custom-select">
                             <select className='' id="role" name="role" value={Data.role} onChange={OnChangeHandler} required>
                                 <option value="" disabled>Register As </option>
-                                <option value="User">Tourist</option>
-                                <option value="Vendor">Agency</option>
+                                <option value="Tourist">Tourist</option>
+                                <option value="Agency">Agency</option>
                             </select>
                         </div>
                         <div className='button-group'>
-                            <button type="button" className="btn">BACK</button>
-                            <button type="submit" className="btn">SIGN UP</button>
+                            <button type="button"> <Link to ='/login' className="btn"> BACK </Link></button>
+                            <button type="submit">SIGN UP</button>
                         </div>
                     </div>
                 </form>
