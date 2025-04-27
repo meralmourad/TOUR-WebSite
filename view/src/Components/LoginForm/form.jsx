@@ -1,8 +1,13 @@
 import './form.scss';
 import { useState } from "react";
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../../Store/Slices/UserSlice';
+import { Link } from 'react-router-dom';
 
 function LoginForm() {
+  // const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const [error, setError] = useState('');
 
@@ -22,24 +27,24 @@ function LoginForm() {
     
   const SubmitHandler = async (event) => {
     event.preventDefault();
+    
+    setError('');
+
+    if (Data.email === "" || Data.password === "") {
+      setError("Please fill in all fields!");
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:5129/api/User/login", {
-      headers: {
-        email: Data.email,
-        password: Data.password 
-      }
+          email: Data.email,
+          password: Data.password
       });
-  
-      if (response.status == 200) {
-      return (<><h1>hello</h1></>);
-      } else {
-      setError("Please SignUp first!");
-      }
+
+      dispatch(setUser(response.data));
 
     } catch (error) {
-      setError("Please SignUp first!");
-      console.error("Fetch error:", error);
+      setError("invalid username or password!");
     }
   };
   
@@ -70,7 +75,9 @@ function LoginForm() {
               required
             />
             <div className='button-group'>
-              <button type="button" className="btn">SIGN UP</button>
+              <button type="button" className="btn">
+                <Link to="/signup" style={{textDecoration: "none"}} className="btn">SIGN UP</Link>
+              </button>
               <button type="submit" className="btn">LOGIN</button>
             </div>
           </div>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const UsersList: React.FC = () => {
     const [filters, setFilters] = useState<string[]>([]);
@@ -27,83 +26,97 @@ const UsersList: React.FC = () => {
             : users.filter((user) => filters.includes(user.role));
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center mb-4">List of All Users</h2>
-            <div className="d-flex justify-content-center mb-4">
+        <div style={{ margin: "20px" }}>
+            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>List of All Users</h2>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
                 <input
                     type="text"
-                    className="form-control w-25 me-3"
+                    style={{
+                        width: "25%",
+                        marginRight: "10px",
+                        padding: "10px",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px",
+                    }}
                     placeholder="Search"
                 />
                 <button
-                    className={`btn btn-outline-secondary me-2 ${
-                        filters.includes("AGENCY") ? "active" : ""
-                    }`}
-                    style={{ borderRadius: "50%", padding: "10px 20px" }}
+                    style={{
+                        marginRight: "10px",
+                        borderRadius: "50%",
+                        padding: "10px 20px",
+                        backgroundColor: filters.includes("AGENCY") ? "#ddd" : "transparent",
+                        border: "1px solid #ccc",
+                        cursor: "pointer",
+                    }}
                     onClick={() => toggleFilter("AGENCY")}
                 >
                     AGENCY
                 </button>
                 <button
-                    className={`btn btn-outline-success me-2 ${
-                        filters.includes("Admin") ? "active" : ""
-                    }`}
-                    style={{ borderRadius: "50%", padding: "10px 20px" }}
+                    style={{
+                        marginRight: "10px",
+                        borderRadius: "50%",
+                        padding: "10px 20px",
+                        backgroundColor: filters.includes("Admin") ? "#ddd" : "transparent",
+                        border: "1px solid #ccc",
+                        cursor: "pointer",
+                    }}
                     onClick={() => toggleFilter("Admin")}
                 >
                     Admin
                 </button>
                 <button
-                    className={`btn btn-outline-success ${
-                        filters.includes("Tourist") ? "active" : ""
-                    }`}
-                    style={{ borderRadius: "50%", padding: "10px 20px" }}
+                    style={{
+                        borderRadius: "50%",
+                        padding: "10px 20px",
+                        backgroundColor: filters.includes("Tourist") ? "#ddd" : "transparent",
+                        border: "1px solid #ccc",
+                        cursor: "pointer",
+                    }}
                     onClick={() => toggleFilter("Tourist")}
                 >
                     Tourist
                 </button>
             </div>
-            <div className="row">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
                 {filteredUsers.map((user, index) => (
-                    <div key={index} className="col-md-4 mb-3">
-                        <div className="card text-center" style={{ borderRadius: "50px" }}>
-                            <div className="card-body">
-                                <h5 className="card-title">{user.name}</h5>
-                                <p className="card-text">{user.role}</p>
-                            </div>
-                        </div>
+                    <div
+                        key={index}
+                        style={{
+                            flex: "1 1 calc(33.333% - 20px)",
+                            marginBottom: "20px",
+                            border: "1px solid #ccc",
+                            borderRadius: "20px",
+                            textAlign: "center",
+                            padding: "20px",
+                        }}
+                    >
+                        <h5>{user.name}</h5>
+                        <p>{user.role}</p>
                     </div>
                 ))}
             </div>
-            <nav className="d-flex justify-content-center mt-4">
-                <ul className="pagination">
-                    <li className="page-item">
-                        <a className="page-link" href="#">
-                            &laquo;
-                        </a>
-                    </li>
-                    <li className="page-item active">
-                        <a className="page-link" href="#">
-                            1
-                        </a>
-                    </li>
-                    <li className="page-item">
-                        <a className="page-link" href="#">
-                            2
-                        </a>
-                    </li>
-                    <li className="page-item">
-                        <a className="page-link" href="#">
-                            3
-                        </a>
-                    </li>
-                    <li className="page-item">
-                        <a className="page-link" href="#">
-                            &raquo;
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                <button style={{ margin: "0 5px", padding: "10px", cursor: "pointer" }}>
+                    &laquo;
+                </button>
+                <button
+                    style={{
+                        margin: "0 5px",
+                        padding: "10px",
+                        backgroundColor: "#ddd",
+                        cursor: "pointer",
+                    }}
+                >
+                    1
+                </button>
+                <button style={{ margin: "0 5px", padding: "10px", cursor: "pointer" }}>2</button>
+                <button style={{ margin: "0 5px", padding: "10px", cursor: "pointer" }}>3</button>
+                <button style={{ margin: "0 5px", padding: "10px", cursor: "pointer" }}>
+                    &raquo;
+                </button>
+            </div>
         </div>
     );
 };
