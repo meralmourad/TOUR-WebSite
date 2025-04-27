@@ -1,1 +1,103 @@
-@import url(../../assets/_Colors.scss);
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$accent-color: #e74c3c;
+$light-color: #ecf0f1;
+$dark-color: #2c3e50;
+$border-radius: 8px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+/* Reset and base styles */
+.navbar {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, $light-color 0%, #ffffff 100%);
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  display: flex;
+  justify-content: space-between; /* Key for right alignment */
+  align-items: center;
+  size: 100%;
+  position: relative;
+  
+  /* Flexbox fallback for older browsers */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+
+  .navbar-brand {
+    color: $primary-color;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+
+  .navbar-container {
+    size: 100%;
+    display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .navbar-links {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 1rem;
+
+    /* Fallback for gap in older browsers */
+    & > * + * {
+      margin-left: 1.5rem;
+    }
+
+    .nav-item {
+      .nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: $dark-color;
+        gap: 0.25rem;
+      }
+
+      .icon {
+        width: 30px;
+        height: 30px;
+        display: block;
+        object-fit: contain;
+        -webkit-object-fit: contain;
+      }
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+    
+    .navbar-container {
+      width: 100%;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    
+    .navbar-links {
+      width: 100%;
+      justify-content: space-around;
+      gap: 0.5rem;
+      
+      /* Fallback for gap in older browsers */
+      & > * + * {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}
