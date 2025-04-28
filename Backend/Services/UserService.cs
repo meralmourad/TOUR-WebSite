@@ -1,6 +1,7 @@
 using System;
 using System.Security.Cryptography;
 using Backend.Data;
+using Backend.DTOs;
 using Backend.DTOs.UserDTOs;
 using Backend.IServices;
 using Backend.Models;
@@ -159,5 +160,29 @@ private readonly IUnitOfWork _unitOfWork;
             Address = u.Address?.ToString(),
             Role = u.Role
         }).ToList());
+    }
+
+    public object SearchUsers(int start, int len, bool? tourist, bool? agency)
+    {
+        var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+
+        if (tourist.HasValue && tourist.Value)
+            usersQuery = usersQuery.Where(u => u.Role == "Tourist");
+
+        if (agency.HasValue && agency.Value)
+            usersQuery = usersQuery.Where(u => u.Role == "Agency");
+
+        var users = usersQuery
+            .Skip(start)
+            .Take(len)
+            .Select(u => new searchResDTO
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Role = u.Role
+            })
+            .ToList();
+
+        return users;
     }
 }

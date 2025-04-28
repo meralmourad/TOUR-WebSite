@@ -1,6 +1,7 @@
 using System;
 using Backend.DTOs;
 using Backend.DTOs.TripDTOs;
+using Backend.Models;
 
 namespace Backend.IServices;
 
@@ -11,4 +12,5 @@ public interface ITripService
     Task<IEnumerable<TripDto>> GetAllTripsAsync();
     Task<TripDto?> GetTripByIdAsync(int id);
     Task<(bool Success, string Message)> UpdateTripAsync(int id, UpdateTripDTO tripDto);
+    Task<IEnumerable<Trip>> SearchTripsAsync(int start, int len, string? destination, DateTime? startDate);
 }

@@ -117,4 +117,22 @@ public class TripService : ITripService
         await _unitOfWork.CompleteAsync();
         return (true, "Trip updated successfully.");
     }
+
+    public async Task<IEnumerable<Trip>> SearchTripsAsync(int start, int len, string? destination, DateTime? startDate)
+    {
+        // Example implementation
+        var trips = (await _unitOfWork.Trip.GetAllAsync()).AsQueryable();
+
+        if (!string.IsNullOrEmpty(destination))
+        {
+            trips = trips.Where(t => t.Description.Contains(destination));
+        }
+
+        if (startDate.HasValue)
+        {
+            trips = trips.Where(t => t.StartDate >= startDate.Value);
+        }
+
+        return trips.Skip(start).Take(len).ToList();
+    }
 }

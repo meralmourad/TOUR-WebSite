@@ -11,4 +11,5 @@ public interface IUserService
     Task<(bool Success, string Message)> UpdateUserAsync(UpdateUserDto userDto,int id);
     Task<bool> DeleteUserAsync(int id);
     Task SearchUsersAsync(string query);
+    object SearchUsers(int start, int len, bool? tourist, bool? agency);
 }

@@ -16,4 +16,17 @@ public class SearchController : ControllerBase
         _tripService = tripService;
     }
 
+    [HttpGet("users")]
+    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency)
+    {
+        var users = _userService.SearchUsers(start, len, tourist, agency);
+        return Ok(users);
+    }
+
+    [HttpGet("trips")]
+    public IActionResult SearchTrips([FromQuery] int start, [FromQuery] int len, [FromQuery] string? destination, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+    {
+        var trips = _tripService.SearchTripsAsync(start, len, destination, startDate);
+        return Ok(trips);
+    }
 }
