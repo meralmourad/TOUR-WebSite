@@ -3,13 +3,14 @@ import { useState } from "react";
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../Store/Slices/UserSlice';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function LoginForm() {
   // const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [error, setError] = useState('');
 
@@ -79,10 +80,8 @@ function LoginForm() {
               <p className='error'>signup if you don't have an account </p>
               </>}
             <div className='button-group'>
-              <button type="button" >
-                <Link to="/signup" style={{textDecoration: "none"}} className="btn">SIGN UP</Link>
-              </button>
-              <button type="submit" >LOGIN</button>
+              <button type="button" onClick={()=>navigate('/signup')}>SIGN UP</button>
+              <button type="submit" onClick={()=>navigate('/home')}>LOGIN</button>
             </div>
           </div>
         </form>
