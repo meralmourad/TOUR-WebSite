@@ -24,22 +24,6 @@ namespace Backend.Controllers
             return Ok(users);
         }
 
-        [HttpPost("signup")]
-        public async Task<IActionResult> CreateUser([FromBody] UserSignupDto user)
-        {
-            var result = await _userService.RegisterUserAsync(user);
-            if (!result.Success) return BadRequest(result.Message);
-            return Ok(result.Message);
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
-        {
-            var result = await _userService.LoginAsync(loginDto);
-            if (!result.Success) return Unauthorized(result.Message);
-            return Ok(result.User);
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
