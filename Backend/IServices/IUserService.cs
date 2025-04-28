@@ -14,4 +14,5 @@ public interface IUserService
     Task<IEnumerable<searchResDTO>> SearchUsersAsync(string query);
     object SearchUsers(int start, int len, bool? tourist, bool? agency);
     IEnumerable<DTOs.searchResDTO> SearchUsersByQuery(string? query, int start, int len, bool? tourist, bool? agency);
+    Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id);
 }

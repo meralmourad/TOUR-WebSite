@@ -144,6 +144,25 @@ public class UserService : IUserService
             .ToList();
     }
 
+    public async Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id)
+    {
+        var user = await _unitOfWork.User.GetByIdAsync(id);
+        if (user == null)
+            return (false, null, "User not found.");
+
+        var userDto = new UserDTO
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            Address = user.Address?.ToString(),
+            Role = user.Role
+        };
+
+        return (true, userDto, "User retrieved successfully.");
+    }
+
     private string HashPassword(string password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
