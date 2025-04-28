@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Backend.Services;
 
-public class UserService :IUserService 
+public class UserService : IUserService
 {
-private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UserService(IUnitOfWork unitOfWork)
     {
@@ -40,17 +40,19 @@ private readonly IUnitOfWork _unitOfWork;
         var existing = await _unitOfWork.User.GetUserByEmailAsync(signupDto.Email);
         if (existing != null)
             return (false, "User already exists.");
-        if(signupDto.Role != null && signupDto.Role != "Tourist" && signupDto.Role != "Agency" )
+
+        if (signupDto.Role != null && signupDto.Role != "Tourist" && signupDto.Role != "Agency")
             return (false, "Invalid role. Only 'Tourist' and 'Agency' are allowed.");
+
         var userEntity = new User
         {
             Name = signupDto.FullName,
             Email = signupDto.Email,
-            PhoneNumber = signupDto.PhoneNumber ?? null,
+            PhoneNumber = signupDto.PhoneNumber,
             Address = signupDto.Address,
             Role = signupDto.Role ?? "Tourist",
+            Password = HashPassword(signupDto.Password)
         };
-        userEntity.Password = HashPassword(signupDto.Password);
 
         await _unitOfWork.User.AddAsync(userEntity);
         await _unitOfWork.CompleteAsync();
@@ -83,38 +85,63 @@ private readonly IUnitOfWork _unitOfWork;
     {
         var user = await _unitOfWork.User.GetByIdAsync(id);
         if (user == null) return false;
+
         _unitOfWork.User.Delete(user);
         await _unitOfWork.CompleteAsync();
         return true;
     }
-    public async Task<(bool Success, string Message)> UpdateUserAsync(UpdateUserDto userDto,int id)
+
+    public async Task<(bool Success, string Message)> UpdateUserAsync(UpdateUserDto userDto, int id)
     {
-        try
-        {
-            var user = await _unitOfWork.User.GetByIdAsync(id);
-            if (user == null)
-                return (false, "User not found.");
+        var user = await _unitOfWork.User.GetByIdAsync(id);
+        if (user == null)
+            return (false, "User not found.");
 
-            // Update properties
-            if (userDto.Password != null)
+        if (userDto.Password != null)
+        {
+            if (userDto.Password != userDto.ConfirmPassword)
+                return (false, "Passwords do not match.");
+            user.Password = HashPassword(userDto.Password);
+        }
+
+        user.Name = userDto.Name ?? user.Name;
+        user.Email = userDto.Email ?? user.Email;
+        user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;
+        user.Address = userDto.Address ?? user.Address;
+
+        await _unitOfWork.CompleteAsync();
+        return (true, "User updated successfully.");
+    }
+
+    public IEnumerable<searchResDTO> SearchUsersByQuery(string? query, int start, int len, bool? tourist, bool? agency)
+    {
+        var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            usersQuery = usersQuery.Where(u => u.Name.Contains(query) || u.Email.Contains(query));
+        }
+
+        if (tourist.HasValue && tourist.Value)
+        {
+            usersQuery = usersQuery.Where(u => u.Role == "Tourist");
+        }
+
+        if (agency.HasValue && agency.Value)
+        {
+            usersQuery = usersQuery.Where(u => u.Role == "Agency");
+        }
+
+        return usersQuery
+            .Skip(start)
+            .Take(len)
+            .Select(u => new searchResDTO
             {
-                if (userDto.Password != userDto.ConfirmPassword)
-                    return (false, "Passwords do not match.");
-                user.Password = HashPassword(userDto.Password);
-            }
-
-            user.Name = userDto.Name ?? user.Name;
-            user.Email = userDto.Email ?? user.Email;
-            user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;
-            user.Address = userDto.Address ?? user.Address;
-
-            await _unitOfWork.CompleteAsync();
-            return (true, "User updated successfully.");
-        }
-        catch (Exception ex)
-        {
-            return (false, $"An error occurred: {ex.Message}");
-        }
+                Id = u.Id,
+                Name = u.Name,
+                Role = u.Role
+            })
+            .ToList();
     }
 
     private string HashPassword(string password)
@@ -133,6 +160,7 @@ private readonly IUnitOfWork _unitOfWork;
     {
         var parts = stored.Split('.');
         if (parts.Length != 2) return false;
+
         byte[] salt = Convert.FromBase64String(parts[0]);
         var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
             input,
@@ -143,23 +171,21 @@ private readonly IUnitOfWork _unitOfWork;
         return hashed == parts[1];
     }
 
-    public Task SearchUsersAsync(string query)
+    public async Task<IEnumerable<searchResDTO>> SearchUsersAsync(string query)
     {
-        // search with name or email
-        var users = _unitOfWork.User.GetAllAsync().Result.Where(u => u.Name.Contains(query) || u.Email.Contains(query)).ToList();
-        if (users == null || users.Count == 0)
-        {
-            throw new Exception("No users found.");
-        }
-        return Task.FromResult(users.Select(u => new UserDTO
-        {
-            Id = u.Id,
-            Name = u.Name,
-            Email = u.Email,
-            PhoneNumber = u.PhoneNumber,
-            Address = u.Address?.ToString(),
-            Role = u.Role
-        }).ToList());
+        var users = await _unitOfWork.User.GetAllAsync();
+        var filteredUsers = users
+            .Where(u => u.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || 
+                        u.Email.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .Select(u => new searchResDTO
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Role = u.Role
+            })
+            .ToList();
+
+        return filteredUsers;
     }
 
     public object SearchUsers(int start, int len, bool? tourist, bool? agency)
@@ -167,12 +193,16 @@ private readonly IUnitOfWork _unitOfWork;
         var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
 
         if (tourist.HasValue && tourist.Value)
+        {
             usersQuery = usersQuery.Where(u => u.Role == "Tourist");
+        }
 
         if (agency.HasValue && agency.Value)
+        {
             usersQuery = usersQuery.Where(u => u.Role == "Agency");
+        }
 
-        var users = usersQuery
+        var paginatedUsers = usersQuery
             .Skip(start)
             .Take(len)
             .Select(u => new searchResDTO
@@ -183,6 +213,6 @@ private readonly IUnitOfWork _unitOfWork;
             })
             .ToList();
 
-        return users;
+        return paginatedUsers;
     }
 }

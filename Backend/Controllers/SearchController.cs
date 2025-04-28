@@ -17,16 +17,16 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency)
+    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency, [FromQuery] string? q)
     {
-        var users = _userService.SearchUsers(start, len, tourist, agency);
+        var users = _userService.SearchUsersByQuery(q, start, len, tourist, agency);
         return Ok(users);
     }
 
     [HttpGet("trips")]
-    public IActionResult SearchTrips([FromQuery] int start, [FromQuery] int len, [FromQuery] string? destination, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+    public IActionResult SearchTrips([FromQuery] int start, [FromQuery] int len, [FromQuery] string? destination, [FromQuery] DateTime? startDate, [FromQuery] string? q)
     {
-        var trips = _tripService.SearchTripsAsync(start, len, destination, startDate);
+        var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate);
         return Ok(trips);
     }
 }

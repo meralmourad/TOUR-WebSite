@@ -135,4 +135,26 @@ public class TripService : ITripService
 
         return trips.Skip(start).Take(len).ToList();
     }
+
+    public IEnumerable<Trip> SearchTripsByQuery(string? query, int start, int len, string? destination, DateTime? startDate)
+    {
+        var tripsQuery = _unitOfWork.Trip.GetAllAsync().Result.AsQueryable();
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            tripsQuery = tripsQuery.Where(t => t.Title.Contains(query) || t.Description.Contains(query));
+        }
+
+        if (!string.IsNullOrEmpty(destination))
+        {
+            tripsQuery = tripsQuery.Where(t => t.Description.Contains(destination));
+        }
+
+        if (startDate.HasValue)
+        {
+            tripsQuery = tripsQuery.Where(t => t.StartDate >= startDate.Value);
+        }
+
+        return tripsQuery.Skip(start).Take(len).ToList();
+    }
 }
