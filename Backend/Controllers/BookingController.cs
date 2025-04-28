@@ -1,5 +1,6 @@
 using Backend.DTOs.BookingDTOs;
 using Backend.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,10 +37,14 @@ namespace Backend.Controllers
             try
             {
                 var booking = await _bookingService.GetBookingById(id);
-                if (booking == null)
-                {
-                    return NotFound();
-                }
+             
+                var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                
+                if (userId != booking.TouristId.ToString() && !User.IsInRole("Admin") && !User.IsInRole("Agent"))
+                    return Forbid();
+
+                if (booking == null)return NotFound();
+                
                 return Ok(booking);
             }
             catch (Exception ex)
@@ -49,6 +54,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Agency")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto bookingDTO)
         {
             try
@@ -67,11 +73,17 @@ namespace Backend.Controllers
         {
             try
             {
+                // check if the agent is the one who created the booking and is not an admin
+                if (!User.IsInRole("Admin"))
+                {
+                    var booking = await _bookingService.GetBookingById(id);
+                    var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                    if (userId != booking.TouristId.ToString() && !User.IsInRole("Admin") && !User.IsInRole("Agent"))
+                        return Forbid();
+                }
                 var result = await _bookingService.DeleteBooking(id);
                 if (!result)
-                {
                     return NotFound();
-                }
                 return NoContent();
             }
             catch (Exception ex)

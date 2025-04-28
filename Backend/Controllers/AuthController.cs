@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs.UserDTOs;
 using Backend.IServices;
+using System;
 // using System.Threading.Tasks;
 
 namespace Backend.Controllers
@@ -31,8 +32,9 @@ namespace Backend.Controllers
         public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
         {
             var result = await _userService.LoginAsync(loginDto);
-            if (!result.Success) return Unauthorized(result.Message);
 
+            if (!result.Success) return Unauthorized(result.Message);
+            Console.WriteLine("Login successful: " + result.User.Id + " Role: " + result.User.Role);
             var token = _jwtTokenService.GenerateToken(result.User.Id.ToString(), result.User.Role);
             return Ok(new { Token = token, User = result.User });
         }
