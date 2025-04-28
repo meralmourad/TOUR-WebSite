@@ -7,11 +7,11 @@ import UsersList from "./Components/UsersList/UsersList";
 import NavBar from "./Components/NavBar/NavBar";
 
 function App() {
-  const user = useSelector((store) => store.user);
+  const { user, isLoggedIn } = useSelector((store) => store.info);
   console.log(user);
   return (
     <BrowserRouter>
-      <NavBar />
+      {isLoggedIn && <NavBar />}
       <Routes>
         <Route path="/" element={<h1> Home Page </h1>} />
         <Route path="/login" element={ <LoginForm /> } />
