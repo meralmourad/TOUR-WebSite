@@ -12,7 +12,16 @@ h1 {
   font-family: 'Arial', sans-serif;
   padding: 2rem;
   display: block;
-  }
+}
+
+.error{
+  color: #310202;
+  text-align: center;
+  font-weight: 300;
+  font-family: 'Arial', sans-serif;
+  display: block;
+
+}
 
 .login-container {
   height: 33em;
@@ -58,6 +67,12 @@ h1 {
       display: flex;
       justify-content: space-between;
       margin-top: 8rem;
+
+      .btn{
+        text-decoration: none;
+        color: $logincard;
+        font-family: 'Arial', sans-serif;
+      }
   
       button {
         width: 7rem;
@@ -67,7 +82,7 @@ h1 {
         font-size: 0.9rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: transform 0.2s ease;
   
         &:first-child {
           background-color: $white;

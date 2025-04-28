@@ -1,1 +1,90 @@
-@import url(../../assets/_Colors.scss);
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$accent-color: #e74c3c;
+$light-color: #ecf0f1;
+$dark-color: #2c3e50;
+$border-radius: 8px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+.navbar {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  margin: 0;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, $light-color 0%, #ffffff 100%);
+  box-shadow: $box-shadow;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .navbar-left {
+    display: flex;
+    gap: 2rem;
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: $dark-color;
+
+      .icon {
+        width: 30px;
+        height: 30px;
+        display: block;
+        object-fit: contain;
+      }
+    }
+  }
+
+  .navbar-links {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 2rem;
+
+    .nav-item {
+      .nav-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: $dark-color;
+
+        .icon {
+          width: 30px;
+          height: 30px;
+          display: block;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+
+    .navbar-container {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .navbar-left {
+      margin-bottom: 1rem;
+    }
+
+    .navbar-links {
+      flex-direction: row; /* جعل الأيقونات أفقية على الشاشات الصغيرة */
+      justify-content: space-around;
+      gap: 0.5rem;
+    }
+  }
+}
