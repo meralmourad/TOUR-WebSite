@@ -27,6 +27,15 @@ namespace Backend.Controllers
             return Ok(users);
         }
 
+        [HttpGet("{id}")]
+        // [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var result = await _userService.GetUserByIdAsync(id);
+            if (!result.Success) return NotFound(result.Message);
+            return Ok(result.User);
+        }
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
