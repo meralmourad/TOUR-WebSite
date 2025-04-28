@@ -10,7 +10,7 @@ function App() {
   console.log(user);
   return (
     <BrowserRouter>
-      {isLoggedIn && <NavBar />}
+      {true && <NavBar />}
       <Routes>
         <Route path="/" element={<h1> Home Page </h1>} />
         <Route path="/login" element={ <LoginForm /> } />
