@@ -4,10 +4,20 @@ import UsersList from "./Components/UsersList/UsersList";
 import NavBar from "./Components/NavBar/NavBar.jsx";
 import LoginForm from "./Components/LoginForm/Login";
 import RegisterForm from "./Components/RegisterForm/Register";
+import { useEffect } from "react";
 
 function App() {
   const { user, isLoggedIn } = useSelector((store) => store.info);
-  console.log(user);
+
+  useEffect(() => console.log(user), [user]);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("Token");
+    if (token) {
+      
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       {true && <NavBar />}

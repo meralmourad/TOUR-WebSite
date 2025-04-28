@@ -39,15 +39,20 @@ function LoginForm() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/User/login`, {
+      const response = await axios.post(`${API_URL}/Auth/login`, {
           email: Data.email,
           password: Data.password
       });
 
-      dispatch(setUser(response.data));
+      if(response.status === 200) {
+        dispatch(setUser(response.data));
+        localStorage.setItem('Token', JSON.stringify(response.data.token));
+        navigate('/');
+      }
 
     } catch (error) {
-      setError("invalid username or password!");
+      console.error(error);
+      setError(error.response?.data);
     }
   };
   
@@ -76,12 +81,10 @@ function LoginForm() {
               onChange={OnChangeHandler} 
               required
               />
-              {error && <><p className='error'>{error}</p>
-              <p className='error'>signup if you don't have an account </p>
-              </>}
+              {error && <p className='error'>{error}</p>}
             <div className='button-group'>
-              <button type="button" onClick={()=>navigate('/signup')}>SIGN UP</button>
-              <button type="submit" onClick={()=>navigate('/home')}>LOGIN</button>
+              <button type="button" onClick={() => navigate('/signup')}>SIGN UP</button>
+              <button type="submit">LOGIN</button>
             </div>
           </div>
         </form>
