@@ -213,3 +213,4 @@ D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swa
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\obj\Debug\net10.0\Backend.MvcApplicationPartsAssemblyInfo.cs
+D:\project\Collage project\IA_PROJECT\TOUR-WebSite\Backend\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
