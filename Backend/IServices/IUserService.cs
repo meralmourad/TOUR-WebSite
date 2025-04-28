@@ -10,4 +10,5 @@ public interface IUserService
     Task<(bool Success, UserDTO? User, string Message)> LoginAsync(UserLoginDTO loginDto);
     Task<(bool Success, string Message)> UpdateUserAsync(UpdateUserDto userDto,int id);
     Task<bool> DeleteUserAsync(int id);
+    Task SearchUsersAsync(string query);
 }

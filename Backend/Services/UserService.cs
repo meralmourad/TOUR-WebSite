@@ -141,4 +141,23 @@ private readonly IUnitOfWork _unitOfWork;
             256 / 8));
         return hashed == parts[1];
     }
+
+    public Task SearchUsersAsync(string query)
+    {
+        // search with name or email
+        var users = _unitOfWork.User.GetAllAsync().Result.Where(u => u.Name.Contains(query) || u.Email.Contains(query)).ToList();
+        if (users == null || users.Count == 0)
+        {
+            throw new Exception("No users found.");
+        }
+        return Task.FromResult(users.Select(u => new UserDTO
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Email = u.Email,
+            PhoneNumber = u.PhoneNumber,
+            Address = u.Address?.ToString(),
+            Role = u.Role
+        }).ToList());
+    }
 }

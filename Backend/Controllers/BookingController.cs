@@ -22,8 +22,17 @@ namespace Backend.Controllers
         {
             try
             {
-                var bookings = await _bookingService.GetAllBookings();
-                return Ok(bookings);
+                //if user is an admin return all bookings
+                if (User.IsInRole("Admin"))
+                {
+                    var bk = await _bookingService.GetAllBookings();
+                    return Ok(bk);
+                }
+                    var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                    var touristId = int.TryParse(userId, out var id) ? id : 0;
+                    var bookings = await _bookingService.GetBookingsByTouristId(touristId);
+                    return Ok(bookings);
+                
             }
             catch (Exception ex)
             {

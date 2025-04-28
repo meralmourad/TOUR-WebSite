@@ -38,19 +38,6 @@ public class TripController : ControllerBase
     {
         try
         {
-            // Check if the user is authorized to view the trip (e.g., only Admin can view trips or the agency)
-            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (userIdClaim == null) return Unauthorized("User not found in token.");
-            var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            if (userRole != "Admin")
-            {
-                // agency can view their own trips
-                var trp = await _tripService.GetTripByIdAsync(id);
-                if (trp == null || trp.AgenceId != int.Parse(userIdClaim))
-                {
-                    return Forbid("You are not authorized to view this trip.");
-                }
-            }
             var trip = await _tripService.GetTripByIdAsync(id);
             return trip != null ? Ok(trip) : NotFound("Trip not found.");
         }
