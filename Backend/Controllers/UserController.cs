@@ -28,11 +28,33 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{id}")]
-        // [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int? id)
         {
-            var result = await _userService.GetUserByIdAsync(id);
+            // Get the user ID from the token
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null) return Unauthorized("User not found in token.");
+
+            // If id is null, use the ID from the token
+            if (id == null) id = int.Parse(userIdClaim);
+
+            var result = await _userService.GetUserByIdAsync((int)id);
             if (!result.Success) return NotFound(result.Message);
+
+            var retuser = result.User;
+
+            // Allow access if the user is the same as in the token or has the "Agency" role
+            if (id.ToString() == userIdClaim || retuser?.Role == "Agency")
+            {
+                return Ok(result.User);
+            }
+
+            // Check if the user has the "Admin" or "Agency" role
+            var roleClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (roleClaim != "Admin" && roleClaim != "Agency")
+            {
+                return Unauthorized("You are not authorized to view this user.");
+            }
+
             return Ok(result.User);
         }
 
