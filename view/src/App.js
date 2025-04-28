@@ -1,10 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginForm from "./Components/LoginForm/form.jsx";
-import RegisterForm from "./Components/RegisterForm/Register";
 import { useSelector } from "react-redux";
-import { store } from "./Store/Store.js";
 import UsersList from "./Components/UsersList/UsersList";
-import NavBar from "./Components/NavBar/NavBar";
+import NavBar from "./Components/NavBar/NavBar.jsx";
+import LoginForm from "./Components/LoginForm/Login";
+import RegisterForm from "./Components/RegisterForm/Register";
 
 function App() {
   const { user, isLoggedIn } = useSelector((store) => store.info);

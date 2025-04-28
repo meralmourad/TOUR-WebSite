@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../Store/Slices/UserSlice';
 import { Link } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function LoginForm() {
   // const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -36,7 +38,7 @@ function LoginForm() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5129/api/User/login", {
+      const response = await axios.post(`${API_URL}/User/login`, {
           email: Data.email,
           password: Data.password
       });

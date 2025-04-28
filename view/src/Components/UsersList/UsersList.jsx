@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const UsersList: React.FC = () => {
-    const [filters, setFilters] = useState<string[]>([]);
+const UsersList = () => {
+    const [filters, setFilters] = useState([]);
 
     const users = [
         { name: "omar", role: "AGENCY" },
@@ -12,7 +12,7 @@ const UsersList: React.FC = () => {
         { name: "hany", role: "Tourist" },
     ];
 
-    const toggleFilter = (role: string) => {
+    const toggleFilter = (role) => {
         setFilters((prevFilters) =>
             prevFilters.includes(role)
                 ? prevFilters.filter((filter) => filter !== role)
