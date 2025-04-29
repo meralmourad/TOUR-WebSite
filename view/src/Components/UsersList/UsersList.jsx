@@ -1,67 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import "./UsersList.scss";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const UsersList = () => {
   const [Admin, setAdmin] = useState(false);
   const [Agency, setAgency] = useState(false);
   const [Tourist, setTourist] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
+  const [users, setUsers] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
+    setSearchTerm(event.target.value);
   };
 
-  const users = [
-    { id: 1, name: "omar", role: "AGENCY" },
-    { id: 2, name: "ahmed", role: "Admin" },
-    { id: 3, name: "feby", role: "AGENCY" },
-    { id: 4, name: "fady", role: "Tourist" },
-    { id: 5, name: "miral", role: "AGENCY" },
-    { id: 6, name: "hany", role: "Tourist" },
-    { id: 7, name: "hany", role: "Tourist" },
-    { id: 8, name: "sara", role: "Admin" },
-    { id: 9, name: "john", role: "Tourist" },
-    { id: 10, name: "linda", role: "AGENCY" },
-    { id: 11, name: "mike", role: "Admin" },
-    { id: 12, name: "jane", role: "Tourist" },
-    { id: 13, name: "paul", role: "AGENCY" },
-    { id: 14, name: "emma", role: "Admin" },
-    { id: 15, name: "noah", role: "Tourist" },
-    { id: 16, name: "olivia", role: "AGENCY" },
-    { id: 17, name: "liam", role: "Admin" },
-    { id: 18, name: "ava", role: "Tourist" },
-    { id: 19, name: "elijah", role: "AGENCY" },
-    { id: 20, name: "sophia", role: "Admin" },
-    { id: 21, name: "william", role: "Tourist" },
-    { id: 22, name: "isabella", role: "AGENCY" },
-    { id: 23, name: "james", role: "Admin" },
-    { id: 24, name: "mia", role: "Tourist" },
-    { id: 25, name: "benjamin", role: "AGENCY" },
-    { id: 26, name: "amelia", role: "Admin" },
-    { id: 27, name: "lucas", role: "Tourist" },
-    { id: 27, name: "lucas", role: "Tourist" },
-  ];
+  useEffect(() => {
+    const start = (pageNumber - 1) * 9;
+    const { token } = JSON.parse(localStorage.getItem("Token"));
 
-  const filteredUsers = users.filter((user) => {
-    const isAgency = Agency && user.role === "AGENCY";
-    const isAdmin = Admin && user.role === "Admin";
-    const isTourist = Tourist && user.role === "Tourist";
-    const isSearchMatch = user.name.toLowerCase().includes(searchTerm);
-    const isRoleMatch =
-      isAgency || isAdmin || isTourist || (!Agency && !Admin && !Tourist);
-    return isRoleMatch && isSearchMatch;
-  });
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/Search/users?admin=${Admin}&start=${start}&len=${9}&tourist=${Tourist}&agency=${Agency}&q=${searchTerm}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
 
-  const paginatedUsers = filteredUsers.slice(
-    (pageNumber - 1) * 9,
-    pageNumber * 9
-  );
+        setUsers(response.data?.$values || []);
 
-  const numberOfPages = Math.ceil(filteredUsers.length / 9);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
+  }, [Admin, Agency, Tourist, pageNumber, searchTerm]);
 
-  if (pageNumber > numberOfPages || pageNumber < 1) {
+  const numberOfPages = 100;
+
+  if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
   }
 
@@ -128,8 +108,9 @@ const UsersList = () => {
       </div>
       <div className="users-list-container">
         <br />
+        {users.length === 0 && <h2 className="users-list-title">No users Found</h2>}
         <div className="users-list">
-          {paginatedUsers.map((user) => (
+          {users.length !== 0 && users.map((user) => (
             <div key={user.id} className="user-card">
               <div className="user-image">
                 <h5 style={{ margin: 0, fontSize: "16px" }}>{user.name}</h5>
@@ -154,7 +135,7 @@ const UsersList = () => {
           &laquo;
         </button>
 
-        {pageNumber - 3 > 0 && <button>...</button>}
+        {pageNumber - 3 >= 1 && <button>...</button>}
 
         {FunctionBtn(pageNumber - 2)}
         {FunctionBtn(pageNumber - 1)}
