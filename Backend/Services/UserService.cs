@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using Backend.Data;
 using Backend.DTOs;
@@ -113,26 +114,25 @@ public class UserService : IUserService
         return (true, "User updated successfully.");
     }
 
-    public IEnumerable<searchResDTO> SearchUsersByQuery(string? query, int start, int len, bool? tourist, bool? agency)
+    public IEnumerable<searchResDTO> SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency)
     {
-        var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+        var query = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+        // Filter by search query if provided
+        if (!string.IsNullOrWhiteSpace(q))
+            query = query.Where(u => u.Name.Contains(q) || u.Email.Contains(q));
+        // Console.WriteLine("query is "+ query.Count());
+        // Filter by roles
+        if (tourist && !agency)
+            query = query.Where(u => u.Role == "Tourist");
+        else if (!tourist && agency)
+            query = query.Where(u => u.Role == "Agency");
+        else if (tourist && agency)
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency");
+        else
+            query = query.Where(u => false); // If both false, return empty
 
-        if (!string.IsNullOrEmpty(query))
-        {
-            usersQuery = usersQuery.Where(u => u.Name.Contains(query) || u.Email.Contains(query));
-        }
-
-        if (tourist.HasValue && tourist.Value)
-        {
-            usersQuery = usersQuery.Where(u => u.Role == "Tourist");
-        }
-
-        if (agency.HasValue && agency.Value)
-        {
-            usersQuery = usersQuery.Where(u => u.Role == "Agency");
-        }
-
-        return usersQuery
+        // Pagination
+        var users = query
             .Skip(start)
             .Take(len)
             .Select(u => new searchResDTO
@@ -142,6 +142,9 @@ public class UserService : IUserService
                 Role = u.Role
             })
             .ToList();
+        // Console.WriteLine("query is "+ users.Count());
+
+        return users;
     }
 
     public async Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id)

@@ -1,6 +1,7 @@
 using System;
 using Backend.DTOs;
 using Backend.DTOs.UserDTOs;
+using Backend.Models;
 
 namespace Backend.IServices;
 
@@ -13,6 +14,6 @@ public interface IUserService
     Task<bool> DeleteUserAsync(int id);
     Task<IEnumerable<searchResDTO>> SearchUsersAsync(string query);
     object SearchUsers(int start, int len, bool? tourist, bool? agency);
-    IEnumerable<DTOs.searchResDTO> SearchUsersByQuery(string? query, int start, int len, bool? tourist, bool? agency);
+    IEnumerable<searchResDTO> SearchUsersByQuery(string? query, int start, int len, bool tourist, bool agency);
     Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id);
 }
