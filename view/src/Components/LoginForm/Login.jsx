@@ -46,7 +46,7 @@ function LoginForm() {
 
       if(response.status === 200) {
         dispatch(setUser(response.data));
-        localStorage.setItem('Token', JSON.stringify(response.data.token));
+        localStorage.setItem('Token', JSON.stringify({token: response.data.token, id: response.data.user.id}));
         navigate('/');
       }
 
