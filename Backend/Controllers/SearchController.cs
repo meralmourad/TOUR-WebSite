@@ -31,13 +31,13 @@ public class SearchController : ControllerBase
             admin = false;
         }
 
-        if (User.IsInRole("Agency") && (tourist.Value || admin.Value))
+        if (User.IsInRole("Agency") )
         {
             tourist = false;
             agency = true;
             admin = false;
         }
-        else if (User.IsInRole("Tourist") && (tourist.Value || admin.Value))
+        else if (User.IsInRole("Tourist"))
         {
             tourist = false;
             agency = true;
