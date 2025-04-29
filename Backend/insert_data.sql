@@ -71,3 +71,16 @@ INSERT INTO Bookings(TouristId , TripId, IsApproved, PhoneNumber, Comment, Ratin
 (4, 13, 1, '4567890123', 'Fayoum is nice.', 1),
 (6, 14, 1, '6789012345', 'Siwa was magical.', 3),
 (7, 15, 0, '7890123456', 'Excited for Aswan.', -1);
+
+
+
+UPDATE Trips SET Images = '["nile.jpg"]' WHERE Images = 'nile.jpg';
+UPDATE Trips SET Images = '["desert.jpg"]' WHERE Images = 'desert.jpg';
+UPDATE Trips SET Images = '["redsea.jpg"]' WHERE Images = 'redsea.jpg';
+UPDATE Trips SET Images = '["cairo.jpg"]' WHERE Images = 'cairo.jpg';
+UPDATE Trips SET Images = '["alexandria.jpg"]' WHERE Images = 'alexandria.jpg';
+UPDATE Trips SET Images = '["luxor.jpg"]' WHERE Images = 'luxor.jpg';
+UPDATE Trips SET Images = '["sinai.jpg"]' WHERE Images = 'sinai.jpg';
+UPDATE Trips SET Images = '["fayoum.jpg"]' WHERE Images = 'fayoum.jpg';
+UPDATE Trips SET Images = '["siwa.jpg"]' WHERE Images = 'siwa.jpg';
+UPDATE Trips SET Images = '["aswan.jpg"]' WHERE Images = 'aswan.jpg';

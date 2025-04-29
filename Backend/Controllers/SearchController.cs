@@ -38,8 +38,20 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet("trips")]
-    public IActionResult SearchTrips([FromQuery] int start, [FromQuery] int len, [FromQuery] string? destination, [FromQuery] DateTime? startDate, [FromQuery] string? q)
+    public IActionResult SearchTrips(
+    [FromQuery] int start = 0,
+    [FromQuery] int len = 0,
+    [FromQuery] string? destination = null,
+    [FromQuery] DateTime? startDate = null,
+    [FromQuery] string? q = null)
     {
+        // Set default pagination if not provided
+        if (len == 0 && start == 0)
+        {
+            len = int.MaxValue;
+            start = 0;
+        }
+
         var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate);
         return Ok(trips);
     }

@@ -136,25 +136,43 @@ public class TripService : ITripService
         return trips.Skip(start).Take(len).ToList();
     }
 
-    public IEnumerable<Trip> SearchTripsByQuery(string? query, int start, int len, string? destination, DateTime? startDate)
+    public IEnumerable<TripDto> SearchTripsByQuery(string? q, int start, int len, string? destination, DateTime? startDate)
     {
-        var tripsQuery = _unitOfWork.Trip.GetAllAsync().Result.AsQueryable();
+        var trips = _unitOfWork.Trip.GetAllAsync().Result;
 
-        if (!string.IsNullOrEmpty(query))
-        {
-            tripsQuery = tripsQuery.Where(t => t.Title.Contains(query) || t.Description.Contains(query));
-        }
+        // Filter by search query (title or description)
+        if (!string.IsNullOrWhiteSpace(q))
+            trips = trips.Where(t => t.Title.Contains(q) || t.Description.Contains(q)).ToList();
 
-        if (!string.IsNullOrEmpty(destination))
-        {
-            tripsQuery = tripsQuery.Where(t => t.Description.Contains(destination));
-        }
+        // Filter by destination as LocationId if provided
+        if (!string.IsNullOrWhiteSpace(destination) && int.TryParse(destination, out int locationId))
+            trips = trips.Where(t => t.LocationIds != null && t.LocationIds.Contains(locationId)).ToList();
 
+        // Filter by start date if provided
         if (startDate.HasValue)
-        {
-            tripsQuery = tripsQuery.Where(t => t.StartDate >= startDate.Value);
-        }
+            trips = trips.Where(t => t.StartDate >= startDate.Value).ToList();
 
-        return tripsQuery.Skip(start).Take(len).ToList();
+        // Pagination and projection to DTO
+        var result = trips
+            .Skip(start)
+            .Take(len)
+            .Select(t => new TripDto
+            {
+                Id = t.Id,
+                AgenceId = t.VendorId,
+                Title = t.Title,
+                Price = t.Price,
+                StartDate = t.StartDate,
+                Description = t.Description,
+                Rating = t.Rating,
+                LocationIds = t.LocationIds,
+                Images = t.Images,
+                Status = t.Status,
+                AvailableSets = t.AvailableSets,
+                CategoryIds = t.CategoryIds
+            })
+            .ToList();
+
+        return result;
     }
 }
