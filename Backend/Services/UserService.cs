@@ -114,23 +114,28 @@ public class UserService : IUserService
         return (true, "User updated successfully.");
     }
 
-    public IEnumerable<searchResDTO> SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency)
+    public IEnumerable<searchResDTO> SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency,bool admin)
     {
         var query = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
-        // Filter by search query if provided
         if (!string.IsNullOrWhiteSpace(q))
             query = query.Where(u => u.Name.Contains(q) || u.Email.Contains(q));
-        // Console.WriteLine("query is "+ query.Count());
-        // Filter by roles
-        if (tourist && !agency)
-            query = query.Where(u => u.Role == "Tourist");
-        else if (!tourist && agency)
-            query = query.Where(u => u.Role == "Agency");
-        else if (tourist && agency)
-            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency");
-        else
-            query = query.Where(u => false); // If both false, return empty
 
+        if (admin && !tourist && !agency)
+            query = query.Where(u => u.Role == "Admin");
+        else if (tourist && !agency && !admin)
+            query = query.Where(u => u.Role == "Tourist");
+        else if (!tourist && agency && !admin)
+            query = query.Where(u => u.Role == "Agency");
+        else if (tourist && agency && !admin)
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" );
+        else if (tourist && !agency && admin)
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Admin");
+        else if (!tourist && agency && admin)
+            query = query.Where(u => u.Role == "Agency" || u.Role == "Admin");
+        else if (tourist && agency && admin)
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" || u.Role == "Admin");
+        else if (!tourist && !agency && !admin)
+            query = query.Where(u => u.Role == "Tourist");
         // Pagination
         var users = query
             .Skip(start)
