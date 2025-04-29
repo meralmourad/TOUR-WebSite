@@ -4,6 +4,9 @@ import UsersList from "./Components/UsersList/UsersList";
 import NavBar from "./Components/NavBar/NavBar.jsx";
 import LoginForm from "./Components/LoginForm/Login";
 import RegisterForm from "./Components/RegisterForm/Register";
+import ChatApp from "./Components/Chat/Chat.jsx";
+import Home from "./Components/Home/Home.jsx";
+import Rate from "./Components/Rate/Rate.jsx";
 
 function App() {
   const { user, isLoggedIn } = useSelector((store) => store.info);
@@ -12,7 +15,7 @@ function App() {
     <BrowserRouter>
       {true && <NavBar />}
       <Routes>
-        <Route path="/" element={<h1> Home Page </h1>} />
+        <Route path="/" element={<Home/>} />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/userslist" element={ <UsersList /> } />
