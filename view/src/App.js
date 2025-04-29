@@ -10,7 +10,7 @@ import ChatApp from "./Components/Chat/Chat.jsx";
 import Home from "./Components/Home/Home.jsx";
 import Rate from "./Components/Rate/Rate.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
-
+import AgencyProfile from "./Components/Agencyprofile/Agencyprofile.jsx";
 
 
 function App() {
@@ -33,6 +33,7 @@ function App() {
         <Route path="/" element={ <Home/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
+        <Route path="/AgencyProfile" element={ <AgencyProfile /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="*" element={ <h1> Page not found </h1> } />
         <Route path="/welcome" element={<WelcomePage />} />
