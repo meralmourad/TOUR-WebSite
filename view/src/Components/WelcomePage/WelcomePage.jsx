@@ -1,7 +1,9 @@
 import React from 'react';
 import './WelcomePage.scss';
+import { useNavigate } from 'react-router-dom';
 
 const WelcomePage = () => {
+  const navigate = useNavigate();
   return (
     <div className="welcome-page">
       <div className="welcome-page__left">
@@ -19,7 +21,7 @@ const WelcomePage = () => {
         <p className="welcome-page__description">
           Take only memories, leave only footprints.
         </p>
-        <button className="welcome-page__button">GET STARTED &gt;</button>
+        <button onClick={() => navigate('/login')} className="welcome-page__button">GET STARTED &gt;</button>
       </div>
     </div>
   );

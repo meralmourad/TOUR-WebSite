@@ -12,9 +12,8 @@ import Rate from "./Components/Rate/Rate.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 
 
-
 function App() {
-  const { user, isLoggedIn } = useSelector((store) => store.info);
+  const { user } = useSelector((store) => store.info);
   const usedispatch = useDispatch();
 
   useEffect(() => console.log(user), [user]);
@@ -28,14 +27,14 @@ function App() {
 
   return (
     <BrowserRouter>
-      {isLoggedIn && <NavBar />}
+      <NavBar />
       <Routes>
         <Route path="/" element={ <Home/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/userslist" element={ <UsersList /> } />
-        <Route path="*" element={ <h1> Page not found </h1> } />
         <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="*" element={ <h1> Page not found </h1> } />
       </Routes>
     </BrowserRouter>
   );
