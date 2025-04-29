@@ -51,7 +51,7 @@ function RegisterForm() {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/User/signup`, {
+            const response = await axios.post(`${API_URL}/Auth/signup`, {
                 fullName: Data.name,
                 email: Data.email,
                 password: Data.password,
@@ -61,16 +61,16 @@ function RegisterForm() {
                 address: Data.country,
             });
 
-            if (response.status === 200) {
-                console.log('aregato');
-                navigate('/login');
-            } else {
-                console.log(response.data);
-            }
-        } catch (error) {
+            console.log('aregato');
+            navigate('/login');
+            console.log(response.data);
+        } 
+        
+        catch (error) {
             console.error('Fetch error:', error);
             setA5piError(error.response.data)
         }
+
     };
 
     return (
@@ -160,11 +160,7 @@ function RegisterForm() {
                             </select>
                         </div>
                         <div className="button-group">
-                            <button type="button">
-                                <Link to="/login" className="btn">
-                                    BACK
-                                </Link>
-                            </button>
+                            <button type="button" onClick={()=>navigate('/login')}>BACK</button>
                             <button type="submit">SIGN UP</button>
                         </div>
                     </div>

@@ -3,13 +3,14 @@ import { useState } from "react";
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../Store/Slices/UserSlice';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function LoginForm() {
   // const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [error, setError] = useState('');
 
@@ -38,15 +39,20 @@ function LoginForm() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/User/login`, {
+      const response = await axios.post(`${API_URL}/Auth/login`, {
           email: Data.email,
           password: Data.password
       });
 
-      dispatch(setUser(response.data));
+      if(response.status === 200) {
+        dispatch(setUser(response.data));
+        localStorage.setItem('Token', JSON.stringify({token: response.data.token, id: response.data.user.id}));
+        navigate('/');
+      }
 
     } catch (error) {
-      setError("invalid username or password!");
+      console.error(error);
+      setError(error.response?.data);
     }
   };
   
@@ -75,14 +81,10 @@ function LoginForm() {
               onChange={OnChangeHandler} 
               required
               />
-              {error && <><p className='error'>{error}</p>
-              <p className='error'>signup if you don't have an account </p>
-              </>}
+              {error && <p className='error'>{error}</p>}
             <div className='button-group'>
-              <button type="button" >
-                <Link to="/signup" style={{textDecoration: "none"}} className="btn">SIGN UP</Link>
-              </button>
-              <button type="submit" >LOGIN</button>
+              <button type="button" onClick={() => navigate('/signup')}>SIGN UP</button>
+              <button type="submit">LOGIN</button>
             </div>
           </div>
         </form>

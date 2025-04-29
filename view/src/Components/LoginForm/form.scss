@@ -67,44 +67,30 @@ h1 {
       display: flex;
       justify-content: space-between;
       margin-top: 8rem;
-
-      .btn{
-        text-decoration: none;
-        color: $logincard;
-        font-family: 'Arial', sans-serif;
-      }
   
       button {
         width: 7rem;
-        padding:4% ;
+        padding:5% ;
         border: none;
         border-radius: 21px;
         font-size: 0.9rem;
         font-weight: 500;
         cursor: pointer;
         transition: transform 0.2s ease;
-  
-        &:first-child {
-          background-color: $white;
-          color: $logincard ;
-          font-family: 'Arial', sans-serif;
-          font-weight: 600;
-          
-          &:hover {
-            background-color: $confirm;
-          }
-        }
-  
-        &:last-child {
-          background-color:  $white;
-          color: $logincard ;
-          font-family: 'Arial', sans-serif;
-          font-weight: 600;
-          
-          &:hover {
-            background-color: rgb(187, 187, 209);
-          }
-        }
+        background-color:  $white;
+        color: $logincard ;
+        font-family: 'Arial', sans-serif;
+        font-weight: 600;
+      }
+      button:nth-child(1):hover {
+        background-color: rgb(94, 202, 94) ;
+        color: white;
+      }
+
+      
+      button:nth-child(2):hover {
+        background-color: $edit ;
+        color: white;
       }
     }
   }

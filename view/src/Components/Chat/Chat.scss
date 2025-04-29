@@ -1,1 +1,67 @@
-@import url(../../assets/Colors.scss);
+.chat-bar {
+    position: fixed;     // Stick to the left of the page
+    top: 0;
+    left: 0;
+    width: 300px;        // Adjust width as you need
+    height: 100vh;       // Full height of viewport
+    background-color: #bf3e3e; // Light background (customize)
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;       // Ensure it's above other content
+  
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+  
+      .message {
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #333;
+      }
+    }
+  
+    .chat-input {
+      display: flex;
+      align-items: center;
+  
+      input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        outline: none;
+        font-size: 14px;
+      }
+  
+      .send-button {
+        background-color: #00c853; // Green send button
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        // transition: background 0.3s;
+  
+        &:hover {
+          background-color: #00b34d;
+        }
+  
+        svg {
+          width: 20px;
+          height: 20px;
+          fill: white;
+        }
+      }
+    }
+  }
+  

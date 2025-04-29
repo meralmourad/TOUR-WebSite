@@ -1,5 +1,6 @@
 using Backend.DTOs.PlaceDTOs;
 using Backend.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace Backend.Controllers;
         }
         
         [HttpPost("create")]
+        [Authorize(Roles = "Admin,Agency")]
         public async Task<IActionResult> CreatePlace([FromBody] CreatePlaceDTO placeDTO)
         {
             try
@@ -61,6 +63,7 @@ namespace Backend.Controllers;
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePlace(int id)
         {
             try

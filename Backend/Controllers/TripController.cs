@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using Backend.DTOs;
 using Backend.DTOs.TripDTOs;
 using Backend.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers{
@@ -17,6 +19,7 @@ public class TripController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Agency")]
     public async Task<IActionResult> CreateTrip([FromBody] CreateTripDTO tripDto)
     {
         try
@@ -62,6 +65,19 @@ public class TripController : ControllerBase
     {
         try
         {
+            // Check if the user is authorized to update the trip (e.g., only Admin can update trips or the agency)
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null) return Unauthorized("User not found in token.");
+            var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (userRole != "Admin")
+            {
+                // agency can update their own trips
+                var trip = await _tripService.GetTripByIdAsync(id);
+                if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
+                {
+                    return Forbid("You are not authorized to update this trip.");
+                }
+            }
             var result = await _tripService.UpdateTripAsync(id, tripDto);
             return result.Success ? Ok(result) : BadRequest(result);
         }
@@ -76,6 +92,19 @@ public class TripController : ControllerBase
     {
         try
         {
+            // Check if the user is authorized to delete the trip (e.g., only Admin can delete trips or the agency)
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null) return Unauthorized("User not found in token.");
+            var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (userRole != "Admin")
+            {
+                // agency can delete their own trips
+                var trip = await _tripService.GetTripByIdAsync(id);
+                if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
+                {
+                    return Forbid("You are not authorized to delete this trip.");
+                }
+            }
             var result = await _tripService.DeleteTripAsync(id);
             return result.Success ? Ok(result) : NotFound(result);
         }
