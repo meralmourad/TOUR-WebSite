@@ -17,23 +17,40 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency, [FromQuery] string? q)
+    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency, [FromQuery] bool? admin, [FromQuery] string? q)
     {
-        // If both are null or both are false, search all
-        if ((tourist == null && agency == null) || (tourist == false && agency == false))
+        tourist ??= false;
+        agency ??= false;
+        admin ??= false;
+
+
+        if (!User.Identity?.IsAuthenticated ?? true)
         {
-            tourist = true;
+            tourist = false;
             agency = true;
+            admin = false;
         }
-        if (tourist == null) tourist = false;
-        if (agency == null) agency = false;
+
+        if (User.IsInRole("Agency") )
+        {
+            tourist = false;
+            agency = true;
+            admin = false;
+        }
+        else if (User.IsInRole("Tourist"))
+        {
+            tourist = false;
+            agency = true;
+            admin = false;
+        }
 
         if (len == 0 && start == 0)
         {
             len = int.MaxValue;
             start = 0;
         }
-        var users = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value);
+
+        var users = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value, admin.Value);
         return Ok(users);
     }
 

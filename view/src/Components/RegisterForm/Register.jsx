@@ -51,7 +51,7 @@ function RegisterForm() {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/User/signup`, {
+            const response = await axios.post(`${API_URL}/Auth/signup`, {
                 fullName: Data.name,
                 email: Data.email,
                 password: Data.password,
@@ -62,6 +62,8 @@ function RegisterForm() {
             });
 
             console.log('aregato');
+            navigate('/login');
+            console.log(response.data);
         } 
         
         catch (error) {
@@ -159,7 +161,7 @@ function RegisterForm() {
                         </div>
                         <div className="button-group">
                             <button type="button" onClick={()=>navigate('/login')}>BACK</button>
-                            <button type="submit" onClick={()=>navigate('/login')} >SIGN UP</button>
+                            <button type="submit">SIGN UP</button>
                         </div>
                     </div>
                 </form>
