@@ -4,6 +4,9 @@ import UsersList from "./Components/UsersList/UsersList";
 import NavBar from "./Components/NavBar/NavBar.jsx";
 import LoginForm from "./Components/LoginForm/Login";
 import RegisterForm from "./Components/RegisterForm/Register";
+import WelcomePage from "./Components/WelcomePage/WelcomePage";
+
+
 
 function App() {
   const { user, isLoggedIn } = useSelector((store) => store.info);
@@ -17,6 +20,7 @@ function App() {
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="*" element={ <h1> Page not found </h1> } />
+        <Route path="/welcome" element={<WelcomePage />} />
       </Routes>
     </BrowserRouter>
   );
