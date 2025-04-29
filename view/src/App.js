@@ -6,6 +6,12 @@ import LoginForm from "./Components/LoginForm/Login";
 import RegisterForm from "./Components/RegisterForm/Register";
 import { useEffect } from "react";
 import { fetchUser } from "./Store/Slices/UserSlice.js";
+import ChatApp from "./Components/Chat/Chat.jsx";
+import Home from "./Components/Home/Home.jsx";
+import Rate from "./Components/Rate/Rate.jsx";
+import WelcomePage from "./Components/WelcomePage/WelcomePage";
+
+
 
 function App() {
   const { user, isLoggedIn } = useSelector((store) => store.info);
@@ -24,11 +30,12 @@ function App() {
     <BrowserRouter>
       {isLoggedIn && <NavBar />}
       <Routes>
-        <Route path="/" element={<h1> Home Page </h1>} />
+        <Route path="/" element={ <Home/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="*" element={ <h1> Page not found </h1> } />
+        <Route path="/welcome" element={<WelcomePage />} />
       </Routes>
     </BrowserRouter>
   );

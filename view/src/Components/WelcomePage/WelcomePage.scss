@@ -1,0 +1,77 @@
+.welcome-page {
+  display: flex;
+  height: 100vh;
+  background-color: #efeae1;
+
+  &__left {
+    width: 45%; 
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+
+    .welcome-page__image {
+      height: 100%;
+      width: 100%;
+      object-fit: cover; 
+      border-radius: 0;
+    }
+  }
+
+  &__right {
+    width: 55%; 
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    
+    .welcome-page__small-title {
+      font-size: 14px;
+      color: #805f45;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+    }
+
+    .welcome-page__main-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 70px;
+      color: #654c3b;
+      margin: 20px 0;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      margin-top: 15px;
+    }
+
+    
+    .welcome-page__description {
+      font-size: 22px;
+      color: #5e4933;
+      margin: 30px 0;
+      line-height: 1.8;
+      width: 80%; 
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center; 
+    }
+
+    .welcome-page__button {
+      background: none;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #584030;
+      cursor: pointer;
+      transition: 0.3s;
+
+      &:hover {
+        background-color: #a78267;
+        color: #ffffff;
+      }
+    }
+  }
+}
