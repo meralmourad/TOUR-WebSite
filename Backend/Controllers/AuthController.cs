@@ -34,7 +34,7 @@ namespace Backend.Controllers
             var result = await _userService.LoginAsync(loginDto);
 
             if (!result.Success) return Unauthorized(result.Message);
-            Console.WriteLine("Login successful: " + result.User.Id + " Role: " + result.User.Role);
+            // Console.WriteLine("Login successful: " + result.User.Id + " Role: " + result.User.Role);
             var token = _jwtTokenService.GenerateToken(result.User.Id.ToString(), result.User.Role);
             return Ok(new { Token = token, User = result.User });
         }
