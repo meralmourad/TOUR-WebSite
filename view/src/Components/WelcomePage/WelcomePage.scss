@@ -4,7 +4,7 @@
   background-color: #efeae1;
 
   &__left {
-    width: 45%; /* عرض الصورة أقل من نصف الصفحة */
+    width: 45%; 
     height: 100%;
     display: flex;
     justify-content: center;
@@ -12,15 +12,15 @@
     padding: 0;
 
     .welcome-page__image {
-      height: 100%; /* جعل الصورة تأخذ نفس ارتفاع الـ left bar */
-      width: 100%; /* جعل عرض الصورة يتناسب مع الـ left bar */
-      object-fit: cover; /* ضمان أن الصورة تملأ المساحة مع الحفاظ على نسبتها */
+      height: 100%;
+      width: 100%;
+      object-fit: cover; 
       border-radius: 0;
     }
   }
 
   &__right {
-    width: 55%; /* عرض الجهة اليمنى */
+    width: 55%; 
     padding: 20px;
     text-align: center;
     display: flex;
@@ -28,7 +28,7 @@
     justify-content: center;
     align-items: center;
 
-    /* رفع كلمة "TOUR AGENCIES" عن الكلمة التي تحتها */
+    
     .welcome-page__small-title {
       font-size: 14px;
       color: #805f45;
@@ -47,16 +47,16 @@
       margin-top: 15px;
     }
 
-    /* توسيع الجملة "Take only memories, leave only footprints" */
+    
     .welcome-page__description {
-      font-size: 22px; /* زيادة حجم الخط */
+      font-size: 22px;
       color: #5e4933;
       margin: 30px 0;
       line-height: 1.8;
-      width: 80%; /* زيادة العرض لتأخذ مساحة أكبر من الصفحة */
+      width: 80%; 
       margin-left: auto;
       margin-right: auto;
-      text-align: center; /* جعل الجملة في منتصف الصفحة بشكل أفقي */
+      text-align: center; 
     }
 
     .welcome-page__button {
