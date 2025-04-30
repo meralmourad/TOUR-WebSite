@@ -12,6 +12,7 @@ const TravelCards = () => {
   const [tripsData, setTripsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filer , setFilter] = useState(false);
   const { user, loading , isLoggedIn } = useSelector((store) => store.info);
 
   const itemsPerPage = 10 ;
@@ -28,7 +29,7 @@ const TravelCards = () => {
         else {
           setCurrentPage(currentPage);
         }
-        // console.log(response.data.$values);
+        console.log(response.data.$values);
         
       } 
       catch (error) {
@@ -79,7 +80,7 @@ const TravelCards = () => {
           role="img"
           aria-label="filter"
           style={{ marginRight: "10px", cursor: "pointer" }}
-          onClick={() => alert("Filter functionality coming soon!")}
+          onClick={() => setFilter(!filer)}
         >
             <img
               src="Icons/Filter.jpg"
@@ -100,7 +101,7 @@ const TravelCards = () => {
         <h4>{trip.city}</h4>
         <p>{trip.description}</p>
         <div>
-          <Rate rating={trip.rating} />
+        <Rate  children={trip.rating} />
         </div>
       </div>
     </div>
