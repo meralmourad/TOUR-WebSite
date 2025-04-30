@@ -11,6 +11,7 @@ import Home from "./Components/Home/Home.jsx";
 import Rate from "./Components/Rate/Rate.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import AgencyProfile from "./Components/Agencyprofile/Agencyprofile.jsx";
+import Profile from "./Components/Profile/Profile.jsx";
 
 function App() {
   const { user } = useSelector((store) => store.info);
@@ -32,7 +33,7 @@ function App() {
         <Route path="/" element={ <Home/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
-        <Route path="/AgencyProfile/:id" element={ <AgencyProfile /> } />
+        <Route path="/profile/:id" element={ <Profile /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="*" element={ <h1> Page not found </h1> } />

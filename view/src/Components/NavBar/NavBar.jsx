@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../Store/Slices/UserSlice';
 
 const NavBar = () => {
-    const { isLoggedIn } = useSelector((store) => store.info);
+    const { isLoggedIn, user } = useSelector((store) => store.info);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -33,7 +33,7 @@ const NavBar = () => {
             <div className="navbar-container">
                 
                 <div className="navbar-left">
-                    {(url.includes("/AgencyProfile") || url.includes("/TouristProfile")) &&
+                    {(url.includes("/profile")) &&
                         <>
                             <Link to="#flag" className="nav-link">
                                 <img src={'/Icons/flag icon.jpg'} alt="Flag" className="icon" />
@@ -48,7 +48,7 @@ const NavBar = () => {
                 {isLoggedIn && 
                     <ul className="navbar-links">
                         <li className="nav-item">
-                            <Link to="/profile" className="nav-link">
+                            <Link to={`/profile/${user.id}`} className="nav-link">
                                 <img src={'/Icons/Profile.jpg'} alt="Profile" className="icon" />
                             </Link>
                         </li>

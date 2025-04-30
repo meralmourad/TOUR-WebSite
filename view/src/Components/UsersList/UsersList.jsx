@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import "./UsersList.scss";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const UsersList = () => {
+  const navigate = useNavigate();
   const [Admin, setAdmin] = useState(false);
   const [Agency, setAgency] = useState(false);
   const [Tourist, setTourist] = useState(false);
@@ -111,7 +113,7 @@ const UsersList = () => {
         {users.length === 0 && <h2 className="users-list-title">No users Found</h2>}
         <div className="users-list">
           {users.length !== 0 && users.map((user) => (
-            <div key={user.id} className="user-card">
+            <div key={user.id} className="user-card" onClick={() => navigate(`/profile/${user.id}`)}>
               <div className="user-image">
                 <h5 style={{ margin: 0, fontSize: "16px" }}>{user.name}</h5>
                 <p
