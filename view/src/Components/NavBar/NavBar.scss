@@ -6,7 +6,19 @@ $dark-color: #2c3e50;
 $border-radius: 8px;
 $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .navbar {
+  animation: slideDown 1s ease-in;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 100%;
   margin: 0;

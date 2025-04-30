@@ -5,8 +5,6 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../Store/Slices/UserSlice';
 
-
-
 const NavBar = () => {
     const { isLoggedIn } = useSelector((store) => store.info);
     const dispatch = useDispatch();
@@ -14,7 +12,7 @@ const NavBar = () => {
     const location = useLocation();
 
     const url = location.pathname;
-    console.log(url);
+    console.log(location);
 
     if(url === "/welcome") {
         return <></>;
@@ -31,13 +29,13 @@ const NavBar = () => {
             <div className="navbar-container">
                 
                 <div className="navbar-left">
-                    {(url === "/AgencyProfile" || url === "/TouristProfile") &&
+                    {(url.includes("/AgencyProfile") || url.includes("/TouristProfile")) &&
                         <>
                             <Link to="#flag" className="nav-link">
-                                <img src={'Icons/flag icon.jpg'} alt="Flag" className="icon" />
+                                <img src={'/Icons/flag icon.jpg'} alt="Flag" className="icon" />
                             </Link>
                             <Link to="#chat" className="nav-link">
-                                <img src={'Icons/chat icon.jpg'} alt="Chat" className="icon" />
+                                <img src={'/Icons/chat icon.jpg'} alt="Chat" className="icon" />
                             </Link>
                         </>
                     }
@@ -47,22 +45,22 @@ const NavBar = () => {
                     <ul className="navbar-links">
                         <li className="nav-item">
                             <Link to="/profile" className="nav-link">
-                                <img src={'Icons/Profile.jpg'} alt="Profile" className="icon" />
+                                <img src={'/Icons/Profile.jpg'} alt="Profile" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/" className="nav-link">
-                                <img src={'Icons/HomeIcon.jpg'} alt="Home" className="icon" />
+                                <img src={'/Icons/HomeIcon.jpg'} alt="Home" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="#notification" className="nav-link">
-                                <img src={'Icons/Notification.jpg'} alt="Notification" className="icon" />
+                                <img src={'/Icons/Notification.jpg'} alt="Notification" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <button onClick={logout} className="nav-link">
-                                <img src={'Icons/logout.png'} alt="logout" className="icon" />
+                                <img src={'/Icons/logout.png'} alt="logout" className="icon" />
                             </button>
                         </li>
                     </ul>
@@ -72,17 +70,17 @@ const NavBar = () => {
                     <ul className="navbar-links">
                         <li className="nav-item">
                             <Link to="/" className="nav-link">
-                                <img src={'Icons/HomeIcon.jpg'} alt="Home" className="icon" />
+                                <img src={'/Icons/HomeIcon.jpg'} alt="Home" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/login" className="nav-link">
-                            <img src={'Icons/login.png'} alt="Settings" className="icon" />
+                            <img src={'/Icons/login.png'} alt="Settings" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/signup" className="nav-link">
-                            <img src={'Icons/signup.png'} alt="Settings" className="icon" />
+                            <img src={'/Icons/signup.png'} alt="Settings" className="icon" />
                             </Link>
                         </li>
                     </ul>
