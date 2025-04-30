@@ -12,16 +12,18 @@ const NavBar = () => {
     const location = useLocation();
 
     const url = location.pathname;
-    console.log(location);
+    // console.log(location);
 
-    if(url === "/welcome") {
+    if(url === "/welcome" || url === '/login' || url === '/signup') {
         return <></>;
     }
 
     const logout = () => {
-        localStorage.removeItem("Token");
-        dispatch(clearUser());
-        navigate("/welcome");
+        setTimeout(() => {
+            window.localStorage.removeItem("Token");
+            dispatch(clearUser());
+            navigate("/welcome");
+        }, 1000);
     }
 
     return (
@@ -59,9 +61,9 @@ const NavBar = () => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <button onClick={logout} className="nav-link">
+                            <Link onClick={logout} className="nav-link">
                                 <img src={'/Icons/logout.png'} alt="logout" className="icon" />
-                            </button>
+                            </Link>
                         </li>
                     </ul>
                 }

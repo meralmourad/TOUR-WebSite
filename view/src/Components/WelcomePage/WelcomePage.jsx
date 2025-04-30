@@ -8,7 +8,7 @@ const WelcomePage = () => {
     <div className="welcome-page">
       <div className="welcome-page__left">
         <img
-          src='/Icons/map.jpg'
+          src='https://media-public.canva.com/MADQ5DQYfO0/1/screen.jpg'
           alt="Map"
           className="welcome-page__image"
         />

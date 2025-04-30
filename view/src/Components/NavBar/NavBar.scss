@@ -63,6 +63,7 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     .nav-item {
       .nav-link {
+        cursor: pointer;
         display: flex;
         align-items: center;
         text-decoration: none;
