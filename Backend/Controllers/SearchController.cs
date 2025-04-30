@@ -17,7 +17,13 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult SearchUsers([FromQuery] int start, [FromQuery] int len, [FromQuery] bool? tourist, [FromQuery] bool? agency, [FromQuery] bool? admin, [FromQuery] string? q)
+    public IActionResult SearchUsers(
+        [FromQuery] int start,
+        [FromQuery] int len,
+        [FromQuery] bool? tourist,
+        [FromQuery] bool? agency,
+        [FromQuery] bool? admin,
+        [FromQuery] string? q)
     {
         tourist ??= false;
         agency ??= false;
@@ -57,19 +63,14 @@ public class SearchController : ControllerBase
     [HttpGet("trips")]
     public IActionResult SearchTrips(
     [FromQuery] int start = 0,
-    [FromQuery] int len = 0,
+    [FromQuery] int len = int.MaxValue,
     [FromQuery] string? destination = null,
     [FromQuery] DateTime? startDate = null,
+    [FromQuery] int startPrice = 0,
+    [FromQuery] int endPrice = int.MaxValue,
     [FromQuery] string? q = null)
     {
-        // Set default pagination if not provided
-        if (len == 0 && start == 0)
-        {
-            len = int.MaxValue;
-            start = 0;
-        }
-
-        var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate);
+        var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate, startPrice, endPrice);
         return Ok(trips);
     }
 }
