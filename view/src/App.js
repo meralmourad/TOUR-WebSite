@@ -37,7 +37,7 @@ function App() {
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="*" element={ <h1> Page not found </h1> } />
-        <Route path="/welcome" element={<WelcomePage />} />
+    
       </Routes>
     </BrowserRouter>
   );
