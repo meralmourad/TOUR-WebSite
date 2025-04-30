@@ -136,7 +136,7 @@ public class TripService : ITripService
         return trips.Skip(start).Take(len).ToList();
     }
 
-    public IEnumerable<TripDto> SearchTripsByQuery(string? q, int start, int len, string? destination, DateTime? startDate)
+    public IEnumerable<TripDto> SearchTripsByQuery(string? q, int start, int len, string? destination, DateTime? startDate, int startPrice, int endPrice)
     {
         var trips = _unitOfWork.Trip.GetAllAsync().Result;
 
@@ -151,7 +151,10 @@ public class TripService : ITripService
         // Filter by start date if provided
         if (startDate.HasValue)
             trips = trips.Where(t => t.StartDate >= startDate.Value).ToList();
-
+        //price filter
+        if (startPrice > 0 && endPrice > 0)
+            trips = trips.Where(t => t.Price >= startPrice && t.Price <= endPrice).ToList();
+        
         // Pagination and projection to DTO
         var result = trips
             .Skip(start)

@@ -1,30 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Rate.scss";
 
-const StarRating = ({ outOf = 5, onChange }) => {
+const StarRating = ({ outOf = 5, onChange, children }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
+  const [flag, setFlag] = useState(false);
 
   const handleClick = (index) => {
     setRating(index);
-    if (onChange) onChange(index); // send to parent if needed
+    if (onChange) onChange(index); 
   };
+
+  useEffect(() => {
+    if (children != null ) {
+      setFlag(true); 
+      handleClick(children) 
+    }
+  }, [children]);
 
   return (
     <div className="star-rating">
       {Array.from({ length: outOf }).map((_, index) => {
         const starValue = index + 1;
         return (
-          <span
-            key={index}
-            className={starValue <= (hover || rating) ? "filled" : ""}
-            onClick={() => handleClick(starValue)}
-            onMouseEnter={() => setHover(starValue)}
-            onMouseLeave={() => setHover(0)}
-          >
-            ★
-          </span>
-        );
+      <span
+        key={index}
+        className={starValue <= (hover || rating) ? "filled" : ""}
+        onClick={!flag ? () => handleClick(starValue) : undefined}
+        onMouseEnter={!flag ? () => setHover(starValue) : undefined}
+        onMouseLeave={!flag ? () => setHover(0) : undefined}
+      >
+        ★
+      </span>);
       })}
     </div>
   );
