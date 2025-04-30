@@ -19,11 +19,13 @@ const NavBar = () => {
     }
 
     const logout = () => {
+        document.body.style.cursor = 'wait';
         setTimeout(() => {
+            document.body.style.cursor = 'default';
             window.localStorage.removeItem("Token");
             dispatch(clearUser());
             navigate("/welcome");
-        }, 1000);
+        }, 1500);
     }
 
     return (
