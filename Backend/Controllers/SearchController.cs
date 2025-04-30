@@ -72,5 +72,6 @@ public class SearchController : ControllerBase
     {
         var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate, startPrice, endPrice);
         return Ok(trips);
+        
     }
 }
