@@ -1,9 +1,9 @@
 import './form.scss';
 import { useState } from "react";
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUser } from '../../Store/Slices/UserSlice';
-import { Link , useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 

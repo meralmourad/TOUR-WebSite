@@ -1,0 +1,178 @@
+$user-bg: #e8e2da;
+
+.user-profile-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Georgia', serif;
+  background-color: #f8f8f8;
+}
+
+.left-section {
+  width: 30%;
+  padding: 2rem;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .last-trips {
+    background-color: $user-bg;
+    padding: 0.5rem 2rem;
+    border-radius: 25px;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+  }
+
+  .trip {
+    width: 220px;
+    border-radius: 50px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 30px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.05rem;
+    cursor: pointer;
+
+    .trip-text {
+      line-height: 1.4;
+
+      span {
+        font-size: 0.85rem;
+        font-weight: normal;
+      }
+    }
+
+    .arrow-wrapper {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 40px;
+      padding: 0.5rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .arrow-icon {
+        font-size: 1.5rem;
+        color: white;
+      }
+    }
+
+    &.green {
+      background-color: #a7e8a1;
+      margin-top: 30px;  
+    }
+
+    &.red {
+      background-color: #f2a59c;
+    }
+
+    &.blue {
+      background-color: #91bceb;
+    }
+
+    &:first-of-type {
+      transform: scale(1.1);
+    }
+  }
+
+  .trip.green {
+    margin-bottom: 30px;  
+  }
+
+  .trip.red {
+    margin-top: 30px;  
+    margin-bottom: 30px; 
+  }
+
+  .trip.blue {
+    margin-top: 30px; 
+  }
+
+
+  .trip.first-beige {
+    margin-top: 2cm;  
+  }
+
+  .pagination {
+    margin-top: auto;
+    display: flex;
+    gap: 0.6rem;
+    font-size: 1rem;
+
+    span {
+      cursor: pointer;
+
+      &.active {
+        text-decoration: underline;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.right-section {
+  width: 70%;
+  background-color: $user-bg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .profile-wrapper {
+    text-align: center;
+
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .profile-box {
+      position: relative;
+      background-color: $user-bg;
+      border: 2px solid black;
+      border-radius: 150px;
+      padding: 1rem 2rem;
+      width: 900px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      gap: 3rem;
+
+      .icon-section {
+        width: 120px;
+        height: 120px;
+        border: 2px solid black;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .user-icon {
+          font-size: 3.5rem;
+        }
+      }
+
+      .info-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem; 
+        font-size: 1rem;  
+        font-weight: bold;
+      }
+
+      .edit-btn {
+        position: absolute;
+        bottom: 30px;
+        right: 70px;
+        background-color: #91bceb;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 20px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+    }
+  }
+}

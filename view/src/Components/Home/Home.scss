@@ -38,56 +38,56 @@
 
   .cards-grid {
     display: flex;
-    // flex-wrap: wrap; // Allows wrapping to the next line if needed
+    flex-wrap: wrap; // Allows wrapping to the next line
     gap: 20px; // Adds spacing between cards
     justify-content: center; // Centers the cards horizontally
     width: 90%;
     margin: 0 auto;
-
+  
     .trip-card {
-      background:#fffdfd;
+      background: #fff;
       border: 2px solid #ccc;
-      border-radius: 50px; // Rounded edges for the card
+      border-radius: 20px; // Rounded edges for the card
       overflow: hidden;
       text-align: center;
       display: flex;
       flex-direction: column; // Ensures content stacks vertically inside the card
-      padding: 20px;
-      width: calc(33.33% - 20px); // Ensures 3 cards per row with spacing
+      padding: 15px;
+      width: calc(16.66% - 20px); // Ensures 6 cards per row with spacing
       transition: transform 0.3s ease; // Smooth transition for scaling
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Adds a subtle shadow
       margin: 10px;
-
+  
       &:hover {
         transform: scale(1.05); // Slightly larger on hover
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); // Enhances shadow on hover
       }
-
+  
       img {
         width: 100%;
-        height: 120px; // Adjusted height for better proportions
+        height: 100px; // Adjusted height for better proportions
         object-fit: cover;
-        border-radius: 20px;
+        border-radius: 10px;
         margin-bottom: 10px;
       }
-
+  
       .trip-info {
         h4 {
-          font-size: 18px;
+          font-size: 16px;
           margin: 10px 0;
           color: #333;
         }
-
+  
         p {
-          font-size: 14px;
+          font-size: 12px;
           margin: 5px 0;
           color: #666;
         }
-
+  
         .stars {
           margin-top: 10px;
           color: gold;
-          font-size: 16px;
+          font-size: 14px;
         }
       }
     }
