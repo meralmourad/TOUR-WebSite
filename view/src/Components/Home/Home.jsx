@@ -1,18 +1,21 @@
-import React, { useState , useEffect } from "react";
-import Rate from "../Rate/Rate";
-import { useSelector }  from "react-redux";
-import axios from "axios";
 import "./Home.scss";
+import Filter from "../FilterTrip/Filter";
+import Rate from "../Rate/Rate";
+import axios from "axios";
+import swal from 'sweetalert';
+import { useSelector }  from "react-redux";
+import { useNavigate} from 'react-router-dom'; 
+import React, { useState , useEffect } from "react";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const TravelCards = () => {
 
+  const navigate = useNavigate();
   const [start , setStart] = useState(0);
   const [tripsData, setTripsData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filer , setFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const { user, loading , isLoggedIn } = useSelector((store) => store.info);
 
   const itemsPerPage = 10 ;
@@ -25,6 +28,7 @@ const TravelCards = () => {
         if(response.data.$values.length === 0 ) {
           setCurrentPage(1) ;
           setStart(0);
+          swal("Opps!", "No trips found for this destination", "error");
         }
         else {
           setCurrentPage(currentPage);
@@ -40,11 +44,6 @@ const TravelCards = () => {
     fetchTrips();
   }, [start, currentPage]);
 
-  // const filteredTrips = tripsData.filter((trip) =>
-  //   trip.city.includes(searchTerm)
-  // );
-
-  // const totalPages = Math.ceil(filteredTrips.length / itemsPerPage);
   const currentTrips = tripsData;
 
   const handleSearchChange = (e) => {
@@ -76,11 +75,11 @@ const TravelCards = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
-         <span
+        <span
           role="img"
           aria-label="filter"
           style={{ marginRight: "10px", cursor: "pointer" }}
-          onClick={() => setFilter(!filer)}
+          onClick={() => <Filter/>}
         >
             <img
               src="Icons/Filter.jpg"
@@ -92,12 +91,11 @@ const TravelCards = () => {
             ></img>
           </span>
       </div>
-
       <div className="cards-grid">
   {currentTrips.map((trip) => (
-    <div className="trip-card" key={trip.id}>
-      <img src='' alt="" />
-      <div className="trip-info">
+    <div className="trip-card" key={trip.id} >
+      <img src='' alt="" onClick={()=> navigate(`/Trip/${trip.id}`)} />
+      <div className="trip-info"  onClick={()=> navigate(`/Trip/${trip.id}`)}>
         <h4>{trip.city}</h4>
         <p>{trip.description}</p>
         <div>
