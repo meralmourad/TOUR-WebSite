@@ -1,0 +1,140 @@
+.filter {
+    width: 300px;
+    height: 90vh;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  .filter-group {
+    margin-bottom: 20px;
+  
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+      text-transform: capitalize;
+    }
+  
+    input[type="range"] {
+      width: 100%;
+      appearance: none;
+      height: 6px;
+      border-radius: 5px;
+      outline: none;
+      margin-top: 5px;
+      position: relative;
+      background: #ccc;
+      background-image: linear-gradient(to right, #d77a7a 0%, #d77a7a var(--range-progress, 50%), #ccc var(--range-progress, 50%), #ccc 100%);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+  
+      &::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 5px;
+        background: transparent;
+      }
+  
+      &::-moz-range-track {
+        height: 6px;
+        border-radius: 5px;
+        background: transparent;
+      }
+  
+      &::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: rgb(147, 31, 31);
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        margin-top: -5px;
+      }
+  
+      &::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #d77a7a; 
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+      }
+    }
+  
+    span {
+      float: right;
+      font-weight: bold;
+      color: black;
+      text-transform: none;
+    }
+  
+    &.dates {
+      input[type="date"] {
+        padding: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        color: black;
+      }
+    }
+  
+    &.additional-input {
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        color: black;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  
+    button {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+  
+      &.cancel {
+        background-color: rgba(255, 255, 255, 0.6);
+        border: 2px solid #800000;
+        color: #800000;
+  
+        &:active {
+          background-color: #800000;
+          color: white;
+        }
+      }
+  
+      &.apply {
+        background-color: rgba(0, 128, 0, 0.6);
+        color: white;
+  
+        &:active {
+          background-color: #006400;
+        }
+      }
+    }
+  }
+  

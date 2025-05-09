@@ -10,8 +10,11 @@ import ChatApp from "./Components/Chat/Chat.jsx";
 import Home from "./Components/Home/Home.jsx";
 import Rate from "./Components/Rate/Rate.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
-import AgencyProfile from "./Components/Agencyprofile/Agencyprofile.jsx";
-
+import UserProfile from "./Components/UserProfile/UserProfile.jsx";import AgencyProfile from "./Components/Agencyprofile/Agencyprofile.jsx";
+import Profile from "./Components/Profile/Profile.jsx";
+import TripName  from "./Components/TripName/TripName.jsx";
+import BookingPending from "./Components/BookingPending/BookingPending.jsx";
+import Filter from "./Components/Filter/Filter.jsx";
 function App() {
   const { user } = useSelector((store) => store.info);
   const usedispatch = useDispatch();
@@ -32,10 +35,13 @@ function App() {
         <Route path="/" element={ <Home/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
-        <Route path="/AgencyProfile/:id" element={ <AgencyProfile /> } />
+        <Route path="/AgencyProfile" element={ <AgencyProfile /> } />
+        <Route path="/TripName" element={ <TripName /> } />
+        <Route path="/BookingPending" element={ <BookingPending /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="*" element={ <h1> Page not found </h1> } />
+        <Route path="/filter" element={ <Filter /> } />
       </Routes>
     </BrowserRouter>
   );
