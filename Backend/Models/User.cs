@@ -9,13 +9,13 @@ public class User
     public string Role { get; set; } = "User";
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? Address { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    
     // Navigation properties
     public List<Message>? ReceivedMessages { get; set; }
     public List<Message>? SentMessages { get; set; }
-    public List<Notification>? ReceivedNotifications { get; set; }
-    public List<Notification>? SentNotifications { get; set; }
     public List<Report>? Reports { get; set; }
+    public ICollection<UserNotification> UserNotifications { get; set; }
+    public ICollection<Notification> SentNotifications { get; set; }
+    public List<Booking>? Bookings { get; set; }
 
 }

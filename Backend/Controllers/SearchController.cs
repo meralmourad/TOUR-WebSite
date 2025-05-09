@@ -1,3 +1,4 @@
+using Backend.Data;
 using Backend.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,12 +66,24 @@ public class SearchController : ControllerBase
     [FromQuery] int start = 0,
     [FromQuery] int len = int.MaxValue,
     [FromQuery] string? destination = null,
-    [FromQuery] DateTime? startDate = null,
-    [FromQuery] int startPrice = 0,
-    [FromQuery] int endPrice = int.MaxValue,
+    [FromQuery] DateOnly? startDate = null,
+    [FromQuery] DateOnly? endDate = null,
+    [FromQuery] int Price = int.MaxValue,
+    [FromQuery] bool? IsApproved=true,
     [FromQuery] string? q = null)
     {
-        var trips = _tripService.SearchTripsByQuery(q, start, len, destination, startDate, startPrice, endPrice);
+        // check if the user is authenticated
+        if (!User.Identity?.IsAuthenticated ?? true|| User.IsInRole("Tourist"))
+            IsApproved = true;
+        var isAdmin = User.IsInRole("Admin");
+        //get id from the token
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+        var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+
+        var trips = _tripService.SearchTripsByQuery
+            (q, start, len,
+            destination, startDate, endDate,
+            0, Price,(bool) IsApproved, isAdmin,userId);
         return Ok(trips);
         
     }

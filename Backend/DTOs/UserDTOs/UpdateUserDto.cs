@@ -16,9 +16,6 @@ public class UpdateUserDto
     [MinLength(6)]
     public string? Password { get; init; }
 
-    [Compare("Password", ErrorMessage = "Passwords do not match.")]
-    public string? ConfirmPassword { get; init; }
-
     [Phone]
     public string? PhoneNumber { get; init; }
 
