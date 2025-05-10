@@ -75,26 +75,31 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     [FromQuery] DateOnly? startDate = null,
     [FromQuery] DateOnly? endDate = null,
     [FromQuery] int Price = int.MaxValue,
-    [FromQuery] bool? IsApproved=true,
-    [FromQuery] int? agencyId = null,
-    [FromQuery] string? q = null)
+    [FromQuery] bool? IsApproved = true,
+    [FromQuery] int? agencyId = 0,
+    [FromQuery] string? q = null,
+    [FromQuery] bool sortByRating = false)
     {
-        // check if the user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true|| User.IsInRole("Tourist"))
+        if (endDate == null || (startDate.HasValue && endDate < startDate))
+            endDate = DateOnly.MaxValue;
+
+        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
             IsApproved = true;
         var isAdmin = User.IsInRole("Admin");
-        // //get id from the token
-        // var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-        // var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
 
-   var result = _tripService.SearchTripsByQuery(
-        q, start, len,
-        destination, startDate, endDate,
-        0, Price, (bool)IsApproved, isAdmin, (int)agencyId);
+        var result = _tripService.SearchTripsByQuery(
+            q, start, len,
+            destination, startDate, endDate,
+            0, Price, (bool)IsApproved, isAdmin, (int)agencyId);
 
-    // Wrap the result in an object with named properties
-    return Ok(new { Trips = result.Trips, TotalCount = result.TotalCount });
-        
+        // If sortByRating is true, sort the trips by rating
+        if (sortByRating)
+        {
+            result.Trips = result.Trips.OrderByDescending(t => t.Rating);
+        }
+
+        // Wrap the result in an object with named properties
+        return Ok(new { Trips = result.Trips, TotalCount = result.TotalCount });
     }
 
     [HttpGet("bookings")]
