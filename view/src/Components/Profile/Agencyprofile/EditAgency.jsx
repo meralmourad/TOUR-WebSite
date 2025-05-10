@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { setUser } from "../../Store/Slices/UserSlice";
+import { setUser } from "../../../Store/Slices/UserSlice";
 import { useDispatch } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;

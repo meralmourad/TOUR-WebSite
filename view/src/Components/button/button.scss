@@ -1,0 +1,75 @@
+.custom-swal-popup {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #fffaf0, #f0e5d8);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: scaleIn 0.4s ease forwards;
+  }
+  
+  @keyframes scaleIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  .modal-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #3d3a34;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .modal-subtitle {
+    font-size: 32px;
+    color: #7b2d3a;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .modal-button {
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s ease;
+    border: none;
+  }
+  
+  .modal-button.send {
+    background: linear-gradient(to right, #72e67a, #57c34a);
+    color: white;
+  
+    &:hover {
+      background: linear-gradient(to right, #5ad765, #44b43a);
+      transform: scale(1.05);
+    }
+  }
+  
+  .modal-button.report {
+    background: #ffefef;
+    color: #b73030;
+    border: 2px solid #e09696;
+  
+    &:hover {
+      background: #ffdede;
+      transform: scale(1.05);
+    }
+  }
+  
+  .report-textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: inherit;
+    resize: none;
+  }
+  

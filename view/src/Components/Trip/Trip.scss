@@ -1,0 +1,218 @@
+.trip-container {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom right, #fdfcfb, #e2d1c3);
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  animation: fadeIn 1s ease;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .trip-header {
+    position: relative;
+
+    .trip-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 4px solid #c4b79f;
+    }
+
+    .arrow-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255, 255, 255, 0.7);
+      border: none;
+      border-radius: 50%;
+      font-size: 28px;
+      font-weight: bold;
+      color: #5c4531;
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        transform: translateY(-50%) scale(1.1);
+      }
+    }
+
+    .arrow-button.left {
+      left: 15px;
+    }
+
+    .arrow-button.right {
+      right: 15px;
+    }
+  }
+
+  .trip-details {
+    display: flex;
+    justify-content: space-around;
+    background-color: #e5e3dc;
+    padding: 40px 5vw;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    .trip-section {
+      background-color: #f6f1de;
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1;
+      min-width: 280px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      h3 {
+        color: #3d382f;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .highlight {
+        font-weight: bold;
+        color: #7b2d3a;
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          position: relative;
+          padding-left: 20px;
+          margin-bottom: 6px;
+          font-weight: 500;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            background-color: #6a1b1b;
+            border-radius: 50%;
+          }
+        }
+      }
+
+      p {
+        margin: 5px 0;
+        color: #444;
+      }
+
+      strong {
+        color: #7b2d3a;
+      }
+    }
+  }
+
+  .book-now-button {
+    background: linear-gradient(to right, #8de463, #76c25a);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 14px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 30px auto;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+
+    .arrow {
+      margin-left: 12px;
+      font-size: 22px;
+    }
+
+    &:hover {
+      background: linear-gradient(to right, #6ec850, #5ea742);
+      transform: scale(1.05);
+    }
+  }
+}
+
+.custom-form {
+  font-family: 'Poppins', serif;
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 15px 0;
+    font-size: 18px;
+
+    span {
+      width: 45%;
+      margin: 5px 0;
+    }
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+
+    .discard-button,
+    .confirm-button {
+      font-size: 18px;
+      padding: 12px 28px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s ease;
+    }
+
+    .discard-button {
+      background-color: #f87171;
+      color: white;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        background-color: #ef4444;
+      }
+    }
+
+    .confirm-button {
+      background-color: #a7f3d0;
+      color: #1f2937;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        background-color: #6ee7b7;
+      }
+    }
+  }
+  .swal-content {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+  }
+}
+
