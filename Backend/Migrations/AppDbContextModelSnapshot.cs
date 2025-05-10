@@ -36,8 +36,8 @@ namespace Backend.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
+                    b.Property<int>("IsApproved")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -46,6 +46,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatsNumber")
                         .HasColumnType("int");
 
                     b.Property<int>("TouristId")
@@ -75,8 +78,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 1,
-                            IsApproved = true,
+                            IsApproved = 1,
                             Rating = -1,
+                            SeatsNumber = 2,
                             TouristId = 2,
                             TravelAgencyId = 3,
                             TripId = 1
@@ -84,8 +88,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 2,
-                            IsApproved = true,
+                            IsApproved = 0,
                             Rating = -1,
+                            SeatsNumber = 1,
                             TouristId = 11,
                             TravelAgencyId = 3,
                             TripId = 2
@@ -93,8 +98,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 3,
-                            IsApproved = true,
+                            IsApproved = -1,
                             Rating = -1,
+                            SeatsNumber = 3,
                             TouristId = 12,
                             TravelAgencyId = 4,
                             TripId = 3
@@ -102,11 +108,32 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 4,
-                            IsApproved = false,
+                            IsApproved = 1,
                             Rating = -1,
+                            SeatsNumber = 4,
                             TouristId = 13,
                             TravelAgencyId = 4,
                             TripId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsApproved = 1,
+                            Rating = -1,
+                            SeatsNumber = 2,
+                            TouristId = 14,
+                            TravelAgencyId = 3,
+                            TripId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsApproved = 0,
+                            Rating = -1,
+                            SeatsNumber = 1,
+                            TouristId = 15,
+                            TravelAgencyId = 4,
+                            TripId = 6
                         });
                 });
 
@@ -176,6 +203,16 @@ namespace Backend.Migrations
                         {
                             Id = 10,
                             Name = "Sports"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Beach"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Adventure Sports"
                         });
                 });
 
@@ -224,6 +261,18 @@ namespace Backend.Migrations
                             Id = 4,
                             ImageUrl = "https://example.com/rome1.jpg",
                             tripId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ImageUrl = "https://example.com/sydney1.jpg",
+                            tripId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ImageUrl = "https://example.com/capetown1.jpg",
+                            tripId = 6
                         });
                 });
 
@@ -406,6 +455,20 @@ namespace Backend.Migrations
                             Country = "Turkey",
                             Description = "Where East meets West.",
                             Name = "Istanbul"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Country = "Greece",
+                            Description = "A picturesque island in the Aegean Sea.",
+                            Name = "Santorini"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Country = "Indonesia",
+                            Description = "A tropical paradise with stunning beaches.",
+                            Name = "Bali"
                         });
                 });
 
@@ -562,6 +625,32 @@ namespace Backend.Migrations
                             Status = 1,
                             Title = "Tokyo Experience",
                             VendorId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AvailableSets = 20,
+                            Description = "Explore the beauty of Sydney.",
+                            EndDate = new DateOnly(2023, 10, 10),
+                            Price = 1700,
+                            Rating = 4.5999999999999996,
+                            StartDate = new DateOnly(2023, 10, 1),
+                            Status = 1,
+                            Title = "Sydney Adventure",
+                            VendorId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AvailableSets = 15,
+                            Description = "Experience the wildlife of Cape Town.",
+                            EndDate = new DateOnly(2023, 11, 12),
+                            Price = 2500,
+                            Rating = 4.9000000000000004,
+                            StartDate = new DateOnly(2023, 11, 1),
+                            Status = 1,
+                            Title = "Cape Town Safari",
+                            VendorId = 4
                         });
                 });
 
@@ -679,6 +768,9 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -708,6 +800,7 @@ namespace Backend.Migrations
                             Id = 1,
                             Address = "Admin Address",
                             Email = "admin@example.com",
+                            IsApproved = true,
                             Name = "Admin",
                             Password = "admin123",
                             PhoneNumber = "1234567890",
@@ -718,6 +811,7 @@ namespace Backend.Migrations
                             Id = 2,
                             Address = "123 Adventure Lane",
                             Email = "agency1@example.com",
+                            IsApproved = true,
                             Name = "Global Adventures",
                             Password = "agency123",
                             PhoneNumber = "5551234567",
@@ -728,6 +822,7 @@ namespace Backend.Migrations
                             Id = 3,
                             Address = "Adventure Lane",
                             Email = "agency2@example.com",
+                            IsApproved = true,
                             Name = "Adventure Co.",
                             Password = "password",
                             PhoneNumber = "1111111111",
@@ -738,6 +833,7 @@ namespace Backend.Migrations
                             Id = 4,
                             Address = "Luxury Street",
                             Email = "agency3@example.com",
+                            IsApproved = true,
                             Name = "Luxury Travels",
                             Password = "password",
                             PhoneNumber = "2222222222",
@@ -748,6 +844,7 @@ namespace Backend.Migrations
                             Id = 5,
                             Address = "Alice's Address",
                             Email = "alice@example.com",
+                            IsApproved = true,
                             Name = "Alice",
                             Password = "password",
                             PhoneNumber = "1231231234",
@@ -758,6 +855,7 @@ namespace Backend.Migrations
                             Id = 6,
                             Address = "Bob's Address",
                             Email = "bob@example.com",
+                            IsApproved = true,
                             Name = "Bob",
                             Password = "password",
                             PhoneNumber = "2342342345",
@@ -768,6 +866,7 @@ namespace Backend.Migrations
                             Id = 7,
                             Address = "Charlie's Address",
                             Email = "charlie@example.com",
+                            IsApproved = true,
                             Name = "Charlie",
                             Password = "password",
                             PhoneNumber = "3453453456",
@@ -778,6 +877,7 @@ namespace Backend.Migrations
                             Id = 8,
                             Address = "David's Address",
                             Email = "david@example.com",
+                            IsApproved = true,
                             Name = "David",
                             Password = "password",
                             PhoneNumber = "4564564567",
@@ -788,6 +888,7 @@ namespace Backend.Migrations
                             Id = 9,
                             Address = "Eve's Address",
                             Email = "eve@example.com",
+                            IsApproved = true,
                             Name = "Eve",
                             Password = "password",
                             PhoneNumber = "5675675678",
@@ -798,6 +899,7 @@ namespace Backend.Migrations
                             Id = 10,
                             Address = "Frank's Address",
                             Email = "frank@example.com",
+                            IsApproved = true,
                             Name = "Frank",
                             Password = "password",
                             PhoneNumber = "6786786789",
@@ -808,6 +910,7 @@ namespace Backend.Migrations
                             Id = 11,
                             Address = "Grace's Address",
                             Email = "grace@example.com",
+                            IsApproved = true,
                             Name = "Grace",
                             Password = "password",
                             PhoneNumber = "7897897890",
@@ -818,6 +921,7 @@ namespace Backend.Migrations
                             Id = 12,
                             Address = "Hank's Address",
                             Email = "hank@example.com",
+                            IsApproved = true,
                             Name = "Hank",
                             Password = "password",
                             PhoneNumber = "8908908901",
@@ -828,6 +932,7 @@ namespace Backend.Migrations
                             Id = 13,
                             Address = "Ivy's Address",
                             Email = "ivy@example.com",
+                            IsApproved = true,
                             Name = "Ivy",
                             Password = "password",
                             PhoneNumber = "9019019012",
@@ -838,6 +943,7 @@ namespace Backend.Migrations
                             Id = 14,
                             Address = "Jack's Address",
                             Email = "jack@example.com",
+                            IsApproved = true,
                             Name = "Jack",
                             Password = "password",
                             PhoneNumber = "1234561234",
@@ -848,6 +954,7 @@ namespace Backend.Migrations
                             Id = 15,
                             Address = "Karen's Address",
                             Email = "karen@example.com",
+                            IsApproved = true,
                             Name = "Karen",
                             Password = "password",
                             PhoneNumber = "2345672345",
@@ -858,6 +965,7 @@ namespace Backend.Migrations
                             Id = 16,
                             Address = "Leo's Address",
                             Email = "leo@example.com",
+                            IsApproved = true,
                             Name = "Leo",
                             Password = "password",
                             PhoneNumber = "3456783456",
@@ -868,6 +976,7 @@ namespace Backend.Migrations
                             Id = 17,
                             Address = "Mona's Address",
                             Email = "mona@example.com",
+                            IsApproved = true,
                             Name = "Mona",
                             Password = "password",
                             PhoneNumber = "4567894567",
@@ -878,6 +987,7 @@ namespace Backend.Migrations
                             Id = 18,
                             Address = "Nina's Address",
                             Email = "nina@example.com",
+                            IsApproved = true,
                             Name = "Nina",
                             Password = "password",
                             PhoneNumber = "5678905678",

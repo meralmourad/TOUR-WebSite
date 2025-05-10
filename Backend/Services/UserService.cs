@@ -42,9 +42,16 @@ public class UserService : IUserService
         if (existing != null)
             return (false, "User already exists.");
 
+        if(signupDto.Role == null)
+            signupDto.Role = "Tourist";
+
         if (signupDto.Role != null && signupDto.Role != "Tourist" && signupDto.Role != "Agency")
             return (false, "Invalid role. Only 'Tourist' and 'Agency' are allowed.");
 
+        if(signupDto.Role == "Agency")
+           signupDto.isApproved = false;
+        else
+            signupDto.isApproved = true;
         var userEntity = new User
         {
             Name = signupDto.FullName,
@@ -52,6 +59,7 @@ public class UserService : IUserService
             PhoneNumber = signupDto.PhoneNumber,
             Address = signupDto.Address,
             Role = signupDto.Role ?? "Tourist",
+            IsApproved = signupDto.isApproved,
             Password = HashPassword(signupDto.Password)
         };
 
@@ -107,9 +115,12 @@ public class UserService : IUserService
         return (true, "User updated successfully.");
     }
 
-    public IEnumerable<searchResDTO> SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency,bool admin)
+    public (IEnumerable<searchResDTO> Users, int TotalCount) SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency, bool admin, bool isApproved)
     {
         var query = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+        
+        query = query.Where(u => u.IsApproved== isApproved);
+        
         if (!string.IsNullOrWhiteSpace(q))
             query = query.Where(u => u.Name.Contains(q) || u.Email.Contains(q));
 
@@ -120,7 +131,7 @@ public class UserService : IUserService
         else if (!tourist && agency && !admin)
             query = query.Where(u => u.Role == "Agency");
         else if (tourist && agency && !admin)
-            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" );
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency");
         else if (tourist && !agency && admin)
             query = query.Where(u => u.Role == "Tourist" || u.Role == "Admin");
         else if (!tourist && agency && admin)
@@ -129,6 +140,10 @@ public class UserService : IUserService
             query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" || u.Role == "Admin");
         else if (!tourist && !agency && !admin)
             query = query.Where(u => u.Role == "Tourist");
+
+        // Get the total count of users in the database
+        int totalCount = query.Count();
+
         // Pagination
         var users = query
             .Skip(start)
@@ -140,9 +155,8 @@ public class UserService : IUserService
                 Role = u.Role
             })
             .ToList();
-        // Console.WriteLine("query is "+ users.Count());
 
-        return users;
+        return (users, totalCount);
     }
 
     public async Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id)
@@ -193,48 +207,43 @@ public class UserService : IUserService
         return hashed == parts[1];
     }
 
-    public async Task<IEnumerable<searchResDTO>> SearchUsersAsync(string query)
+    public Task<bool> ApproveUserAsync(int id)
     {
-        var users = await _unitOfWork.User.GetAllAsync();
-        var filteredUsers = users
-            .Where(u => u.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || 
-                        u.Email.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .Select(u => new searchResDTO
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Role = u.Role
-            })
-            .ToList();
+        var user = _unitOfWork.User.GetByIdAsync(id).Result;
+        if (user == null) return Task.FromResult(false);
 
-        return filteredUsers;
+        user.IsApproved = true;
+        _unitOfWork.User.Update(user);
+        _unitOfWork.CompleteAsync();
+        return Task.FromResult(true);
     }
 
-    public object SearchUsers(int start, int len, bool? tourist, bool? agency)
-    {
-        var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
 
-        if (tourist.HasValue && tourist.Value)
-        {
-            usersQuery = usersQuery.Where(u => u.Role == "Tourist");
-        }
+    // public object SearchUsers(int start, int len, bool? tourist, bool? agency)
+    // {
+    //     var usersQuery = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
 
-        if (agency.HasValue && agency.Value)
-        {
-            usersQuery = usersQuery.Where(u => u.Role == "Agency");
-        }
+    //     if (tourist.HasValue && tourist.Value)
+    //     {
+    //         usersQuery = usersQuery.Where(u => u.Role == "Tourist");
+    //     }
 
-        var paginatedUsers = usersQuery
-            .Skip(start)
-            .Take(len)
-            .Select(u => new searchResDTO
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Role = u.Role
-            })
-            .ToList();
+    //     if (agency.HasValue && agency.Value)
+    //     {
+    //         usersQuery = usersQuery.Where(u => u.Role == "Agency");
+    //     }
 
-        return paginatedUsers;
-    }
+    //     var paginatedUsers = usersQuery
+    //         .Skip(start)
+    //         .Take(len)
+    //         .Select(u => new searchResDTO
+    //         {
+    //             Id = u.Id,
+    //             Name = u.Name,
+    //             Role = u.Role
+    //         })
+    //         .ToList();
+
+    //     return paginatedUsers;
+    // }
 }

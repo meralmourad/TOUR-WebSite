@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class fine : Migration
+    public partial class fin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +49,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -169,7 +170,8 @@ namespace Backend.Migrations
                     TouristId = table.Column<int>(type: "int", nullable: false),
                     TripId = table.Column<int>(type: "int", nullable: false),
                     TravelAgencyId = table.Column<int>(type: "int", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    SeatsNumber = table.Column<int>(type: "int", nullable: false),
+                    IsApproved = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
@@ -350,7 +352,9 @@ namespace Backend.Migrations
                     { 7, "Family" },
                     { 8, "Romantic" },
                     { 9, "Wildlife" },
-                    { 10, "Sports" }
+                    { 10, "Sports" },
+                    { 11, "Beach" },
+                    { 12, "Adventure Sports" }
                 });
 
             migrationBuilder.InsertData(
@@ -367,32 +371,34 @@ namespace Backend.Migrations
                     { 7, "South Africa", "A city of stunning landscapes.", "Cape Town" },
                     { 8, "Brazil", "The Marvelous City.", "Rio de Janeiro" },
                     { 9, "UAE", "The city of gold.", "Dubai" },
-                    { 10, "Turkey", "Where East meets West.", "Istanbul" }
+                    { 10, "Turkey", "Where East meets West.", "Istanbul" },
+                    { 11, "Greece", "A picturesque island in the Aegean Sea.", "Santorini" },
+                    { 12, "Indonesia", "A tropical paradise with stunning beaches.", "Bali" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "Discriminator", "Email", "Name", "Password", "PhoneNumber", "Role" },
+                columns: new[] { "Id", "Address", "Discriminator", "Email", "IsApproved", "Name", "Password", "PhoneNumber", "Role" },
                 values: new object[,]
                 {
-                    { 1, "Admin Address", "User", "admin@example.com", "Admin", "admin123", "1234567890", "Admin" },
-                    { 2, "123 Adventure Lane", "User", "agency1@example.com", "Global Adventures", "agency123", "5551234567", "Agency" },
-                    { 3, "Adventure Lane", "User", "agency2@example.com", "Adventure Co.", "password", "1111111111", "Agency" },
-                    { 4, "Luxury Street", "User", "agency3@example.com", "Luxury Travels", "password", "2222222222", "Agency" },
-                    { 5, "Alice's Address", "User", "alice@example.com", "Alice", "password", "1231231234", "Tourist" },
-                    { 6, "Bob's Address", "User", "bob@example.com", "Bob", "password", "2342342345", "Tourist" },
-                    { 7, "Charlie's Address", "User", "charlie@example.com", "Charlie", "password", "3453453456", "Tourist" },
-                    { 8, "David's Address", "User", "david@example.com", "David", "password", "4564564567", "Tourist" },
-                    { 9, "Eve's Address", "User", "eve@example.com", "Eve", "password", "5675675678", "Tourist" },
-                    { 10, "Frank's Address", "User", "frank@example.com", "Frank", "password", "6786786789", "Tourist" },
-                    { 11, "Grace's Address", "User", "grace@example.com", "Grace", "password", "7897897890", "Tourist" },
-                    { 12, "Hank's Address", "User", "hank@example.com", "Hank", "password", "8908908901", "Tourist" },
-                    { 13, "Ivy's Address", "User", "ivy@example.com", "Ivy", "password", "9019019012", "Tourist" },
-                    { 14, "Jack's Address", "User", "jack@example.com", "Jack", "password", "1234561234", "Tourist" },
-                    { 15, "Karen's Address", "User", "karen@example.com", "Karen", "password", "2345672345", "Tourist" },
-                    { 16, "Leo's Address", "User", "leo@example.com", "Leo", "password", "3456783456", "Tourist" },
-                    { 17, "Mona's Address", "User", "mona@example.com", "Mona", "password", "4567894567", "Tourist" },
-                    { 18, "Nina's Address", "User", "nina@example.com", "Nina", "password", "5678905678", "Tourist" }
+                    { 1, "Admin Address", "User", "admin@example.com", true, "Admin", "admin123", "1234567890", "Admin" },
+                    { 2, "123 Adventure Lane", "User", "agency1@example.com", true, "Global Adventures", "agency123", "5551234567", "Agency" },
+                    { 3, "Adventure Lane", "User", "agency2@example.com", true, "Adventure Co.", "password", "1111111111", "Agency" },
+                    { 4, "Luxury Street", "User", "agency3@example.com", true, "Luxury Travels", "password", "2222222222", "Agency" },
+                    { 5, "Alice's Address", "User", "alice@example.com", true, "Alice", "password", "1231231234", "Tourist" },
+                    { 6, "Bob's Address", "User", "bob@example.com", true, "Bob", "password", "2342342345", "Tourist" },
+                    { 7, "Charlie's Address", "User", "charlie@example.com", true, "Charlie", "password", "3453453456", "Tourist" },
+                    { 8, "David's Address", "User", "david@example.com", true, "David", "password", "4564564567", "Tourist" },
+                    { 9, "Eve's Address", "User", "eve@example.com", true, "Eve", "password", "5675675678", "Tourist" },
+                    { 10, "Frank's Address", "User", "frank@example.com", true, "Frank", "password", "6786786789", "Tourist" },
+                    { 11, "Grace's Address", "User", "grace@example.com", true, "Grace", "password", "7897897890", "Tourist" },
+                    { 12, "Hank's Address", "User", "hank@example.com", true, "Hank", "password", "8908908901", "Tourist" },
+                    { 13, "Ivy's Address", "User", "ivy@example.com", true, "Ivy", "password", "9019019012", "Tourist" },
+                    { 14, "Jack's Address", "User", "jack@example.com", true, "Jack", "password", "1234561234", "Tourist" },
+                    { 15, "Karen's Address", "User", "karen@example.com", true, "Karen", "password", "2345672345", "Tourist" },
+                    { 16, "Leo's Address", "User", "leo@example.com", true, "Leo", "password", "3456783456", "Tourist" },
+                    { 17, "Mona's Address", "User", "mona@example.com", true, "Mona", "password", "4567894567", "Tourist" },
+                    { 18, "Nina's Address", "User", "nina@example.com", true, "Nina", "password", "5678905678", "Tourist" }
                 });
 
             migrationBuilder.InsertData(
@@ -421,18 +427,22 @@ namespace Backend.Migrations
                     { 1, 20, "Explore the beauty of Paris with this amazing adventure package.", new DateOnly(2023, 6, 10), 1500, 4.5, new DateOnly(2023, 6, 1), 1, "Paris Adventure", 3 },
                     { 2, 15, "Relax and unwind in the tropical paradise of Maldives.", new DateOnly(2023, 7, 8), 2000, 4.7999999999999998, new DateOnly(2023, 7, 1), 1, "Maldives Getaway", 3 },
                     { 3, 25, "Discover the wonders of Rome.", new DateOnly(2023, 8, 10), 1200, 4.7000000000000002, new DateOnly(2023, 8, 1), 1, "Rome Discovery", 4 },
-                    { 4, 30, "Experience the culture of Tokyo.", new DateOnly(2023, 9, 12), 1800, 4.9000000000000004, new DateOnly(2023, 9, 1), 1, "Tokyo Experience", 4 }
+                    { 4, 30, "Experience the culture of Tokyo.", new DateOnly(2023, 9, 12), 1800, 4.9000000000000004, new DateOnly(2023, 9, 1), 1, "Tokyo Experience", 4 },
+                    { 5, 20, "Explore the beauty of Sydney.", new DateOnly(2023, 10, 10), 1700, 4.5999999999999996, new DateOnly(2023, 10, 1), 1, "Sydney Adventure", 3 },
+                    { 6, 15, "Experience the wildlife of Cape Town.", new DateOnly(2023, 11, 12), 2500, 4.9000000000000004, new DateOnly(2023, 11, 1), 1, "Cape Town Safari", 4 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Bookings",
-                columns: new[] { "Id", "CategoryId", "Comment", "IsApproved", "PhoneNumber", "PlaceId", "Rating", "TouristId", "TravelAgencyId", "TripId" },
+                columns: new[] { "Id", "CategoryId", "Comment", "IsApproved", "PhoneNumber", "PlaceId", "Rating", "SeatsNumber", "TouristId", "TravelAgencyId", "TripId" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, -1, 2, 3, 1 },
-                    { 2, null, null, true, null, null, -1, 11, 3, 2 },
-                    { 3, null, null, true, null, null, -1, 12, 4, 3 },
-                    { 4, null, null, false, null, null, -1, 13, 4, 4 }
+                    { 1, null, null, 1, null, null, -1, 2, 2, 3, 1 },
+                    { 2, null, null, 0, null, null, -1, 1, 11, 3, 2 },
+                    { 3, null, null, -1, null, null, -1, 3, 12, 4, 3 },
+                    { 4, null, null, 1, null, null, -1, 4, 13, 4, 4 },
+                    { 5, null, null, 1, null, null, -1, 2, 14, 3, 5 },
+                    { 6, null, null, 0, null, null, -1, 1, 15, 4, 6 }
                 });
 
             migrationBuilder.InsertData(
@@ -443,7 +453,9 @@ namespace Backend.Migrations
                     { 1, "https://example.com/paris1.jpg", 1 },
                     { 2, "https://example.com/paris2.jpg", 1 },
                     { 3, "https://example.com/maldives1.jpg", 2 },
-                    { 4, "https://example.com/rome1.jpg", 3 }
+                    { 4, "https://example.com/rome1.jpg", 3 },
+                    { 5, "https://example.com/sydney1.jpg", 5 },
+                    { 6, "https://example.com/capetown1.jpg", 6 }
                 });
 
             migrationBuilder.InsertData(

@@ -15,6 +15,7 @@ public class TripDto
     public  DateOnly EndDate { get; set; }
     public string? Description { get; set; }
     public double Rating { get; set; } = 0;
+    
     public  List<string> Locations { get; set; }
     public  List<string> Images { get; set; }
     public  int Status { get; set; } 

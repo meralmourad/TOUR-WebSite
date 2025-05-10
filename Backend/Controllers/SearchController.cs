@@ -9,12 +9,14 @@ public class SearchController : ControllerBase
     private readonly IUserService _userService;
     private readonly IPlaceService _placeService;
     private readonly ITripService _tripService;
+    private readonly IBookingService _bookingService;
 
-    public SearchController(IUserService userService, IPlaceService placeService, ITripService tripService)
+    public SearchController(IUserService userService, IPlaceService placeService, ITripService tripService, IBookingService bookingService)
     {
         _userService = userService;
         _placeService = placeService;
         _tripService = tripService;
+        _bookingService = bookingService;
     }
 
     [HttpGet("users")]
@@ -24,12 +26,17 @@ public class SearchController : ControllerBase
         [FromQuery] bool? tourist,
         [FromQuery] bool? agency,
         [FromQuery] bool? admin,
+        [FromQuery] bool? isApproved,
         [FromQuery] string? q)
     {
         tourist ??= false;
         agency ??= false;
         admin ??= false;
-
+        isApproved ??= true;
+        if(!(bool)isApproved && !User.IsInRole("Admin"))
+        {
+            isApproved = true;
+        }
 
         if (!User.Identity?.IsAuthenticated ?? true)
         {
@@ -37,8 +44,7 @@ public class SearchController : ControllerBase
             agency = true;
             admin = false;
         }
-
-        if (User.IsInRole("Agency") )
+        else if (User.IsInRole("Agency") )
         {
             tourist = false;
             agency = true;
@@ -57,8 +63,8 @@ public class SearchController : ControllerBase
             start = 0;
         }
 
-        var users = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value, admin.Value);
-        return Ok(users);
+        var result = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value, admin.Value,(bool)isApproved);
+return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     }
 
     [HttpGet("trips")]
@@ -69,22 +75,58 @@ public class SearchController : ControllerBase
     [FromQuery] DateOnly? startDate = null,
     [FromQuery] DateOnly? endDate = null,
     [FromQuery] int Price = int.MaxValue,
-    [FromQuery] bool? IsApproved=true,
-    [FromQuery] string? q = null)
+    [FromQuery] bool? IsApproved = true,
+    [FromQuery] int? agencyId = 0,
+    [FromQuery] string? q = null,
+    [FromQuery] bool sortByRating = false)
     {
-        // check if the user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true|| User.IsInRole("Tourist"))
+        if (endDate == null || (startDate.HasValue && endDate < startDate))
+            endDate = DateOnly.MaxValue;
+
+        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
             IsApproved = true;
         var isAdmin = User.IsInRole("Admin");
-        //get id from the token
-        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-        var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
 
-        var trips = _tripService.SearchTripsByQuery
-            (q, start, len,
+        var result = _tripService.SearchTripsByQuery(
+            q, start, len,
             destination, startDate, endDate,
-            0, Price,(bool) IsApproved, isAdmin,userId);
-        return Ok(trips);
-        
+            0, Price, (bool)IsApproved, isAdmin, (int)agencyId);
+
+        // If sortByRating is true, sort the trips by rating
+        if (sortByRating)
+        {
+            result.Trips = result.Trips.OrderByDescending(t => t.Rating);
+        }
+
+        // Wrap the result in an object with named properties
+        return Ok(new { Trips = result.Trips, TotalCount = result.TotalCount });
+    }
+
+    [HttpGet("bookings")]
+    public IActionResult SearchBookings(
+    [FromQuery] int start = 0,
+    [FromQuery] int len = int.MaxValue,
+    [FromQuery] bool? IsApproved = null,
+    [FromQuery] int? agencyId = null)
+    {
+        //if the user is not authenticated, set IsApproved to true
+        if(!User.Identity?.IsAuthenticated ?? true)
+            return Unauthorized();
+
+        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
+            IsApproved ??= true;
+
+        //if the user is an agency check if he requested his own bookings
+        var isAdmin = User.IsInRole("Admin");
+        if (User.IsInRole("Agency"))
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+            agencyId ??= intUserIdClaim;
+        }
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? false, isAdmin, agencyId);
+        var totalCount = bookings.Result.Count;
+
+        return Ok(new { TotalCount = totalCount, Bookings = bookings.Result });
     }
 }

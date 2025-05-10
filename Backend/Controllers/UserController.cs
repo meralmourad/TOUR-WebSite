@@ -87,7 +87,6 @@ namespace Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userUpdateDto,int id)
         {
-           
             // Check if the user reqested to update is the same as the one in the token
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null) return Unauthorized("User not found in token.");
@@ -95,6 +94,15 @@ namespace Backend.Controllers
             var result = await _userService.UpdateUserAsync(userUpdateDto, id);
             if (!result.Success) return BadRequest(result.Message);
             return Ok(result.Success);
+        }
+        // approve user
+        [HttpPut("approve/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ApproveUser(int id)
+        {
+            var result = await _userService.ApproveUserAsync(id);
+            if (!result) return BadRequest("User not found.");
+            return Ok(result);
         }
     }
 }

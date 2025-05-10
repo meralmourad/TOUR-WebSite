@@ -15,8 +15,8 @@ public class Booking
     /* TravelAgency relation */
     public TravelAgency TravelAgency { get; set; }
     public int TravelAgencyId { get; set; } 
-    
-    public bool IsApproved { get; set; } = false;
+    public int SeatsNumber { get; set; } = 1;
+    public int IsApproved { get; set; } = 0; //-1:reject 0: pending, 1: approved 
     public String? PhoneNumber { get; set; }
     public String? Comment { get; set; }
     

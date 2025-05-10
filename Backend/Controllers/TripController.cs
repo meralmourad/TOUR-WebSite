@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Backend.DTOs;
 using Backend.DTOs.TripDTOs;
 using Backend.IServices;
 using Microsoft.AspNetCore.Authorization;

@@ -30,7 +30,7 @@ public class JwtTokenService
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Issuer"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiresInMinutes"])),
+            expires: DateTime.MaxValue, // Set to a far future date to make it effectively not expire
             signingCredentials: creds
         );
         Console.WriteLine("Token generated: " + token+ " Role: " + role);

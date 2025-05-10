@@ -89,11 +89,11 @@ public class TripService : ITripService
         return (true, "Trip updated successfully.");
     }
 
-    public IEnumerable<TripDto> SearchTripsByQuery(
+    public (IEnumerable<TripDto> Trips, int TotalCount) SearchTripsByQuery(
         string? q, int start, int len,
         string? destination, DateOnly? startDate,
         DateOnly? endDate, int startPrice, int endPrice,
-        bool isApproved, bool isAdmin, int? agencyId = null)
+        bool isApproved, bool isAdmin, int agencyId)
     {
         // 1. Build the base query and filter as much as possible in the DB
         var tripsQuery = _unitOfWork.Trip.Query();
@@ -102,8 +102,11 @@ public class TripService : ITripService
         {
             if (isAdmin)
                 tripsQuery = tripsQuery.Where(t => t.Status == 0);
-            else
-                tripsQuery = tripsQuery.Where(t => t.Status == 0 && t.VendorId == agencyId);
+            else{
+                // If the user is not an egency skip the trips that are not approved
+                if(agencyId!=0)
+                    tripsQuery = tripsQuery.Where(t => t.Status == 0 && t.VendorId == agencyId);
+            }
         }
         else
         {
@@ -120,70 +123,131 @@ public class TripService : ITripService
         if (!string.IsNullOrEmpty(q))
             tripsQuery = tripsQuery.Where(t => t.Title.Contains(q) || t.Description.Contains(q));
 
-        if (startDate.HasValue)
-            tripsQuery = tripsQuery.Where(t => t.StartDate.ToDateTime(TimeOnly.MinValue) >= startDate.Value.ToDateTime(TimeOnly.MinValue));
-        if (endDate.HasValue)
-            tripsQuery = tripsQuery.Where(t => t.StartDate.ToDateTime(TimeOnly.MinValue) <= endDate.Value.ToDateTime(TimeOnly.MinValue));
-
-        // 2. Materialize the filtered trips
-        var tripsList = tripsQuery.ToList();
-
-        // 3. Only get TripPlace and Image records for the filtered trips
-        var tripIds = tripsList.Select(t => t.Id).ToList();
-
-        var allTripPlaces = _unitOfWork.TripPlace.Query().Where(tp => tripIds.Contains(tp.TripsId)).ToList();
-        var allImages = _unitOfWork.image.Query().Where(i => tripIds.Contains(i.tripId)).ToList();
-
-        // 4. Assign navigation properties
-        foreach (var trip in tripsList)
+        if (startDate.HasValue || endDate.HasValue)
         {
-            trip.TripPlaces = allTripPlaces.Where(tp => tp.TripsId == trip.Id).ToList();
-            trip.Image = allImages.Where(i => i.tripId == trip.Id).ToList();
-        }
+            // Fetch trips from the database without applying the date filter
+            var tripsList = tripsQuery.ToList();
 
-        // 5. Filter by destination (in-memory, since TripPlaces are now assigned)
-        if (!string.IsNullOrEmpty(destination))
-        {
-            int destinationId = int.Parse(destination);
-            tripsList = tripsList.Where(t => t.TripPlaces.Any(tp => tp.PlaceId == destinationId)).ToList();
-        }
+            // Apply the date filter in memory
+            if (startDate.HasValue)
+                tripsList = tripsList.Where(t => t.StartDate >= startDate.Value).ToList();
+            if (endDate.HasValue)
+                tripsList = tripsList.Where(t => t.StartDate <= endDate.Value).ToList();
 
-        // Get all TripCategory and Category records for the filtered trips
-        var allTripCategories = _unitOfWork.tripCategory.Query().Where(tc => tripIds.Contains(tc.tripId)).ToList();
-        var allCategories = _unitOfWork.category.Query().ToList();
-        
-        //assign locations
-        var allLocations = _unitOfWork.Place.Query().ToList();
-        // images
-        // var allImages = _unitOfWork.image.Query().ToList();
-        // 6. Paging and projection to DTO
-        return tripsList
-            .Skip(start)
-            .Take(len)
-            .Select(t => new TripDto
+            // Get the total count of trips after filtering
+            int totalCount = tripsList.Count;
+
+            // Proceed with the rest of the logic
+            var tripIds = tripsList.Select(t => t.Id).ToList();
+
+            var allTripPlaces = _unitOfWork.TripPlace.Query().Where(tp => tripIds.Contains(tp.TripsId)).ToList();
+            var allImages = _unitOfWork.image.Query().Where(i => tripIds.Contains(i.tripId)).ToList();
+ 
+            foreach (var trip in tripsList)
             {
-                Id = t.Id,
-                AgenceId = t.VendorId,
-                Title = t.Title,
-                Price = t.Price,
-                Locations = allLocations
-                    .Where(l => t.TripPlaces.Any(tp => tp.PlaceId == l.Id))
-                    .Select(l => l.Name )
-                    .ToList()
-                ,
-                StartDate = t.StartDate,
-                Description = t.Description,
-                Rating = t.Rating,
-                Images = t.Image?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                AvailableSets = t.AvailableSets,
-                Categories = allTripCategories
-                    .Where(tc => tc.tripId == t.Id)
-                    .Select(tc => allCategories.FirstOrDefault(c => c.Id == tc.categoryId)?.Name)
-                    .Where(name => name != null)
-                    .Select(name => name!) // Use null-forgiving operator to ensure non-null values
-                    .ToList(),
-            })
-            .ToList();
+                trip.TripPlaces = allTripPlaces.Where(tp => tp.TripsId == trip.Id).ToList();
+                trip.Image = allImages.Where(i => i.tripId == trip.Id).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(destination))
+            {
+                int destinationId = int.Parse(destination);
+                tripsList = tripsList.Where(t => t.TripPlaces.Any(tp => tp.PlaceId == destinationId)).ToList();
+            }
+
+            var allTripCategories = _unitOfWork.tripCategory.Query().Where(tc => tripIds.Contains(tc.tripId)).ToList();
+            var allCategories = _unitOfWork.category.Query().ToList();
+            var allLocations = _unitOfWork.Place.Query().ToList();
+
+            var pagedTrips = tripsList
+                .OrderByDescending(t => t.Rating)
+                .Skip(start)
+                .Take(len)
+                .Select(t => new TripDto
+                {
+                    Id = t.Id,
+                    AgenceId = t.VendorId,
+                    Title = t.Title,
+                    Price = t.Price,
+                    Locations = allLocations
+                        .Where(l => t.TripPlaces.Any(tp => tp.PlaceId == l.Id))
+                        .Select(l => l.Name )
+                        .ToList()
+                    ,
+                    StartDate = t.StartDate,
+                    Description = t.Description,
+                    Rating = t.Rating,
+                    Images = t.Image?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    AvailableSets = t.AvailableSets,
+                    Categories = allTripCategories
+                        .Where(tc => tc.tripId == t.Id)
+                        .Select(tc => allCategories.FirstOrDefault(c => c.Id == tc.categoryId)?.Name)
+                        .Where(name => name != null)
+                        .Select(name => name!)
+                        .ToList(),
+                })
+                .ToList();
+
+            return (pagedTrips, totalCount);
+        }
+        else
+        {
+            // If no date filtering is required, proceed as usual
+            var tripsList = tripsQuery.ToList();
+            int totalCount = tripsList.Count;
+
+            var tripIds = tripsList.Select(t => t.Id).ToList();
+
+            var allTripPlaces = _unitOfWork.TripPlace.Query().Where(tp => tripIds.Contains(tp.TripsId)).ToList();
+            var allImages = _unitOfWork.image.Query().Where(i => tripIds.Contains(i.tripId)).ToList();
+ 
+            foreach (var trip in tripsList)
+            {
+                trip.TripPlaces = allTripPlaces.Where(tp => tp.TripsId == trip.Id).ToList();
+                trip.Image = allImages.Where(i => i.tripId == trip.Id).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(destination))
+            {
+                int destinationId = int.Parse(destination);
+                tripsList = tripsList.Where(t => t.TripPlaces.Any(tp => tp.PlaceId == destinationId)).ToList();
+            }
+
+            var allTripCategories = _unitOfWork.tripCategory.Query().Where(tc => tripIds.Contains(tc.tripId)).ToList();
+            var allCategories = _unitOfWork.category.Query().ToList();
+            var allLocations = _unitOfWork.Place.Query().ToList();
+
+            var pagedTrips = tripsList
+                .OrderByDescending(t => t.Rating)
+                .Skip(start)
+                .Take(len)
+                .Select(t => new TripDto
+                {
+                    Id = t.Id,
+                    AgenceId = t.VendorId,
+                    Title = t.Title,
+                    Price = t.Price,
+                    Locations = allLocations
+                        .Where(l => t.TripPlaces.Any(tp => tp.PlaceId == l.Id))
+                        .Select(l => l.Name )
+                        .ToList()
+                    ,
+                    StartDate = t.StartDate,
+                    Description = t.Description,
+                    Rating = t.Rating,
+                    Images = t.Image?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    AvailableSets = t.AvailableSets,
+                    Categories = allTripCategories
+                        .Where(tc => tc.tripId == t.Id)
+                        .Select(tc => allCategories.FirstOrDefault(c => c.Id == tc.categoryId)?.Name)
+                        .Where(name => name != null)
+                        .Select(name => name!)
+                        .ToList(),
+                })
+                .ToList();
+
+            return (pagedTrips, totalCount);
+        }
     }
 
     public Task<IEnumerable<TripDto>> GetTripsByAgencyIdAsync(int id)
