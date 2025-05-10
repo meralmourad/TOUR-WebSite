@@ -1,5 +1,5 @@
 import "./Home.scss";
-import Filter from "../FilterTrip/Filter";
+import Filter from "../Trip/Filter/Filter";
 import Rate from "../Rate/Rate";
 import axios from "axios";
 import swal from 'sweetalert';
@@ -15,6 +15,7 @@ const TravelCards = () => {
   const [start , setStart] = useState(0);
   const [tripsData, setTripsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [Showfilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const { user, loading , isLoggedIn } = useSelector((store) => store.info);
 
@@ -54,12 +55,22 @@ const TravelCards = () => {
   
 
   return (
-    <div className="travel-cards-container">
-      { !loading && isLoggedIn ? <><h2>Hello , {user.name.toUpperCase()} <br /> DISCOVER THE WORLD NOW!</h2> </> : 
-      <h2>Hello<br /> DISCOVER THE WORLD NOW!</h2> }
+    <>
+        <div className="travel-cards-container">
+        {!loading && isLoggedIn ? (
+          <>
+            <h2>
+              Hello , {user.name.toUpperCase()} <br /> DISCOVER THE WORLD NOW!
+            </h2>
+          </>
+        ) : (
+          <h2>
+            Hello<br /> DISCOVER THE WORLD NOW!
+          </h2>
+        )}
 
-      <div className="search-filter">
-        <span role="img" aria-label="search" style={{ marginRight: "10px" }}>
+        <div className="search-filter">
+          <span role="img" aria-label="search" style={{ marginRight: "10px" }}>
             <img
               src="Icons/search.jpg"
               alt=""
@@ -69,18 +80,18 @@ const TravelCards = () => {
               }}
             ></img>
           </span>
-        <input
-          type="text"
-          placeholder="Search Destination..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <span
-          role="img"
-          aria-label="filter"
-          style={{ marginRight: "10px", cursor: "pointer" }}
-          onClick={() => <Filter/>}
-        >
+          <input
+            type="text"
+            placeholder="Search Destination..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <span
+            role="img"
+            aria-label="filter"
+            style={{ marginRight: "10px", cursor: "pointer" }}
+            onClick={() => setShowFilter(!Showfilter) }
+          >
             <img
               src="Icons/Filter.jpg"
               alt=""
@@ -90,47 +101,60 @@ const TravelCards = () => {
               }}
             ></img>
           </span>
-      </div>
-      <div className="cards-grid">
-  {currentTrips.map((trip) => (
-    <div className="trip-card" key={trip.id} >
-      <img src='' alt="" onClick={()=> navigate(`/Trip/${trip.id}`)} />
-      <div className="trip-info"  onClick={()=> navigate(`/Trip/${trip.id}`)}>
-        <h4>{trip.city}</h4>
-        <p>{trip.description}</p>
-        <div>
-        <Rate  children={trip.rating} />
+        </div>
+        {Showfilter && <Filter ShowFilter={Showfilter} />}
+        <div className="cards-grid">
+          {currentTrips.map((trip) => (
+            <div className="trip-card" key={trip.id}>
+              <img src="" alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
+              <div
+                className="trip-info"
+                onClick={() => navigate(`/Trip/${trip.id}`)}
+              >
+                <h4>{trip.city}</h4>
+                <p>{trip.description}</p>
+                <div>
+                  <Rate children={trip.rating} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="pagination">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => {
+              setCurrentPage(currentPage - 1);
+              setStart(start - itemsPerPage);
+            }}
+          >
+            ◀
+          </button>
+
+          {Array.from({ length: 4 }).map((_, index) => (
+            <button
+              key={index}
+              className={currentPage === index + 1 ? "active" : ""}
+              onClick={() => {
+                setCurrentPage(index + 1);
+                setStart(index * itemsPerPage);
+              }}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            disabled={currentPage === 4}
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              setStart(start + itemsPerPage);
+            }}
+          >
+            ▶
+          </button>
         </div>
       </div>
-    </div>
-  ))}
-</div>
-<div className="pagination">
-  <button
-    disabled={currentPage === 1}
-    onClick={() => {setCurrentPage( currentPage -1 ); setStart( start - itemsPerPage );}}
-  >
-    ◀
-  </button>
-  
-  {Array.from({ length: 4 }).map((_, index) => (
-    <button
-      key={index}
-      className={currentPage === index + 1 ? "active" : ""}
-      onClick={() => {setCurrentPage(index + 1) ; setStart(index * itemsPerPage )} }
-    >
-      {index + 1}
-    </button>
-  ))}
-  <button
-    disabled={currentPage === 4 }
-      onClick={() => {setCurrentPage( currentPage + 1 ); setStart( start + itemsPerPage);}}
-  >
-    ▶
-  </button>
-
-</div>
-    </div>
+    </>
   );
 }
 
