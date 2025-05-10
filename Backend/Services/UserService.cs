@@ -207,6 +207,17 @@ public class UserService : IUserService
         return hashed == parts[1];
     }
 
+    public Task<bool> ApproveUserAsync(int id)
+    {
+        var user = _unitOfWork.User.GetByIdAsync(id).Result;
+        if (user == null) return Task.FromResult(false);
+
+        user.IsApproved = true;
+        _unitOfWork.User.Update(user);
+        _unitOfWork.CompleteAsync();
+        return Task.FromResult(true);
+    }
+
 
     // public object SearchUsers(int start, int len, bool? tourist, bool? agency)
     // {

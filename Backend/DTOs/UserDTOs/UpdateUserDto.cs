@@ -18,7 +18,7 @@ public class UpdateUserDto
 
     [Phone]
     public string? PhoneNumber { get; init; }
-
+    
     [StringLength(200)]
     public string? Address { get; init; }
 }
