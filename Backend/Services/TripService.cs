@@ -1,8 +1,11 @@
 using System;
+using System.Threading.Tasks;
 using Backend.Data;
 using Backend.DTOs;
+using Backend.DTOs.PlaceDTOs;
 using Backend.DTOs.TripDTOs;
 using Backend.IServices;
+using Backend.Mappers;
 using Backend.Models;
 
 namespace Backend.Services;
@@ -10,9 +13,12 @@ namespace Backend.Services;
 public class TripService : ITripService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly TripMapper _tripMapper;
+
     public TripService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
+        _tripMapper = new TripMapper(unitOfWork);
     }
 
     private void ThrowIfErrorFound(bool condition, string errorMessage)
@@ -33,11 +39,8 @@ public class TripService : ITripService
             StartDate = tripDto.StartDate,
             Description = tripDto.Description ?? string.Empty,
             Rating = 0,
-            LocationIds = tripDto.LocationIds ?? new List<int>(),
-            Images = tripDto.Images ?? Array.Empty<string>(),
             Status =  0,
             AvailableSets = tripDto.AvailableSets,
-            CategoryIds = tripDto.CategoryIds ?? new List<int>(),
         };
         await _unitOfWork.Trip.AddAsync(trip);
         await _unitOfWork.CompleteAsync();
@@ -53,52 +56,24 @@ public class TripService : ITripService
         await _unitOfWork.CompleteAsync();
         return (true, "Trip deleted successfully.");
     }
+
     public async Task<IEnumerable<TripDto>> GetAllTripsAsync()
     {
         var trips = await _unitOfWork.Trip.GetAllAsync();
         ThrowIfErrorFound(trips == null || !trips.Any(), "No trips found.");
-
-        return trips.Select(t => new TripDto
-        {
-            Id = t.Id,
-            AgenceId = t.VendorId,
-            Title = t.Title,
-            Price = t.Price,
-            StartDate = t.StartDate,
-            Description = t.Description,
-            Rating = t.Rating,
-            LocationIds = t.LocationIds,
-            Images = t.Images,
-            Status = t.Status,
-            AvailableSets = t.AvailableSets,
-            CategoryIds = t.CategoryIds
-        }).ToList();
+        return _tripMapper.MapToTripDtoList(trips);
     }
 
     public async Task<TripDto?> GetTripByIdAsync(int id)
     {
-        var trip =await _unitOfWork.Trip.GetByIdAsync(id);
+        var trip = await _unitOfWork.Trip.GetByIdAsync(id);
         ThrowIfErrorFound(trip == null, "Trip not found.");
-
-        return new TripDto
-        {
-            Id = trip.Id,
-            AgenceId = trip.VendorId,
-            Title = trip.Title,
-            Price = trip.Price,
-            StartDate = trip.StartDate,
-            Description = trip.Description,
-            Rating = trip.Rating,
-            LocationIds = trip.LocationIds,
-            Images = trip.Images,
-            Status = trip.Status,
-            AvailableSets = trip.AvailableSets,
-            CategoryIds = trip.CategoryIds
-        };
+        return _tripMapper.MapToTripDto(trip);
     }
 
     public async Task<(bool Success, string Message)> UpdateTripAsync(int id, UpdateTripDTO tripDto)
     {
+        // var userIdClaim =;
         var curTrip = await _unitOfWork.Trip.GetByIdAsync(id);
         ThrowIfErrorFound(curTrip == null, "Trip not found.");
 
@@ -107,56 +82,82 @@ public class TripService : ITripService
         curTrip.StartDate = tripDto.StartDate ?? curTrip.StartDate;
         curTrip.Description = tripDto.Description ?? curTrip.Description;
         curTrip.Rating = tripDto.Rating ?? curTrip.Rating;
-        curTrip.LocationIds = tripDto.LocationIds ?? curTrip.LocationIds;
-        curTrip.Images = tripDto.Images ?? curTrip.Images;
-        curTrip.Status = tripDto.Status ?? curTrip.Status;
         curTrip.AvailableSets = tripDto.AvailableSets ?? curTrip.AvailableSets;
-        curTrip.CategoryIds = tripDto.CategoryIds ?? curTrip.CategoryIds;
 
         _unitOfWork.Trip.Update(curTrip);
         await _unitOfWork.CompleteAsync();
         return (true, "Trip updated successfully.");
     }
 
-    public async Task<IEnumerable<Trip>> SearchTripsAsync(int start, int len, string? destination, DateTime? startDate)
+    public IEnumerable<TripDto> SearchTripsByQuery(
+        string? q, int start, int len,
+        string? destination, DateOnly? startDate,
+        DateOnly? endDate, int startPrice, int endPrice,
+        bool isApproved, bool isAdmin, int? agencyId = null)
     {
-        // Example implementation
-        var trips = (await _unitOfWork.Trip.GetAllAsync()).AsQueryable();
+        // 1. Build the base query and filter as much as possible in the DB
+        var tripsQuery = _unitOfWork.Trip.Query();
 
+        if (!isApproved)
+        {
+            if (isAdmin)
+                tripsQuery = tripsQuery.Where(t => t.Status == 0);
+            else
+                tripsQuery = tripsQuery.Where(t => t.Status == 0 && t.VendorId == agencyId);
+        }
+        else
+        {
+            tripsQuery = tripsQuery.Where(t => t.Status == 1);
+        }
+
+        start = Math.Max(0, start);
+        len = Math.Max(1, len);
+        startPrice = Math.Max(0, startPrice);
+        endPrice = Math.Max(0, endPrice);
+
+        tripsQuery = tripsQuery.Where(t => t.Price >= startPrice && t.Price <= endPrice);
+
+        if (!string.IsNullOrEmpty(q))
+            tripsQuery = tripsQuery.Where(t => t.Title.Contains(q) || t.Description.Contains(q));
+
+        if (startDate.HasValue)
+            tripsQuery = tripsQuery.Where(t => t.StartDate.ToDateTime(TimeOnly.MinValue) >= startDate.Value.ToDateTime(TimeOnly.MinValue));
+        if (endDate.HasValue)
+            tripsQuery = tripsQuery.Where(t => t.StartDate.ToDateTime(TimeOnly.MinValue) <= endDate.Value.ToDateTime(TimeOnly.MinValue));
+
+        // 2. Materialize the filtered trips
+        var tripsList = tripsQuery.ToList();
+
+        // 3. Only get TripPlace and Image records for the filtered trips
+        var tripIds = tripsList.Select(t => t.Id).ToList();
+
+        var allTripPlaces = _unitOfWork.TripPlace.Query().Where(tp => tripIds.Contains(tp.TripsId)).ToList();
+        var allImages = _unitOfWork.image.Query().Where(i => tripIds.Contains(i.tripId)).ToList();
+
+        // 4. Assign navigation properties
+        foreach (var trip in tripsList)
+        {
+            trip.TripPlaces = allTripPlaces.Where(tp => tp.TripsId == trip.Id).ToList();
+            trip.Image = allImages.Where(i => i.tripId == trip.Id).ToList();
+        }
+
+        // 5. Filter by destination (in-memory, since TripPlaces are now assigned)
         if (!string.IsNullOrEmpty(destination))
         {
-            trips = trips.Where(t => t.Description.Contains(destination));
+            int destinationId = int.Parse(destination);
+            tripsList = tripsList.Where(t => t.TripPlaces.Any(tp => tp.PlaceId == destinationId)).ToList();
         }
 
-        if (startDate.HasValue)
-        {
-            trips = trips.Where(t => t.StartDate >= startDate.Value);
-        }
-
-        return trips.Skip(start).Take(len).ToList();
-    }
-
-    public IEnumerable<TripDto> SearchTripsByQuery(string? q, int start, int len, string? destination, DateTime? startDate, int startPrice, int endPrice)
-    {
-        var trips = _unitOfWork.Trip.GetAllAsync().Result;
-
-        // Filter by search query (title or description)
-        if (!string.IsNullOrWhiteSpace(q))
-            trips = trips.Where(t => t.Title.Contains(q) || t.Description.Contains(q)).ToList();
-
-        // Filter by destination as LocationId if provided
-        if (!string.IsNullOrWhiteSpace(destination) && int.TryParse(destination, out int locationId))
-            trips = trips.Where(t => t.LocationIds != null && t.LocationIds.Contains(locationId)).ToList();
-
-        // Filter by start date if provided
-        if (startDate.HasValue)
-            trips = trips.Where(t => t.StartDate >= startDate.Value).ToList();
-        //price filter
-        if (startPrice > 0 && endPrice > 0)
-            trips = trips.Where(t => t.Price >= startPrice && t.Price <= endPrice).ToList();
+        // Get all TripCategory and Category records for the filtered trips
+        var allTripCategories = _unitOfWork.tripCategory.Query().Where(tc => tripIds.Contains(tc.tripId)).ToList();
+        var allCategories = _unitOfWork.category.Query().ToList();
         
-        // Pagination and projection to DTO
-        var result = trips
+        //assign locations
+        var allLocations = _unitOfWork.Place.Query().ToList();
+        // images
+        // var allImages = _unitOfWork.image.Query().ToList();
+        // 6. Paging and projection to DTO
+        return tripsList
             .Skip(start)
             .Take(len)
             .Select(t => new TripDto
@@ -165,17 +166,43 @@ public class TripService : ITripService
                 AgenceId = t.VendorId,
                 Title = t.Title,
                 Price = t.Price,
+                Locations = allLocations
+                    .Where(l => t.TripPlaces.Any(tp => tp.PlaceId == l.Id))
+                    .Select(l => l.Name )
+                    .ToList()
+                ,
                 StartDate = t.StartDate,
                 Description = t.Description,
                 Rating = t.Rating,
-                LocationIds = t.LocationIds,
-                Images = t.Images,
-                Status = t.Status,
+                Images = t.Image?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
                 AvailableSets = t.AvailableSets,
-                CategoryIds = t.CategoryIds
+                Categories = allTripCategories
+                    .Where(tc => tc.tripId == t.Id)
+                    .Select(tc => allCategories.FirstOrDefault(c => c.Id == tc.categoryId)?.Name)
+                    .Where(name => name != null)
+                    .Select(name => name!) // Use null-forgiving operator to ensure non-null values
+                    .ToList(),
             })
             .ToList();
+    }
 
-        return result;
+    public Task<IEnumerable<TripDto>> GetTripsByAgencyIdAsync(int id)
+    {
+        var trips = _unitOfWork.Trip.GetAllAsync().Result.Where(t => t.VendorId == id).ToList();
+        return Task.FromResult(_tripMapper.MapToTripDtoList(trips));
+    }
+
+    public Task<bool> ApproveTripAsync(int id, bool isApproved)
+    {
+        var trip = _unitOfWork.Trip.GetByIdAsync(id).Result;
+        if (trip == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        trip.Status = isApproved ? 1 : 2; // 1 for approved, 2 for rejected
+        _unitOfWork.Trip.Update(trip);
+        _unitOfWork.CompleteAsync();
+        return Task.FromResult(true);
     }
 }

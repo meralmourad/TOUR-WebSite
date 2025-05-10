@@ -11,13 +11,4 @@ public class UserLoginDTO
     [Required]
     public required string Password { get; set; }
 
-    // mappers
-    public static UserLoginDTO FromUserDto(UserLoginDTO userLoginDto)
-    {
-        return new UserLoginDTO
-        {
-            Email = userLoginDto.Email,
-            Password = userLoginDto.Password
-        };
-    }
 }

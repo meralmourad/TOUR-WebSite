@@ -60,6 +60,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
+// builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+// builder.Services.AddScoped<IReportService, ReportService>();
+// builder.Services.AddScoped<TripPl>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -79,7 +83,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowFrontend");

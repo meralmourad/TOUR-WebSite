@@ -25,7 +25,6 @@ public class MessageService : IMessageService
             SenderId = m.SenderId,
             ReceiverId = m.ReceiverId,
             Content = m.Content,
-            CreatedAt = m.CreatedAt
         }).ToList();
     }
 
@@ -40,7 +39,6 @@ public class MessageService : IMessageService
             SenderId = message.SenderId,
             ReceiverId = message.ReceiverId,
             Content = message.Content,
-            CreatedAt = message.CreatedAt
         };
         
     }
@@ -56,7 +54,6 @@ public class MessageService : IMessageService
             SenderId = m.SenderId,
             ReceiverId = m.ReceiverId,
             Content = m.Content,
-            CreatedAt = m.CreatedAt
         }).ToList();
     }
 
@@ -71,7 +68,6 @@ public class MessageService : IMessageService
             SenderId = m.SenderId,
             ReceiverId = m.ReceiverId,
             Content = m.Content,
-            CreatedAt = m.CreatedAt
         }).ToList();
     }
 
@@ -82,7 +78,6 @@ public class MessageService : IMessageService
             SenderId = messageDto.SenderId,
             ReceiverId = messageDto.ReceiverId,
             Content = messageDto.Content,
-            CreatedAt = DateTime.UtcNow
         };
         await _unitOfWork.Message.AddAsync(message);
         await _unitOfWork.CompleteAsync();
