@@ -89,7 +89,7 @@ public class TripService : ITripService
         return (true, "Trip updated successfully.");
     }
 
-    public IEnumerable<TripDto> SearchTripsByQuery(
+    public (IEnumerable<TripDto> Trips, int TotalCount) SearchTripsByQuery(
         string? q, int start, int len,
         string? destination, DateOnly? startDate,
         DateOnly? endDate, int startPrice, int endPrice,
@@ -128,12 +128,15 @@ public class TripService : ITripService
         // 2. Materialize the filtered trips
         var tripsList = tripsQuery.ToList();
 
+        // Get the total count of trips in the database
+        int totalCount = tripsList.Count;
+
         // 3. Only get TripPlace and Image records for the filtered trips
         var tripIds = tripsList.Select(t => t.Id).ToList();
 
         var allTripPlaces = _unitOfWork.TripPlace.Query().Where(tp => tripIds.Contains(tp.TripsId)).ToList();
         var allImages = _unitOfWork.image.Query().Where(i => tripIds.Contains(i.tripId)).ToList();
-
+ 
         // 4. Assign navigation properties
         foreach (var trip in tripsList)
         {
@@ -157,7 +160,7 @@ public class TripService : ITripService
         // images
         // var allImages = _unitOfWork.image.Query().ToList();
         // 6. Paging and projection to DTO
-        return tripsList
+        var pagedTrips = tripsList
             .Skip(start)
             .Take(len)
             .Select(t => new TripDto
@@ -184,6 +187,8 @@ public class TripService : ITripService
                     .ToList(),
             })
             .ToList();
+
+        return (pagedTrips, totalCount);
     }
 
     public Task<IEnumerable<TripDto>> GetTripsByAgencyIdAsync(int id)

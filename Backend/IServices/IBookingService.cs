@@ -14,5 +14,14 @@ public interface IBookingService
     Task<List<BookingDTO>> GetBookingsByTouristId(int touristId);
     Task<List<BookingDTO>> GetBookingsByTripId(int tripId);
     Task<List<BookingDTO>> GetBookingsByTouristIdAndTripId(int touristId, int tripId);
+    Task<List<BookingDTO>> GetBookingsByAgencyId(int agencyId);
+    Task<bool> ApproveBooking(int id,int Approved);
+    Task<int> RateBooking(int id, int rating, string? comment = null);
+    Task<List<BookingDTO>> SearchBookingsByQuery(
+        int start,
+        int len,
+        bool isApproved,
+        bool isAdmin,
+        int? agencyId);
     // Task GetBookingsByTouristId(string? userId);
 }

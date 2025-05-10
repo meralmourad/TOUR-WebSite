@@ -169,7 +169,8 @@ namespace Backend.Migrations
                     TouristId = table.Column<int>(type: "int", nullable: false),
                     TripId = table.Column<int>(type: "int", nullable: false),
                     TravelAgencyId = table.Column<int>(type: "int", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    SeatsNumber = table.Column<int>(type: "int", nullable: false),
+                    IsApproved = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
@@ -350,7 +351,9 @@ namespace Backend.Migrations
                     { 7, "Family" },
                     { 8, "Romantic" },
                     { 9, "Wildlife" },
-                    { 10, "Sports" }
+                    { 10, "Sports" },
+                    { 11, "Beach" },
+                    { 12, "Adventure Sports" }
                 });
 
             migrationBuilder.InsertData(
@@ -367,7 +370,9 @@ namespace Backend.Migrations
                     { 7, "South Africa", "A city of stunning landscapes.", "Cape Town" },
                     { 8, "Brazil", "The Marvelous City.", "Rio de Janeiro" },
                     { 9, "UAE", "The city of gold.", "Dubai" },
-                    { 10, "Turkey", "Where East meets West.", "Istanbul" }
+                    { 10, "Turkey", "Where East meets West.", "Istanbul" },
+                    { 11, "Greece", "A picturesque island in the Aegean Sea.", "Santorini" },
+                    { 12, "Indonesia", "A tropical paradise with stunning beaches.", "Bali" }
                 });
 
             migrationBuilder.InsertData(
@@ -421,18 +426,22 @@ namespace Backend.Migrations
                     { 1, 20, "Explore the beauty of Paris with this amazing adventure package.", new DateOnly(2023, 6, 10), 1500, 4.5, new DateOnly(2023, 6, 1), 1, "Paris Adventure", 3 },
                     { 2, 15, "Relax and unwind in the tropical paradise of Maldives.", new DateOnly(2023, 7, 8), 2000, 4.7999999999999998, new DateOnly(2023, 7, 1), 1, "Maldives Getaway", 3 },
                     { 3, 25, "Discover the wonders of Rome.", new DateOnly(2023, 8, 10), 1200, 4.7000000000000002, new DateOnly(2023, 8, 1), 1, "Rome Discovery", 4 },
-                    { 4, 30, "Experience the culture of Tokyo.", new DateOnly(2023, 9, 12), 1800, 4.9000000000000004, new DateOnly(2023, 9, 1), 1, "Tokyo Experience", 4 }
+                    { 4, 30, "Experience the culture of Tokyo.", new DateOnly(2023, 9, 12), 1800, 4.9000000000000004, new DateOnly(2023, 9, 1), 1, "Tokyo Experience", 4 },
+                    { 5, 20, "Explore the beauty of Sydney.", new DateOnly(2023, 10, 10), 1700, 4.5999999999999996, new DateOnly(2023, 10, 1), 1, "Sydney Adventure", 3 },
+                    { 6, 15, "Experience the wildlife of Cape Town.", new DateOnly(2023, 11, 12), 2500, 4.9000000000000004, new DateOnly(2023, 11, 1), 1, "Cape Town Safari", 4 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Bookings",
-                columns: new[] { "Id", "CategoryId", "Comment", "IsApproved", "PhoneNumber", "PlaceId", "Rating", "TouristId", "TravelAgencyId", "TripId" },
+                columns: new[] { "Id", "CategoryId", "Comment", "IsApproved", "PhoneNumber", "PlaceId", "Rating", "SeatsNumber", "TouristId", "TravelAgencyId", "TripId" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, -1, 2, 3, 1 },
-                    { 2, null, null, true, null, null, -1, 11, 3, 2 },
-                    { 3, null, null, true, null, null, -1, 12, 4, 3 },
-                    { 4, null, null, false, null, null, -1, 13, 4, 4 }
+                    { 1, null, null, 1, null, null, -1, 2, 2, 3, 1 },
+                    { 2, null, null, 0, null, null, -1, 1, 11, 3, 2 },
+                    { 3, null, null, -1, null, null, -1, 3, 12, 4, 3 },
+                    { 4, null, null, 1, null, null, -1, 4, 13, 4, 4 },
+                    { 5, null, null, 1, null, null, -1, 2, 14, 3, 5 },
+                    { 6, null, null, 0, null, null, -1, 1, 15, 4, 6 }
                 });
 
             migrationBuilder.InsertData(
@@ -443,7 +452,9 @@ namespace Backend.Migrations
                     { 1, "https://example.com/paris1.jpg", 1 },
                     { 2, "https://example.com/paris2.jpg", 1 },
                     { 3, "https://example.com/maldives1.jpg", 2 },
-                    { 4, "https://example.com/rome1.jpg", 3 }
+                    { 4, "https://example.com/rome1.jpg", 3 },
+                    { 5, "https://example.com/sydney1.jpg", 5 },
+                    { 6, "https://example.com/capetown1.jpg", 6 }
                 });
 
             migrationBuilder.InsertData(

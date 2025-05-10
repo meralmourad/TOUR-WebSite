@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250509161700_fine")]
+    [Migration("20250510174156_fine")]
     partial class fine
     {
         /// <inheritdoc />
@@ -39,8 +39,8 @@ namespace Backend.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
+                    b.Property<int>("IsApproved")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -49,6 +49,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatsNumber")
                         .HasColumnType("int");
 
                     b.Property<int>("TouristId")
@@ -78,8 +81,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 1,
-                            IsApproved = true,
+                            IsApproved = 1,
                             Rating = -1,
+                            SeatsNumber = 2,
                             TouristId = 2,
                             TravelAgencyId = 3,
                             TripId = 1
@@ -87,8 +91,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 2,
-                            IsApproved = true,
+                            IsApproved = 0,
                             Rating = -1,
+                            SeatsNumber = 1,
                             TouristId = 11,
                             TravelAgencyId = 3,
                             TripId = 2
@@ -96,8 +101,9 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 3,
-                            IsApproved = true,
+                            IsApproved = -1,
                             Rating = -1,
+                            SeatsNumber = 3,
                             TouristId = 12,
                             TravelAgencyId = 4,
                             TripId = 3
@@ -105,11 +111,32 @@ namespace Backend.Migrations
                         new
                         {
                             Id = 4,
-                            IsApproved = false,
+                            IsApproved = 1,
                             Rating = -1,
+                            SeatsNumber = 4,
                             TouristId = 13,
                             TravelAgencyId = 4,
                             TripId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsApproved = 1,
+                            Rating = -1,
+                            SeatsNumber = 2,
+                            TouristId = 14,
+                            TravelAgencyId = 3,
+                            TripId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsApproved = 0,
+                            Rating = -1,
+                            SeatsNumber = 1,
+                            TouristId = 15,
+                            TravelAgencyId = 4,
+                            TripId = 6
                         });
                 });
 
@@ -179,6 +206,16 @@ namespace Backend.Migrations
                         {
                             Id = 10,
                             Name = "Sports"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Beach"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Adventure Sports"
                         });
                 });
 
@@ -227,6 +264,18 @@ namespace Backend.Migrations
                             Id = 4,
                             ImageUrl = "https://example.com/rome1.jpg",
                             tripId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ImageUrl = "https://example.com/sydney1.jpg",
+                            tripId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ImageUrl = "https://example.com/capetown1.jpg",
+                            tripId = 6
                         });
                 });
 
@@ -409,6 +458,20 @@ namespace Backend.Migrations
                             Country = "Turkey",
                             Description = "Where East meets West.",
                             Name = "Istanbul"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Country = "Greece",
+                            Description = "A picturesque island in the Aegean Sea.",
+                            Name = "Santorini"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Country = "Indonesia",
+                            Description = "A tropical paradise with stunning beaches.",
+                            Name = "Bali"
                         });
                 });
 
@@ -564,6 +627,32 @@ namespace Backend.Migrations
                             StartDate = new DateOnly(2023, 9, 1),
                             Status = 1,
                             Title = "Tokyo Experience",
+                            VendorId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AvailableSets = 20,
+                            Description = "Explore the beauty of Sydney.",
+                            EndDate = new DateOnly(2023, 10, 10),
+                            Price = 1700,
+                            Rating = 4.5999999999999996,
+                            StartDate = new DateOnly(2023, 10, 1),
+                            Status = 1,
+                            Title = "Sydney Adventure",
+                            VendorId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AvailableSets = 15,
+                            Description = "Experience the wildlife of Cape Town.",
+                            EndDate = new DateOnly(2023, 11, 12),
+                            Price = 2500,
+                            Rating = 4.9000000000000004,
+                            StartDate = new DateOnly(2023, 11, 1),
+                            Status = 1,
+                            Title = "Cape Town Safari",
                             VendorId = 4
                         });
                 });

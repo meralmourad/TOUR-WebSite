@@ -146,7 +146,9 @@ public class AppDbContext : DbContext
             new Backend.Models.Category { Id = 7, Name = "Family" },
             new Backend.Models.Category { Id = 8, Name = "Romantic" },
             new Backend.Models.Category { Id = 9, Name = "Wildlife" },
-            new Backend.Models.Category { Id = 10, Name = "Sports", }
+            new Backend.Models.Category { Id = 10, Name = "Sports", },
+            new Backend.Models.Category { Id = 11, Name = "Beach" },
+            new Backend.Models.Category { Id = 12, Name = "Adventure Sports" }
         );
 
         modelBuilder.Entity<Place>().HasData(
@@ -159,7 +161,9 @@ public class AppDbContext : DbContext
             new Place { Id = 7, Name = "Cape Town", Country = "South Africa", Description = "A city of stunning landscapes." },
             new Place { Id = 8, Name = "Rio de Janeiro", Country = "Brazil", Description = "The Marvelous City." },
             new Place { Id = 9, Name = "Dubai", Country = "UAE", Description = "The city of gold." },
-            new Place { Id = 10, Name = "Istanbul", Country = "Turkey", Description = "Where East meets West." }
+            new Place { Id = 10, Name = "Istanbul", Country = "Turkey", Description = "Where East meets West." },
+            new Place { Id = 11, Name = "Santorini", Country = "Greece", Description = "A picturesque island in the Aegean Sea." },
+            new Place { Id = 12, Name = "Bali", Country = "Indonesia", Description = "A tropical paradise with stunning beaches." }
         );
 
         // Seed default data for User
@@ -236,6 +240,32 @@ public class AppDbContext : DbContext
                 Rating = 4.9,
                 Status = 1,
                 AvailableSets = 30
+            },
+            new Trip
+            {
+                Id = 5,
+                Title = "Sydney Adventure",
+                VendorId = 3,
+                Price = 1700,
+                StartDate = DateOnly.FromDateTime(new DateTime(2023, 10, 1)),
+                EndDate = DateOnly.FromDateTime(new DateTime(2023, 10, 10)),
+                Description = "Explore the beauty of Sydney.",
+                Rating = 4.6,
+                Status = 1,
+                AvailableSets = 20
+            },
+            new Trip
+            {
+                Id = 6,
+                Title = "Cape Town Safari",
+                VendorId = 4,
+                Price = 2500,
+                StartDate = DateOnly.FromDateTime(new DateTime(2023, 11, 1)),
+                EndDate = DateOnly.FromDateTime(new DateTime(2023, 11, 12)),
+                Description = "Experience the wildlife of Cape Town.",
+                Rating = 4.9,
+                Status = 1,
+                AvailableSets = 15
             }
         );
 
@@ -264,7 +294,8 @@ public class AppDbContext : DbContext
                 TripId = 1,
                 TouristId = 2,
                 TravelAgencyId = 3,
-                IsApproved = true // 1: confirmed
+                IsApproved = 1, // 1: confirmed
+                SeatsNumber = 2
             },
             new Booking
             {
@@ -272,15 +303,17 @@ public class AppDbContext : DbContext
                 TripId = 2,
                 TouristId = 11,
                 TravelAgencyId = 3,
-                IsApproved = true 
-                },
+                IsApproved = 0,
+                SeatsNumber = 1
+            },
             new Booking
             {
                 Id = 3,
                 TripId = 3,
                 TouristId = 12,
                 TravelAgencyId = 4,
-                IsApproved = true
+                IsApproved = -1,
+                SeatsNumber = 3
             },
             new Booking
             {
@@ -288,7 +321,26 @@ public class AppDbContext : DbContext
                 TripId = 4,
                 TouristId = 13,
                 TravelAgencyId = 4,
-                IsApproved = false
+                IsApproved = 1,
+                SeatsNumber = 4
+            },
+            new Booking
+            {
+                Id = 5,
+                TripId = 5,
+                TouristId = 14,
+                TravelAgencyId = 3,
+                IsApproved = 1,
+                SeatsNumber = 2
+            },
+            new Booking
+            {
+                Id = 6,
+                TripId = 6,
+                TouristId = 15,
+                TravelAgencyId = 4,
+                IsApproved = 0,
+                SeatsNumber = 1
             }
         );
 
@@ -297,7 +349,9 @@ public class AppDbContext : DbContext
             new Images { Id = 1, tripId = 1, ImageUrl = "https://example.com/paris1.jpg" },
             new Images { Id = 2, tripId = 1, ImageUrl = "https://example.com/paris2.jpg" },
             new Images { Id = 3, tripId = 2, ImageUrl = "https://example.com/maldives1.jpg" },
-            new Images { Id = 4, tripId = 3, ImageUrl = "https://example.com/rome1.jpg" }
+            new Images { Id = 4, tripId = 3, ImageUrl = "https://example.com/rome1.jpg" },
+            new Images { Id = 5, tripId = 5, ImageUrl = "https://example.com/sydney1.jpg" },
+            new Images { Id = 6, tripId = 6, ImageUrl = "https://example.com/capetown1.jpg" }
         );
 
         // Seed default data for Messages

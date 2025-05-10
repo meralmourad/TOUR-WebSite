@@ -107,9 +107,10 @@ public class UserService : IUserService
         return (true, "User updated successfully.");
     }
 
-    public IEnumerable<searchResDTO> SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency,bool admin)
+    public (IEnumerable<searchResDTO> Users, int TotalCount) SearchUsersByQuery(string? q, int start, int len, bool tourist, bool agency, bool admin)
     {
         var query = _unitOfWork.User.GetAllAsync().Result.AsQueryable();
+
         if (!string.IsNullOrWhiteSpace(q))
             query = query.Where(u => u.Name.Contains(q) || u.Email.Contains(q));
 
@@ -120,7 +121,7 @@ public class UserService : IUserService
         else if (!tourist && agency && !admin)
             query = query.Where(u => u.Role == "Agency");
         else if (tourist && agency && !admin)
-            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" );
+            query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency");
         else if (tourist && !agency && admin)
             query = query.Where(u => u.Role == "Tourist" || u.Role == "Admin");
         else if (!tourist && agency && admin)
@@ -129,6 +130,10 @@ public class UserService : IUserService
             query = query.Where(u => u.Role == "Tourist" || u.Role == "Agency" || u.Role == "Admin");
         else if (!tourist && !agency && !admin)
             query = query.Where(u => u.Role == "Tourist");
+
+        // Get the total count of users in the database
+        int totalCount = query.Count();
+
         // Pagination
         var users = query
             .Skip(start)
@@ -140,9 +145,8 @@ public class UserService : IUserService
                 Role = u.Role
             })
             .ToList();
-        // Console.WriteLine("query is "+ users.Count());
 
-        return users;
+        return (users, totalCount);
     }
 
     public async Task<(bool Success, UserDTO? User, string Message)> GetUserByIdAsync(int id)

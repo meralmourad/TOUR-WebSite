@@ -13,7 +13,7 @@ public interface ITripService
     Task<TripDto?> GetTripByIdAsync(int id);
     Task<(bool Success, string Message)> UpdateTripAsync(int id, UpdateTripDTO tripDto);
     Task<IEnumerable<TripDto>>  GetTripsByAgencyIdAsync(int id);
-    IEnumerable<TripDto> SearchTripsByQuery(
+    (IEnumerable<TripDto> Trips, int TotalCount) SearchTripsByQuery(
         string? q, int start, int len,
         string? destination, DateOnly? startDate,
         DateOnly? endDate, int startPrice, int endPrice,

@@ -9,12 +9,14 @@ public class SearchController : ControllerBase
     private readonly IUserService _userService;
     private readonly IPlaceService _placeService;
     private readonly ITripService _tripService;
+    private readonly IBookingService _bookingService;
 
-    public SearchController(IUserService userService, IPlaceService placeService, ITripService tripService)
+    public SearchController(IUserService userService, IPlaceService placeService, ITripService tripService, IBookingService bookingService)
     {
         _userService = userService;
         _placeService = placeService;
         _tripService = tripService;
+        _bookingService = bookingService;
     }
 
     [HttpGet("users")]
@@ -86,5 +88,33 @@ public class SearchController : ControllerBase
             0, Price,(bool) IsApproved, isAdmin,userId);
         return Ok(trips);
         
+    }
+
+    [HttpGet("bookings")]
+    public IActionResult SearchBookings(
+    [FromQuery] int start = 0,
+    [FromQuery] int len = int.MaxValue,
+    [FromQuery] bool? IsApproved = null,
+    [FromQuery] int? agencyId = null)
+    {
+        //if the user is not authenticated, set IsApproved to true
+        if(!User.Identity?.IsAuthenticated ?? true)
+            return Unauthorized();
+
+        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
+            IsApproved ??= true;
+
+        //if the user is an agency check if he requested his own bookings
+        var isAdmin = User.IsInRole("Admin");
+        if (User.IsInRole("Agency"))
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+            agencyId ??= intUserIdClaim;
+        }
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? false, isAdmin, agencyId);
+        var totalCount = bookings.Result.Count;
+
+        return Ok(new { TotalCount = totalCount, Bookings = bookings.Result });
     }
 }
