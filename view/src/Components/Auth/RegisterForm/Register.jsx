@@ -1,8 +1,7 @@
 import './Register.scss';
 import { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-const API_URL = process.env.REACT_APP_API_URL;
+import { useNavigate } from 'react-router-dom';
+import { register } from '../../../service/AuthService';
 
 function RegisterForm() {
     const [apiError, setA5piError] = useState('');
@@ -51,26 +50,14 @@ function RegisterForm() {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/Auth/signup`, {
-                fullName: Data.name,
-                email: Data.email,
-                password: Data.password,
-                confirmPassword: Data.confirmPassword,
-                phoneNumber: Data.phone,
-                role: Data.role,
-                address: Data.country,
-            });
-
+            await register(Data);
             console.log('aregato');
             navigate('/login');
-            console.log(response.data);
-        } 
-        
+        }
         catch (error) {
             console.error('Fetch error:', error);
             setA5piError(error.response.data)
         }
-
     };
 
     return (

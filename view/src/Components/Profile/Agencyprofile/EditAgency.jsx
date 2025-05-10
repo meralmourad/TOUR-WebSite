@@ -1,39 +1,31 @@
-import axios from "axios";
 import { useState } from "react";
 import { setUser } from "../../../Store/Slices/UserSlice";
 import { useDispatch } from "react-redux";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { updateUser } from "../../../service/UserService";
 
 function EditAgency({ user, setEdit }) {
+
     const dispatch = useDispatch();
     const [error, setError] = useState(null);
     const [name, setName] = useState(user.name);
     const [address, setAddress] = useState(user.address);
     const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
 
-    const updateUser = async () => {
+    const updateUserForm = async () => {
         const { token } = JSON.parse(localStorage.getItem("Token"));
         setError(null);
         // console.log(`${API_URL}/User/${user.id}`);
         // console.log(token);
         try {
-            const response = await axios.put(`${API_URL}/User/${user.id}`,
-                {
-                    name,
-                    phoneNumber,
-                    address
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                }
-            );
+            updateUser(user.id, {
+                name,
+                phoneNumber,
+                address
+            });
             const new_data = {user, token};
-            new_data.name = name;
-            new_data.phoneNumber = phoneNumber;
-            new_data.address = address;
+            new_data.user.name = name;
+            new_data.user.phoneNumber = phoneNumber;
+            new_data.user.address = address;
             dispatch(setUser(new_data));
             setEdit(false);
         } catch (error) {
@@ -87,7 +79,7 @@ function EditAgency({ user, setEdit }) {
                 </button>
                 <button
                     className="confirm-button styled-button"
-                    onClick={updateUser}
+                    onClick={updateUserForm}
                 >
                     Confirm
                 </button>

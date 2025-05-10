@@ -1,11 +1,6 @@
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import "./Agencyprofile.scss";
-import { useParams } from "react-router-dom";
 import EditAgency from "./EditAgency";
-
-const API_URL = process.env.REACT_APP_API_URL;
-
 
 const AgencyProfile = ({ userprofile, myProfile }) => {
   const [edit, setEdit] = useState(false);

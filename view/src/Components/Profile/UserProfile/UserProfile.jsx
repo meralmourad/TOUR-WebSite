@@ -1,22 +1,20 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState } from "react";
 import "./UserProfile.scss";
 import { FaArrowRight, FaUser } from "react-icons/fa";
-import swal from "sweetalert";
-import axios from "axios";
+import { updateUser } from "../../../service/UserService";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../../Store/Slices/UserSlice";
 
-const API_URL = process.env.REACT_APP_API_URL;
-const token = localStorage.getItem("token");
-
-const UserProfile = ({ userprofile }) => {
+const UserProfile = ({ userprofile, myProfile }) => {
+  const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [user, setUser] = useState(userprofile);
-  const [confirm, setConfirm] = useState(false);
+  const [user, setUser1] = useState(userprofile);
   const [start, setStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
   const changehandle = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    setUser1({ ...user, [e.target.name]: e.target.value });
   };
 
   // useEffect(() => {
@@ -43,9 +41,21 @@ const UserProfile = ({ userprofile }) => {
   
   // api for fetching how many pages found ??
 
+  const updateUserForm = async () => {
+      const { token } = JSON.parse(localStorage.getItem("Token"));
+      try {
+          await updateUser(userprofile.id, user);
+          const new_data = {user, token};
+          console.log(new_data);
+          setEditMode(false);
+          dispatch(setUser(new_data));
+      } catch (error) {
+          console.error("Error fetching profile:", error);
+      }
+  };
+
   return (
     <div className="user-profile-container">
-      {console.log("userprofile", userprofile)}
       <div className="left-section">
         <div className="last-trips">Last Trips</div>
 
@@ -116,7 +126,8 @@ const UserProfile = ({ userprofile }) => {
 
       <div className="right-section">
         <div className="profile-wrapper">
-          <h2>Hello {userprofile.name.toUpperCase()}!</h2>
+          {myProfile && <h2>Hello {userprofile.name.toUpperCase()}!</h2>}
+          {!myProfile && <h2>{userprofile.name.toUpperCase()}'S PROFILE</h2>}
           <div className="profile-box">
             <div className="icon-section">
               <FaUser className="user-icon" />
@@ -137,12 +148,12 @@ const UserProfile = ({ userprofile }) => {
                     <strong>Country :</strong> {user.address}
                   </div>
                   <div>
-                    <button
+                    {myProfile && <button
                       className="edit-btn"
                       onClick={() => setEditMode(true)}
                     >
                       Edit
-                    </button>
+                    </button>}
                   </div>
                 </>
               )}
@@ -187,9 +198,7 @@ const UserProfile = ({ userprofile }) => {
                     </button>
                     <button
                       className="confirm-button"
-                      onClick={() => {
-                        setConfirm(true);
-                      }}
+                      onClick={updateUserForm}
                     >
                       Confirm
                     </button>

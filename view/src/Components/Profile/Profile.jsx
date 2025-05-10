@@ -1,27 +1,23 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import AgencyProfile from "./Agencyprofile/Agencyprofile";
 import UserProfile from "./UserProfile/UserProfile";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { getUserById } from "../../service/UserService";
 
 function Profile() {
+    const { id } = useParams();
     const [error, setError] = useState(null);
-    const { user, token } = useSelector((store) => store.info);
+    const { user } = useSelector((store) => store.info);
     const [userprofile, setUserProfile] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`${API_URL}/User/${user.id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                console.log("Profile data:", response.data);
-                setUserProfile(response.data);
+                const profile = await getUserById(id);
+                setUserProfile(profile);
+                console.log("Fetched profile:", profile);
+                
             } catch (error) {
                 setError(error.response.data);
                 console.error("Error fetching profile:");
@@ -29,7 +25,7 @@ function Profile() {
         };
         if(user?.id)
             fetchProfile();
-    }, [ user, token]);
+    }, []);
 
     if(!error && !userprofile) {
         return (
@@ -44,15 +40,15 @@ function Profile() {
         if(userprofile.role === "Agency") {
             return <AgencyProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />;
         }
-        else { // admidn or user
-            return <UserProfile userprofile={userprofile} />;
+        else { // admin or user
+            return <UserProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />;
         }
     } 
 
 
     return (
         <div style={{textAlign: "center", marginTop: "20px"}}>
-            <h2>error</h2>
+            <h2>error: { error }</h2>
         </div>
     );
 }

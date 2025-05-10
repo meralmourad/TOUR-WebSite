@@ -1,49 +1,53 @@
-import "./Home.scss";
-import Filter from "../Trip/Filter/Filter";
+import "./TripsList.scss";
+import Filter from "./Trip/Filter/Filter";
 import Rate from "../Rate/Rate";
-import axios from "axios";
-import swal from 'sweetalert';
-import { useSelector }  from "react-redux";
-import { useNavigate} from 'react-router-dom'; 
-import React, { useState , useEffect } from "react";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import swal from "sweetalert";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { SearchTrips } from "../../service/TripsService";
 
 const TravelCards = () => {
-
+  const id = useParams()?.id;
   const navigate = useNavigate();
-  const [start , setStart] = useState(0);
+  const [start, setStart] = useState(0);
   const [tripsData, setTripsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [Showfilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { user, loading , isLoggedIn } = useSelector((store) => store.info);
+  const { user, loading, isLoggedIn } = useSelector((store) => store.info);
 
-  const itemsPerPage = 10 ;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${itemsPerPage}`); 
-        setTripsData(response.data.$values);
-        if(response.data.$values.length === 0 ) {
-          setCurrentPage(1) ;
+        const trips = await SearchTrips(start, itemsPerPage,
+          null /* destination */,
+          null /* startDate */,
+          null /* endDate */,
+          null /* price */,
+          true /* isApproved */,
+          searchTerm);
+          
+        setTripsData(trips);
+        if (trips.length === 0) {
+          setCurrentPage(1);
           setStart(0);
           swal("Opps!", "No trips found for this destination", "error");
-        }
-        else {
+        } else {
           setCurrentPage(currentPage);
         }
-        console.log(response.data.$values);
-        
-      } 
-      catch (error) {
+        console.log(trips);
+      } catch (error) {
         console.error("Error fetching trips:", error);
       }
     };
 
     fetchTrips();
-  }, [start, currentPage]);
+//     setTripsData([{id: 1, city: "Paris", description: "Beautiful city", rating: 4}
+// , {id: 2, city: "London", description: "Historic city", rating: 5}]);
+  }, [start, currentPage, searchTerm]);
 
   const currentTrips = tripsData;
 
@@ -52,11 +56,9 @@ const TravelCards = () => {
     setCurrentPage(1);
   };
 
-  
-
   return (
     <>
-        <div className="travel-cards-container">
+      <div className="travel-cards-container">
         {!loading && isLoggedIn ? (
           <>
             <h2>
@@ -65,7 +67,8 @@ const TravelCards = () => {
           </>
         ) : (
           <h2>
-            Hello<br /> DISCOVER THE WORLD NOW!
+            Hello
+            <br /> DISCOVER THE WORLD NOW!
           </h2>
         )}
 
@@ -90,7 +93,7 @@ const TravelCards = () => {
             role="img"
             aria-label="filter"
             style={{ marginRight: "10px", cursor: "pointer" }}
-            onClick={() => setShowFilter(!Showfilter) }
+            onClick={() => setShowFilter(!Showfilter)}
           >
             <img
               src="Icons/Filter.jpg"
@@ -106,7 +109,7 @@ const TravelCards = () => {
         <div className="cards-grid">
           {currentTrips.map((trip) => (
             <div className="trip-card" key={trip.id}>
-              <img src="" alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
+              <img src={trip.images.$values[0]? trip.images.$values[0]: 'https://media-public.canva.com/MADQtrAClGY/2/screen.jpg'} alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
               <div
                 className="trip-info"
                 onClick={() => navigate(`/Trip/${trip.id}`)}
@@ -156,6 +159,6 @@ const TravelCards = () => {
       </div>
     </>
   );
-}
+};
 
 export default TravelCards;

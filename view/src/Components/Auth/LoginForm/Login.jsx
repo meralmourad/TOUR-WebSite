@@ -1,14 +1,11 @@
 import './form.scss';
 import { useState } from "react";
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../.././../Store/Slices/UserSlice';
 import { useNavigate} from 'react-router-dom';
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { login } from '../../../service/AuthService';
 
 function LoginForm() {
-  // const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -18,7 +15,7 @@ function LoginForm() {
     email: "",
     password: ""
   });
-    
+
   const OnChangeHandler = (event) => {
     const { name, value } = event.target;
 
@@ -39,16 +36,11 @@ function LoginForm() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/Auth/login`, {
-          email: Data.email,
-          password: Data.password
-      });
+      const data = await login(Data);
 
-      if(response.status === 200) {
-        dispatch(setUser(response.data));
-        localStorage.setItem('Token', JSON.stringify({token: response.data.token, id: response.data.user.id}));
-        navigate('/home');
-      }
+      dispatch(setUser(data));
+      localStorage.setItem('Token', JSON.stringify({token: data.token, id: data.user.id}));
+      navigate('/home');
 
     } catch (error) {
       console.error(error);

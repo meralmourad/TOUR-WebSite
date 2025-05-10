@@ -41,8 +41,6 @@ const Filter = ({ ShowFilter }) => {
           startDate: fromDate,
           len: (toDateObj - fromDateObj) / (1000 * 60 * 60 * 24),
           destination: destination,
-          // seats,
-          // rate,
         },
       });
       console.log("Filtered Results:", response.data);
