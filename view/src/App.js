@@ -15,6 +15,9 @@ import Profile from "./Components/Profile/Profile.jsx";
 import TripName  from "./Components/TripName/TripName.jsx";
 import BookingPending from "./Components/BookingPending/BookingPending.jsx";
 import Filter from "./Components/Filter/Filter.jsx";
+import Button from "./Components/button/button.jsx";
+import AddTrip from "./Components/AddTrip/AddTrip.jsx";
+import NotificationPage from "./Components/NotificationPage/NotificationPage.jsx";
 function App() {
   const { user } = useSelector((store) => store.info);
   const usedispatch = useDispatch();
@@ -36,7 +39,10 @@ function App() {
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/AgencyProfile" element={ <AgencyProfile /> } />
+        <Route path="/NotificationPage" element={ <NotificationPage /> } />
+        <Route path="/AddTrip" element={ <AddTrip /> } />
         <Route path="/TripName" element={ <TripName /> } />
+        <Route path="/button" element={ <Button /> } />
         <Route path="/BookingPending" element={ <BookingPending /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="/welcome" element={<WelcomePage />} />

@@ -1,0 +1,66 @@
+.notification-container {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 350px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .notification-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #7b0e15; // لون قريب من الموجود بالصورة
+  }
+  
+  .notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .notification-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #7b0e15;
+    border-radius: 30px;
+    padding: 10px 15px;
+    position: relative;
+    background-color: #fff;
+  }
+  
+  .notification-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #7b0e15;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .notification-text {
+    color: #333;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #7b0e15;
+    font-weight: bold;
+  }
+  
+  .pagination-page,
+  .pagination-arrow,
+  .pagination-dots {
+    cursor: pointer;
+  }
