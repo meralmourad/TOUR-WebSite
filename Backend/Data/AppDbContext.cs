@@ -168,24 +168,24 @@ public class AppDbContext : DbContext
 
         // Seed default data for User
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, Name = "Admin", Email = "admin@example.com", Password = "admin123", Role = "Admin", PhoneNumber = "1234567890", Address = "Admin Address" },
-            new User { Id = 2, Name = "Global Adventures", Email = "agency1@example.com", Password = "agency123", Role = "Agency", PhoneNumber = "5551234567", Address = "123 Adventure Lane" },
-            new User { Id = 3, Name = "Adventure Co.", Email = "agency2@example.com", Password = "password", Role = "Agency", PhoneNumber = "1111111111", Address = "Adventure Lane" },
-            new User { Id = 4, Name = "Luxury Travels", Email = "agency3@example.com", Password = "password", Role = "Agency", PhoneNumber = "2222222222", Address = "Luxury Street" },
-            new User { Id = 5, Name = "Alice", Email = "alice@example.com", Password = "password", Role = "Tourist", PhoneNumber = "1231231234", Address = "Alice's Address" },
-            new User { Id = 6, Name = "Bob", Email = "bob@example.com", Password = "password", Role = "Tourist", PhoneNumber = "2342342345", Address = "Bob's Address" },
-            new User { Id = 7, Name = "Charlie", Email = "charlie@example.com", Password = "password", Role = "Tourist", PhoneNumber = "3453453456", Address = "Charlie's Address" },
-            new User { Id = 8, Name = "David", Email = "david@example.com", Password = "password", Role = "Tourist", PhoneNumber = "4564564567", Address = "David's Address" },
-            new User { Id = 9, Name = "Eve", Email = "eve@example.com", Password = "password", Role = "Tourist", PhoneNumber = "5675675678", Address = "Eve's Address" },
-            new User { Id = 10, Name = "Frank", Email = "frank@example.com", Password = "password", Role = "Tourist", PhoneNumber = "6786786789", Address = "Frank's Address" },
-            new User { Id = 11, Name = "Grace", Email = "grace@example.com", Password = "password", Role = "Tourist", PhoneNumber = "7897897890", Address = "Grace's Address" },
-            new User { Id = 12, Name = "Hank", Email = "hank@example.com", Password = "password", Role = "Tourist", PhoneNumber = "8908908901", Address = "Hank's Address" },
-            new User { Id = 13, Name = "Ivy", Email = "ivy@example.com", Password = "password", Role = "Tourist", PhoneNumber = "9019019012", Address = "Ivy's Address" },
-            new User { Id = 14, Name = "Jack", Email = "jack@example.com", Password = "password", Role = "Tourist", PhoneNumber = "1234561234", Address = "Jack's Address" },
-            new User { Id = 15, Name = "Karen", Email = "karen@example.com", Password = "password", Role = "Tourist", PhoneNumber = "2345672345", Address = "Karen's Address" },
-            new User { Id = 16, Name = "Leo", Email = "leo@example.com", Password = "password", Role = "Tourist", PhoneNumber = "3456783456", Address = "Leo's Address" },
-            new User { Id = 17, Name = "Mona", Email = "mona@example.com", Password = "password", Role = "Tourist", PhoneNumber = "4567894567", Address = "Mona's Address" },
-            new User { Id = 18, Name = "Nina", Email = "nina@example.com", Password = "password", Role = "Tourist", PhoneNumber = "5678905678", Address = "Nina's Address" }
+            new User { Id = 1, Name = "Admin", Email = "admin@example.com", Password = "admin123", Role = "Admin", PhoneNumber = "1234567890", Address = "Admin Address" ,IsApproved= true},
+            new User { Id = 2, Name = "Global Adventures", Email = "agency1@example.com", Password = "agency123", Role = "Agency", PhoneNumber = "5551234567", Address = "123 Adventure Lane" ,IsApproved= true},
+            new User { Id = 3, Name = "Adventure Co.", Email = "agency2@example.com", Password = "password", Role = "Agency", PhoneNumber = "1111111111", Address = "Adventure Lane",IsApproved= true },
+            new User { Id = 4, Name = "Luxury Travels", Email = "agency3@example.com", Password = "password", Role = "Agency", PhoneNumber = "2222222222", Address = "Luxury Street",IsApproved= true },
+            new User { Id = 5, Name = "Alice", Email = "alice@example.com", Password = "password", Role = "Tourist", PhoneNumber = "1231231234", Address = "Alice's Address" ,IsApproved= true},
+            new User { Id = 6, Name = "Bob", Email = "bob@example.com", Password = "password", Role = "Tourist", PhoneNumber = "2342342345", Address = "Bob's Address",IsApproved= true },
+            new User { Id = 7, Name = "Charlie", Email = "charlie@example.com", Password = "password", Role = "Tourist", PhoneNumber = "3453453456", Address = "Charlie's Address" ,IsApproved= true},
+            new User { Id = 8, Name = "David", Email = "david@example.com", Password = "password", Role = "Tourist", PhoneNumber = "4564564567", Address = "David's Address",IsApproved= true },
+            new User { Id = 9, Name = "Eve", Email = "eve@example.com", Password = "password", Role = "Tourist", PhoneNumber = "5675675678", Address = "Eve's Address" ,IsApproved= true},
+            new User { Id = 10, Name = "Frank", Email = "frank@example.com", Password = "password", Role = "Tourist", PhoneNumber = "6786786789", Address = "Frank's Address" ,IsApproved= true},
+            new User { Id = 11, Name = "Grace", Email = "grace@example.com", Password = "password", Role = "Tourist", PhoneNumber = "7897897890", Address = "Grace's Address" ,IsApproved= true},
+            new User { Id = 12, Name = "Hank", Email = "hank@example.com", Password = "password", Role = "Tourist", PhoneNumber = "8908908901", Address = "Hank's Address" ,IsApproved= true},
+            new User { Id = 13, Name = "Ivy", Email = "ivy@example.com", Password = "password", Role = "Tourist", PhoneNumber = "9019019012", Address = "Ivy's Address",IsApproved= true },
+            new User { Id = 14, Name = "Jack", Email = "jack@example.com", Password = "password", Role = "Tourist", PhoneNumber = "1234561234", Address = "Jack's Address",IsApproved= true },
+            new User { Id = 15, Name = "Karen", Email = "karen@example.com", Password = "password", Role = "Tourist", PhoneNumber = "2345672345", Address = "Karen's Address" ,IsApproved= true},
+            new User { Id = 16, Name = "Leo", Email = "leo@example.com", Password = "password", Role = "Tourist", PhoneNumber = "3456783456", Address = "Leo's Address",IsApproved= true },
+            new User { Id = 17, Name = "Mona", Email = "mona@example.com", Password = "password", Role = "Tourist", PhoneNumber = "4567894567", Address = "Mona's Address" ,IsApproved= true},
+            new User { Id = 18, Name = "Nina", Email = "nina@example.com", Password = "password", Role = "Tourist", PhoneNumber = "5678905678", Address = "Nina's Address" ,IsApproved= true}
         );
 
         modelBuilder.Entity<Trip>().HasData(

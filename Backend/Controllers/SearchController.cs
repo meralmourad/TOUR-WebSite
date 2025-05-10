@@ -26,12 +26,17 @@ public class SearchController : ControllerBase
         [FromQuery] bool? tourist,
         [FromQuery] bool? agency,
         [FromQuery] bool? admin,
+        [FromQuery] bool? isApproved,
         [FromQuery] string? q)
     {
         tourist ??= false;
         agency ??= false;
         admin ??= false;
-
+        isApproved ??= true;
+        if(!(bool)isApproved && !User.IsInRole("Admin"))
+        {
+            isApproved = true;
+        }
 
         if (!User.Identity?.IsAuthenticated ?? true)
         {
@@ -39,8 +44,7 @@ public class SearchController : ControllerBase
             agency = true;
             admin = false;
         }
-
-        if (User.IsInRole("Agency") )
+        else if (User.IsInRole("Agency") )
         {
             tourist = false;
             agency = true;
@@ -59,8 +63,8 @@ public class SearchController : ControllerBase
             start = 0;
         }
 
-        var users = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value, admin.Value);
-        return Ok(users);
+        var result = _userService.SearchUsersByQuery(q, start, len, tourist.Value, agency.Value, admin.Value,(bool)isApproved);
+return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     }
 
     [HttpGet("trips")]
@@ -82,11 +86,13 @@ public class SearchController : ControllerBase
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
         var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
 
-        var trips = _tripService.SearchTripsByQuery
-            (q, start, len,
-            destination, startDate, endDate,
-            0, Price,(bool) IsApproved, isAdmin,userId);
-        return Ok(trips);
+   var result = _tripService.SearchTripsByQuery(
+        q, start, len,
+        destination, startDate, endDate,
+        0, Price, (bool)IsApproved, isAdmin, userId);
+
+    // Wrap the result in an object with named properties
+    return Ok(new { Trips = result.Trips, TotalCount = result.TotalCount });
         
     }
 

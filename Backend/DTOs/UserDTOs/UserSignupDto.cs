@@ -24,8 +24,9 @@ public class UserSignupDto
     [Phone]
     public string? PhoneNumber { get; init; }
 
-    public string? Role { get; init; } = "Tourist";
+    public string? Role { get; set; } = "Tourist";
 
     [StringLength(200)]
     public string? Address { get; init; }
+    public bool isApproved = true;
 }

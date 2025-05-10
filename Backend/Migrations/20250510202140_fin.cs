@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class fine : Migration
+    public partial class fin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +49,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -377,27 +378,27 @@ namespace Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "Discriminator", "Email", "Name", "Password", "PhoneNumber", "Role" },
+                columns: new[] { "Id", "Address", "Discriminator", "Email", "IsApproved", "Name", "Password", "PhoneNumber", "Role" },
                 values: new object[,]
                 {
-                    { 1, "Admin Address", "User", "admin@example.com", "Admin", "admin123", "1234567890", "Admin" },
-                    { 2, "123 Adventure Lane", "User", "agency1@example.com", "Global Adventures", "agency123", "5551234567", "Agency" },
-                    { 3, "Adventure Lane", "User", "agency2@example.com", "Adventure Co.", "password", "1111111111", "Agency" },
-                    { 4, "Luxury Street", "User", "agency3@example.com", "Luxury Travels", "password", "2222222222", "Agency" },
-                    { 5, "Alice's Address", "User", "alice@example.com", "Alice", "password", "1231231234", "Tourist" },
-                    { 6, "Bob's Address", "User", "bob@example.com", "Bob", "password", "2342342345", "Tourist" },
-                    { 7, "Charlie's Address", "User", "charlie@example.com", "Charlie", "password", "3453453456", "Tourist" },
-                    { 8, "David's Address", "User", "david@example.com", "David", "password", "4564564567", "Tourist" },
-                    { 9, "Eve's Address", "User", "eve@example.com", "Eve", "password", "5675675678", "Tourist" },
-                    { 10, "Frank's Address", "User", "frank@example.com", "Frank", "password", "6786786789", "Tourist" },
-                    { 11, "Grace's Address", "User", "grace@example.com", "Grace", "password", "7897897890", "Tourist" },
-                    { 12, "Hank's Address", "User", "hank@example.com", "Hank", "password", "8908908901", "Tourist" },
-                    { 13, "Ivy's Address", "User", "ivy@example.com", "Ivy", "password", "9019019012", "Tourist" },
-                    { 14, "Jack's Address", "User", "jack@example.com", "Jack", "password", "1234561234", "Tourist" },
-                    { 15, "Karen's Address", "User", "karen@example.com", "Karen", "password", "2345672345", "Tourist" },
-                    { 16, "Leo's Address", "User", "leo@example.com", "Leo", "password", "3456783456", "Tourist" },
-                    { 17, "Mona's Address", "User", "mona@example.com", "Mona", "password", "4567894567", "Tourist" },
-                    { 18, "Nina's Address", "User", "nina@example.com", "Nina", "password", "5678905678", "Tourist" }
+                    { 1, "Admin Address", "User", "admin@example.com", true, "Admin", "admin123", "1234567890", "Admin" },
+                    { 2, "123 Adventure Lane", "User", "agency1@example.com", true, "Global Adventures", "agency123", "5551234567", "Agency" },
+                    { 3, "Adventure Lane", "User", "agency2@example.com", true, "Adventure Co.", "password", "1111111111", "Agency" },
+                    { 4, "Luxury Street", "User", "agency3@example.com", true, "Luxury Travels", "password", "2222222222", "Agency" },
+                    { 5, "Alice's Address", "User", "alice@example.com", true, "Alice", "password", "1231231234", "Tourist" },
+                    { 6, "Bob's Address", "User", "bob@example.com", true, "Bob", "password", "2342342345", "Tourist" },
+                    { 7, "Charlie's Address", "User", "charlie@example.com", true, "Charlie", "password", "3453453456", "Tourist" },
+                    { 8, "David's Address", "User", "david@example.com", true, "David", "password", "4564564567", "Tourist" },
+                    { 9, "Eve's Address", "User", "eve@example.com", true, "Eve", "password", "5675675678", "Tourist" },
+                    { 10, "Frank's Address", "User", "frank@example.com", true, "Frank", "password", "6786786789", "Tourist" },
+                    { 11, "Grace's Address", "User", "grace@example.com", true, "Grace", "password", "7897897890", "Tourist" },
+                    { 12, "Hank's Address", "User", "hank@example.com", true, "Hank", "password", "8908908901", "Tourist" },
+                    { 13, "Ivy's Address", "User", "ivy@example.com", true, "Ivy", "password", "9019019012", "Tourist" },
+                    { 14, "Jack's Address", "User", "jack@example.com", true, "Jack", "password", "1234561234", "Tourist" },
+                    { 15, "Karen's Address", "User", "karen@example.com", true, "Karen", "password", "2345672345", "Tourist" },
+                    { 16, "Leo's Address", "User", "leo@example.com", true, "Leo", "password", "3456783456", "Tourist" },
+                    { 17, "Mona's Address", "User", "mona@example.com", true, "Mona", "password", "4567894567", "Tourist" },
+                    { 18, "Nina's Address", "User", "nina@example.com", true, "Nina", "password", "5678905678", "Tourist" }
                 });
 
             migrationBuilder.InsertData(
