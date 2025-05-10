@@ -23,7 +23,6 @@ public class MessageRepositories: GenericRepository<Message>, IMessageRepositori
                 SenderId = m.SenderId,
                 ReceiverId = m.ReceiverId,
                 Content = m.Content,
-                CreatedAt = m.CreatedAt
             }).ToListAsync();
         return messages;
     }
@@ -38,7 +37,6 @@ public class MessageRepositories: GenericRepository<Message>, IMessageRepositori
                 SenderId = m.SenderId,
                 ReceiverId = m.ReceiverId,
                 Content = m.Content,
-                CreatedAt = m.CreatedAt
             }).ToListAsync();
     }
 }

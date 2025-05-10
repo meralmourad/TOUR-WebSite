@@ -1,5 +1,6 @@
 using System;
 using Backend.Data;
+using Backend.DTOs;
 using Backend.DTOs.PlaceDTOs;
 using Backend.IServices;
 using Backend.Models;
@@ -24,7 +25,6 @@ public class PlaceService : IPlaceService
             Name = placeDTO.Name,
             Description = placeDTO.Description,
             Country = placeDTO.Country,
-            ImagesURL = placeDTO.ImageURL
         };
         await _unitOfWork.Place.AddAsync(place);
         await _unitOfWork.CompleteAsync();
@@ -35,7 +35,6 @@ public class PlaceService : IPlaceService
             Name = place.Name,
             Description = place.Description,
             Country = place.Country,
-            ImageURL = place.ImagesURL
         };
         return placeToReturn;   
     }
@@ -65,7 +64,6 @@ public class PlaceService : IPlaceService
                 Name = place.Name,
                 Description = place.Description,
                 Country = place.Country,
-                ImageURL = place.ImagesURL
             };
             placesToReturn.Add(placeToReturn);
         }
@@ -75,8 +73,6 @@ public class PlaceService : IPlaceService
     public async Task<GetPlaceDTO?> GetPlaceById(int id)
     {
         var place = await _unitOfWork.Place.GetByIdAsync(id);
-        if (place == null)
-            throw new Exception("Place not found");
         
         var placeToReturn = new GetPlaceDTO
         {
@@ -84,7 +80,6 @@ public class PlaceService : IPlaceService
             Name = place.Name,
             Description = place.Description,
             Country = place.Country,
-            ImageURL = place.ImagesURL
         };
         return placeToReturn;
     }
@@ -98,7 +93,6 @@ public class PlaceService : IPlaceService
         place.Name = placeDTO.Name?? place.Name;
         place.Description = placeDTO.Description?? place.Description;
         place.Country = placeDTO.Country?? place.Country;
-        place.ImagesURL = placeDTO.ImageURL?? place.ImagesURL;
         
         _unitOfWork.Place.Update(place);
         return true;

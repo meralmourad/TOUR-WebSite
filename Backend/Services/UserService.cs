@@ -98,13 +98,6 @@ public class UserService : IUserService
         if (user == null)
             return (false, "User not found.");
 
-        if (userDto.Password != null)
-        {
-            if (userDto.Password != userDto.ConfirmPassword)
-                return (false, "Passwords do not match.");
-            user.Password = HashPassword(userDto.Password);
-        }
-
         user.Name = userDto.Name ?? user.Name;
         user.Email = userDto.Email ?? user.Email;
         user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;

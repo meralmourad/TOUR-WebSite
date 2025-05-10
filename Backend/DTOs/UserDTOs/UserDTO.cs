@@ -15,7 +15,7 @@ public class UserDTO
     public required string Email { get; init; }
 
     [Required]
-    public required string Role { get; init; }
+    public required string Role{ get; init; }
 
     [Phone]
     public string? PhoneNumber { get; init; }

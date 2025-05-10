@@ -24,24 +24,22 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Booking", b =>
                 {
-                    b.Property<int>("TouristId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("TripId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PlaceId")
@@ -50,15 +48,66 @@ namespace Backend.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.HasKey("TouristId", "TripId");
+                    b.Property<int>("TouristId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TravelAgencyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("PlaceId");
 
+                    b.HasIndex("TouristId");
+
+                    b.HasIndex("TravelAgencyId");
+
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsApproved = true,
+                            Rating = -1,
+                            TouristId = 2,
+                            TravelAgencyId = 3,
+                            TripId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsApproved = true,
+                            Rating = -1,
+                            TouristId = 11,
+                            TravelAgencyId = 3,
+                            TripId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsApproved = true,
+                            Rating = -1,
+                            TouristId = 12,
+                            TravelAgencyId = 4,
+                            TripId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsApproved = false,
+                            Rating = -1,
+                            TouristId = 13,
+                            TravelAgencyId = 4,
+                            TripId = 4
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Category", b =>
@@ -69,19 +118,113 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Adventure"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Relaxation"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Cultural"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Nature"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Historical"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Luxury"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Family"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Romantic"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Wildlife"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Sports"
+                        });
+                });
+
+            modelBuilder.Entity("Backend.Models.Images", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("tripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("tripId");
+
+                    b.ToTable("Images");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageUrl = "https://example.com/paris1.jpg",
+                            tripId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ImageUrl = "https://example.com/paris2.jpg",
+                            tripId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ImageUrl = "https://example.com/maldives1.jpg",
+                            tripId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ImageUrl = "https://example.com/rome1.jpg",
+                            tripId = 3
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Message", b =>
@@ -96,12 +239,6 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ReceiverId")
                         .HasColumnType("int");
 
@@ -115,6 +252,22 @@ namespace Backend.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "Welcome to the platform!",
+                            ReceiverId = 2,
+                            SenderId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "Thank you!",
+                            ReceiverId = 1,
+                            SenderId = 2
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Notification", b =>
@@ -129,15 +282,6 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
 
@@ -147,11 +291,25 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
                     b.HasIndex("SenderId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "Your trip to Paris has been approved.",
+                            SenderId = 1,
+                            Title = "Trip Approved"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "Your booking for Maldives is confirmed.",
+                            SenderId = 3,
+                            Title = "Booking Confirmed"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Place", b =>
@@ -170,10 +328,6 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.PrimitiveCollection<string>("ImagesURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -181,22 +335,94 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Places");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Country = "France",
+                            Description = "The city of lights.",
+                            Name = "Paris"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Country = "Maldives",
+                            Description = "Tropical paradise.",
+                            Name = "Maldives"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Country = "Italy",
+                            Description = "The Eternal City.",
+                            Name = "Rome"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Country = "USA",
+                            Description = "The city that never sleeps.",
+                            Name = "New York"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Country = "Japan",
+                            Description = "A blend of tradition and modernity.",
+                            Name = "Tokyo"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Country = "Australia",
+                            Description = "The Harbour City.",
+                            Name = "Sydney"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Country = "South Africa",
+                            Description = "A city of stunning landscapes.",
+                            Name = "Cape Town"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Country = "Brazil",
+                            Description = "The Marvelous City.",
+                            Name = "Rio de Janeiro"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Country = "UAE",
+                            Description = "The city of gold.",
+                            Name = "Dubai"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Country = "Turkey",
+                            Description = "Where East meets West.",
+                            Name = "Istanbul"
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Report", b =>
                 {
-                    b.Property<int>("TripId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("SenderId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AgencyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
@@ -204,13 +430,41 @@ namespace Backend.Migrations
                     b.Property<int?>("PlaceId")
                         .HasColumnType("int");
 
-                    b.HasKey("TripId", "SenderId");
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
 
                     b.HasIndex("SenderId");
 
+                    b.HasIndex("TripId");
+
                     b.ToTable("Reports");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AgencyId = 3,
+                            Content = "Great trip!",
+                            IsRead = false,
+                            SenderId = 2,
+                            TripId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AgencyId = 3,
+                            Content = "Had some issues.",
+                            IsRead = true,
+                            SenderId = 11,
+                            TripId = 2
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
@@ -224,27 +478,12 @@ namespace Backend.Migrations
                     b.Property<int>("AvailableSets")
                         .HasColumnType("int");
 
-                    b.PrimitiveCollection<string>("CategoryIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.PrimitiveCollection<string>("Duration")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("Images")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("LocationIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -252,8 +491,8 @@ namespace Backend.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -261,9 +500,6 @@ namespace Backend.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("VendorId")
                         .HasColumnType("int");
@@ -273,6 +509,154 @@ namespace Backend.Migrations
                     b.HasIndex("VendorId");
 
                     b.ToTable("Trips");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AvailableSets = 20,
+                            Description = "Explore the beauty of Paris with this amazing adventure package.",
+                            EndDate = new DateOnly(2023, 6, 10),
+                            Price = 1500,
+                            Rating = 4.5,
+                            StartDate = new DateOnly(2023, 6, 1),
+                            Status = 1,
+                            Title = "Paris Adventure",
+                            VendorId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AvailableSets = 15,
+                            Description = "Relax and unwind in the tropical paradise of Maldives.",
+                            EndDate = new DateOnly(2023, 7, 8),
+                            Price = 2000,
+                            Rating = 4.7999999999999998,
+                            StartDate = new DateOnly(2023, 7, 1),
+                            Status = 1,
+                            Title = "Maldives Getaway",
+                            VendorId = 3
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AvailableSets = 25,
+                            Description = "Discover the wonders of Rome.",
+                            EndDate = new DateOnly(2023, 8, 10),
+                            Price = 1200,
+                            Rating = 4.7000000000000002,
+                            StartDate = new DateOnly(2023, 8, 1),
+                            Status = 1,
+                            Title = "Rome Discovery",
+                            VendorId = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AvailableSets = 30,
+                            Description = "Experience the culture of Tokyo.",
+                            EndDate = new DateOnly(2023, 9, 12),
+                            Price = 1800,
+                            Rating = 4.9000000000000004,
+                            StartDate = new DateOnly(2023, 9, 1),
+                            Status = 1,
+                            Title = "Tokyo Experience",
+                            VendorId = 4
+                        });
+                });
+
+            modelBuilder.Entity("Backend.Models.TripCategory", b =>
+                {
+                    b.Property<int>("tripId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("categoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("tripId", "categoryId");
+
+                    b.HasIndex("categoryId");
+
+                    b.ToTable("TripCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            tripId = 1,
+                            categoryId = 1
+                        },
+                        new
+                        {
+                            tripId = 1,
+                            categoryId = 3
+                        },
+                        new
+                        {
+                            tripId = 2,
+                            categoryId = 2
+                        },
+                        new
+                        {
+                            tripId = 2,
+                            categoryId = 6
+                        },
+                        new
+                        {
+                            tripId = 3,
+                            categoryId = 3
+                        },
+                        new
+                        {
+                            tripId = 3,
+                            categoryId = 5
+                        },
+                        new
+                        {
+                            tripId = 4,
+                            categoryId = 4
+                        },
+                        new
+                        {
+                            tripId = 4,
+                            categoryId = 8
+                        });
+                });
+
+            modelBuilder.Entity("Backend.Models.TripPlace", b =>
+                {
+                    b.Property<int>("TripsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TripsId", "PlaceId");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("TripPlaces");
+
+                    b.HasData(
+                        new
+                        {
+                            TripsId = 1,
+                            PlaceId = 1
+                        },
+                        new
+                        {
+                            TripsId = 2,
+                            PlaceId = 2
+                        },
+                        new
+                        {
+                            TripsId = 3,
+                            PlaceId = 3
+                        },
+                        new
+                        {
+                            TripsId = 4,
+                            PlaceId = 5
+                        });
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -285,9 +669,6 @@ namespace Backend.Migrations
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -313,9 +694,6 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -323,6 +701,220 @@ namespace Backend.Migrations
                     b.HasDiscriminator().HasValue("User");
 
                     b.UseTphMappingStrategy();
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Admin Address",
+                            Email = "admin@example.com",
+                            Name = "Admin",
+                            Password = "admin123",
+                            PhoneNumber = "1234567890",
+                            Role = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "123 Adventure Lane",
+                            Email = "agency1@example.com",
+                            Name = "Global Adventures",
+                            Password = "agency123",
+                            PhoneNumber = "5551234567",
+                            Role = "Agency"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "Adventure Lane",
+                            Email = "agency2@example.com",
+                            Name = "Adventure Co.",
+                            Password = "password",
+                            PhoneNumber = "1111111111",
+                            Role = "Agency"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "Luxury Street",
+                            Email = "agency3@example.com",
+                            Name = "Luxury Travels",
+                            Password = "password",
+                            PhoneNumber = "2222222222",
+                            Role = "Agency"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "Alice's Address",
+                            Email = "alice@example.com",
+                            Name = "Alice",
+                            Password = "password",
+                            PhoneNumber = "1231231234",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "Bob's Address",
+                            Email = "bob@example.com",
+                            Name = "Bob",
+                            Password = "password",
+                            PhoneNumber = "2342342345",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Address = "Charlie's Address",
+                            Email = "charlie@example.com",
+                            Name = "Charlie",
+                            Password = "password",
+                            PhoneNumber = "3453453456",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Address = "David's Address",
+                            Email = "david@example.com",
+                            Name = "David",
+                            Password = "password",
+                            PhoneNumber = "4564564567",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Address = "Eve's Address",
+                            Email = "eve@example.com",
+                            Name = "Eve",
+                            Password = "password",
+                            PhoneNumber = "5675675678",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Address = "Frank's Address",
+                            Email = "frank@example.com",
+                            Name = "Frank",
+                            Password = "password",
+                            PhoneNumber = "6786786789",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Address = "Grace's Address",
+                            Email = "grace@example.com",
+                            Name = "Grace",
+                            Password = "password",
+                            PhoneNumber = "7897897890",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Address = "Hank's Address",
+                            Email = "hank@example.com",
+                            Name = "Hank",
+                            Password = "password",
+                            PhoneNumber = "8908908901",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Address = "Ivy's Address",
+                            Email = "ivy@example.com",
+                            Name = "Ivy",
+                            Password = "password",
+                            PhoneNumber = "9019019012",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Address = "Jack's Address",
+                            Email = "jack@example.com",
+                            Name = "Jack",
+                            Password = "password",
+                            PhoneNumber = "1234561234",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Address = "Karen's Address",
+                            Email = "karen@example.com",
+                            Name = "Karen",
+                            Password = "password",
+                            PhoneNumber = "2345672345",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Address = "Leo's Address",
+                            Email = "leo@example.com",
+                            Name = "Leo",
+                            Password = "password",
+                            PhoneNumber = "3456783456",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Address = "Mona's Address",
+                            Email = "mona@example.com",
+                            Name = "Mona",
+                            Password = "password",
+                            PhoneNumber = "4567894567",
+                            Role = "Tourist"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Address = "Nina's Address",
+                            Email = "nina@example.com",
+                            Name = "Nina",
+                            Password = "password",
+                            PhoneNumber = "5678905678",
+                            Role = "Tourist"
+                        });
+                });
+
+            modelBuilder.Entity("Backend.Models.UserNotification", b =>
+                {
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ReceiverId", "NotificationId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("UserNotifications");
+
+                    b.HasData(
+                        new
+                        {
+                            ReceiverId = 2,
+                            NotificationId = 1,
+                            IsRead = false
+                        },
+                        new
+                        {
+                            ReceiverId = 11,
+                            NotificationId = 2,
+                            IsRead = true
+                        });
                 });
 
             modelBuilder.Entity("CategoryTrip", b =>
@@ -337,22 +929,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("TripsId");
 
-                    b.ToTable("TripCategories", (string)null);
-                });
-
-            modelBuilder.Entity("PlaceTrip", b =>
-                {
-                    b.Property<int>("LocationsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TripsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("LocationsId", "TripsId");
-
-                    b.HasIndex("TripsId");
-
-                    b.ToTable("TripPlaces", (string)null);
+                    b.ToTable("CategoryTrip");
                 });
 
             modelBuilder.Entity("Backend.Models.Tourist", b =>
@@ -385,6 +962,12 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Backend.Models.TravelAgency", "TravelAgency")
+                        .WithMany("Bookings")
+                        .HasForeignKey("TravelAgencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Backend.Models.Trip", "Trip")
                         .WithMany("Bookings")
                         .HasForeignKey("TripId")
@@ -393,7 +976,20 @@ namespace Backend.Migrations
 
                     b.Navigation("Tourist");
 
+                    b.Navigation("TravelAgency");
+
                     b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Backend.Models.Images", b =>
+                {
+                    b.HasOne("Backend.Models.Trip", "trip")
+                        .WithMany("Image")
+                        .HasForeignKey("tripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("trip");
                 });
 
             modelBuilder.Entity("Backend.Models.Message", b =>
@@ -417,19 +1013,11 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Notification", b =>
                 {
-                    b.HasOne("Backend.Models.User", "Receiver")
-                        .WithMany("ReceivedNotifications")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Backend.Models.User", "Sender")
                         .WithMany("SentNotifications")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Receiver");
 
                     b.Navigation("Sender");
                 });
@@ -449,7 +1037,7 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.Trip", "Trip")
                         .WithMany("Reports")
                         .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Sender");
@@ -462,10 +1050,67 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.TravelAgency", "Vendor")
                         .WithMany("Trips")
                         .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripCategory", b =>
+                {
+                    b.HasOne("Backend.Models.Category", "Category")
+                        .WithMany("TripCategories")
+                        .HasForeignKey("categoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TripCategories")
+                        .HasForeignKey("tripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripPlace", b =>
+                {
+                    b.HasOne("Backend.Models.Place", "Place")
+                        .WithMany("Trip_Places")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TripPlaces")
+                        .HasForeignKey("TripsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Backend.Models.UserNotification", b =>
+                {
+                    b.HasOne("Backend.Models.Notification", "Notification")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "Receiver")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("CategoryTrip", b =>
@@ -483,24 +1128,16 @@ namespace Backend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlaceTrip", b =>
-                {
-                    b.HasOne("Backend.Models.Place", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.Trip", null)
-                        .WithMany()
-                        .HasForeignKey("TripsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Backend.Models.Category", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("TripCategories");
+                });
+
+            modelBuilder.Entity("Backend.Models.Notification", b =>
+                {
+                    b.Navigation("UserNotifications");
                 });
 
             modelBuilder.Entity("Backend.Models.Place", b =>
@@ -508,26 +1145,34 @@ namespace Backend.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("Trip_Places");
                 });
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Navigation("Bookings");
 
+                    b.Navigation("Image");
+
                     b.Navigation("Reports");
+
+                    b.Navigation("TripCategories");
+
+                    b.Navigation("TripPlaces");
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Navigation("ReceivedMessages");
 
-                    b.Navigation("ReceivedNotifications");
-
                     b.Navigation("Reports");
 
                     b.Navigation("SentMessages");
 
                     b.Navigation("SentNotifications");
+
+                    b.Navigation("UserNotifications");
                 });
 
             modelBuilder.Entity("Backend.Models.Tourist", b =>
@@ -537,6 +1182,8 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.TravelAgency", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Trips");
                 });
 #pragma warning restore 612, 618

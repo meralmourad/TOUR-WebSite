@@ -41,11 +41,20 @@ namespace Backend.Controllers
             if (!result.Success) return NotFound(result.Message);
 
             var retuser = result.User;
-
+            if (retuser == null) return NotFound("User not found.");
             // Allow access if the user is the same as in the token or has the "Agency" role
             if (id.ToString() == userIdClaim || retuser?.Role == "Agency")
             {
-                return Ok(result.User);
+                // return userDTO
+                var user = new UserDTO
+                {
+                    Id = retuser.Id,
+                   Name = retuser.Name,
+                    Email = retuser.Email,
+                    PhoneNumber = retuser.PhoneNumber,
+                    Role = retuser.Role,
+                };
+                return Ok(user);
             }
 
             // Check if the user has the "Admin" or "Agency" role
@@ -54,8 +63,16 @@ namespace Backend.Controllers
             {
                 return Unauthorized("You are not authorized to view this user.");
             }
-
-            return Ok(result.User);
+            var userDto = new UserDTO
+                {
+                    Id = retuser.Id,
+                   Name = retuser.Name,
+                    Email = retuser.Email,
+                    PhoneNumber = retuser.PhoneNumber,
+                    Role = retuser.Role,
+                };
+                return Ok(userDto);
+            
         }
 
         [HttpDelete("{id}")]

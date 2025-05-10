@@ -9,28 +9,22 @@ public class Trip
     public required int VendorId { get; set; }
     public TravelAgency Vendor { get; set; }
             /*-------*/
-            /* category of the trip */
-    public List<Category> Categories { get; set; }
-    public required List<int> CategoryIds { get; set; }
-            /*-------*/
     public required int Price { get; set; } = 0;
-    public DateTime StartDate { get; set; }
-    public  List<DateTime>? Duration { get; set; } = new List<DateTime>();
+    public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
     public string Description { get; set; } = string.Empty;
-            /* list of Destination */
-    public List<Place> Locations { get; set; }
-    public required List<int> LocationIds { get; set; }
             /*-------*/
-    public string[] Images { get; set; } = Array.Empty<string>();
     public double Rating { get; set; } = 0;
     public int Status { get; set; } = 0; // 0: pending, 1: approved, 2: rejected 3: canceled 4:finished 5: on going 6:hidden
     public int AvailableSets { get; set; } = 0;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
-    // relation with booking
-        public List<Booking> Bookings { get; set; }
-        public List<Report> Reports { get; set; }
+    // relationships
+        public List<Booking>? Bookings { get; set; }
+        public List<Report>? Reports { get; set; }
+        public List<Images>? Image { get; set; } 
+        public List<TripPlace>? TripPlaces { get; set; }
+        public List<TripCategory>? TripCategories { get; set; }
+        public List<Category>? Categories { get; set; } // Add navigation property for Categories
 }
 /*
 

@@ -10,7 +10,8 @@ public record class UpdateTripDTO
     [Range(0, int.MaxValue)]
     public int? Price { get; set; }
 
-    public DateTime? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; } 
 
     [StringLength(500)]
     public string? Description { get; set; }
@@ -22,7 +23,6 @@ public record class UpdateTripDTO
 
     public string[]? Images { get; set; }
 
-    public int? Status { get; set; }
 
     [Range(0, int.MaxValue)]
     public int? AvailableSets { get; set; }
