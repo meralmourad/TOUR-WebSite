@@ -69,6 +69,7 @@ namespace Backend.Controllers
                    Name = retuser.Name,
                     Email = retuser.Email,
                     PhoneNumber = retuser.PhoneNumber,
+                    Address = retuser.Address,
                     Role = retuser.Role,
                 };
                 return Ok(userDto);
