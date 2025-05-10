@@ -1,7 +1,9 @@
-import React, { useState , useEffect, use } from "react";
+
+import { useState , useEffect, use } from "react";
 import axios from "axios";
-import swal from "sweetalert";
 import "./Trip.scss";
+import swal from "sweetalert";
+import "./TripName.scss";
 
 const images = [
   "https://ultimahoracol.com/sites/default/files/2024-12/PORTADAS%20ESCRITORIO%20-%202024-12-19T122111.264.jpg",
@@ -24,6 +26,25 @@ const Trip = ({TripData , MyTrip }) => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchTripData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/User/${TripData.agenceId}}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAgencyName(response.data.name);
+      } catch (error) {
+        // console.error("Error fetching trip data:", error);
+      }
+    };
+
+    fetchTripData();
+  },[TripData.agenceId, token]);
   const handleBooking = () => {
     const wrapper = document.createElement("div");
     wrapper.innerHTML = `
@@ -61,26 +82,6 @@ const Trip = ({TripData , MyTrip }) => {
       });
     }, 100);
   };
-
-
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    const fetchTripData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/User/${TripData.agenceId}}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setAgencyName(response.data.name);
-      } catch (error) {
-        // console.error("Error fetching trip data:", error);
-      }
-    };
-
-    fetchTripData();
-  },[TripData.agenceId, token]);
 
   return (
     <div className="trip-container">
@@ -124,6 +125,12 @@ const Trip = ({TripData , MyTrip }) => {
 
 
 
+      <div className="trip-footer">
+        <button className="book-now-button">
+          BOOK NOW!
+          <span className="arrow">→</span>
+        </button>
+      </div>
       <button className="book-now-button" onClick={handleBooking}>
         BOOK NOW!
         <span className="arrow">→</span>
@@ -132,4 +139,4 @@ const Trip = ({TripData , MyTrip }) => {
   );
 };
 
-export default TripName;
+export default Trip;

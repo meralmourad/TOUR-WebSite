@@ -40,8 +40,7 @@ function App() {
         <Route path="/Profile" element={ <Profile/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
-        <Route path="/AgencyProfile" element={ <AgencyProfile /> } />
-        <Route path="/TripName" element={ <TripName /> } />
+        <Route path="/Trip" element={ <Trip /> } />
         <Route path="/BookingPending" element={ <BookingPending /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="/welcome" element={<WelcomePage />} />
