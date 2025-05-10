@@ -2,7 +2,7 @@ import './form.scss';
 import { useState } from "react";
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../Store/Slices/UserSlice';
+import { setUser } from '../.././../Store/Slices/UserSlice';
 import { useNavigate} from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -47,7 +47,7 @@ function LoginForm() {
       if(response.status === 200) {
         dispatch(setUser(response.data));
         localStorage.setItem('Token', JSON.stringify({token: response.data.token, id: response.data.user.id}));
-        navigate('/');
+        navigate('/home');
       }
 
     } catch (error) {

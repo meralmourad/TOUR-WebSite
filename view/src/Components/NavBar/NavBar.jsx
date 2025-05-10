@@ -48,12 +48,12 @@ const NavBar = () => {
                 {isLoggedIn && 
                     <ul className="navbar-links">
                         <li className="nav-item">
-                            <Link to={`/profile/${user.id}`} className="nav-link">
+                            <Link to={`/profile`} className="nav-link">
                                 <img src={'/Icons/Profile.jpg'} alt="Profile" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/" className="nav-link">
+                            <Link to="/home" className="nav-link">
                                 <img src={'/Icons/HomeIcon.jpg'} alt="Home" className="icon" />
                             </Link>
                         </li>
@@ -79,12 +79,12 @@ const NavBar = () => {
                         </li>
                         <li className="nav-item">
                             <Link to="/login" className="nav-link">
-                            <img src={'/Icons/login.png'} alt="Settings" className="icon" />
+                            <img src={'/Icons/login.png'} alt="" className="icon" />
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/signup" className="nav-link">
-                            <img src={'/Icons/signup.png'} alt="Settings" className="icon" />
+                            <img src={'/Icons/signup.png'} alt="" className="icon" />
                             </Link>
                         </li>
                     </ul>

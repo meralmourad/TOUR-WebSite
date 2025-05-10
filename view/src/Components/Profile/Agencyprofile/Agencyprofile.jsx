@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import axios from "axios";
 import "./Agencyprofile.scss";
 import { useParams } from "react-router-dom";
@@ -6,24 +6,26 @@ import EditAgency from "./EditAgency";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+
 const AgencyProfile = ({ userprofile, myProfile }) => {
   const [edit, setEdit] = useState(false);
 
-  return (
+  return ( 
+  <>
     <div className="agency-profile">
       <div className="header">
         <div className="header-images">
           <img
             src="https://beta.sis.gov.eg/media/195319/pyramids-2371501-1920.jpg"
-            alt="Alexandria"
+            alt=""
           />
           <img
             src="https://kenzly.com/wp-content/uploads/2025/04/Cairo-to-Alexandria-Full-Day-Tour-3.webp"
-            alt="Pyramids"
+            alt=""
           />
           <div className="overlay-title">
             <h1>
-              Agency <br /> FREEDOM
+              {userprofile.name.toUpperCase()}
             </h1>
           </div>
         </div>
@@ -87,6 +89,7 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
         }
       </div>
     </div>
+    </>
   );
 };
 

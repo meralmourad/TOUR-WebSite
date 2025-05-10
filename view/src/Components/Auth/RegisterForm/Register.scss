@@ -1,4 +1,6 @@
 // Normalize base styles
+@import '../../../assets/Colors' ;
+  
 * {
     margin: 0;
     padding: 0;
@@ -28,9 +30,6 @@
     font-family: inherit;
     font-size: 1rem;
   }
-  
-  // Your original SCSS starts here
-  @import '../../assets/Colors';
   
   h1 {
     text-align: center;

@@ -1,6 +1,7 @@
 
-import { useState } from "react";
-import "./TripName.scss";
+import { useState , useEffect, use } from "react";
+import axios from "axios";
+import "./Trip.scss";
 
 const images = [
   "https://ultimahoracol.com/sites/default/files/2024-12/PORTADAS%20ESCRITORIO%20-%202024-12-19T122111.264.jpg", 
@@ -8,8 +9,12 @@ const images = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ45rDg-QQbP8l4fp0IT1B1zDLU8BdxV_LIFToRuNG9KEPsc52B4B9rlcX4&s=10",  
 ];
 
-const TripName = () => {
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+const Trip = ({TripData , MyTrip }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [agencyName, setAgencyName] = useState("");
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -18,6 +23,26 @@ const TripName = () => {
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
+
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchTripData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/User/${TripData.agenceId}}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAgencyName(response.data.name);
+      } catch (error) {
+        // console.error("Error fetching trip data:", error);
+      }
+    };
+
+    fetchTripData();
+  },[TripData.agenceId, token]);
 
   return (
     <div className="trip-container">
@@ -38,9 +63,9 @@ const TripName = () => {
       <div className="trip-details">
         <div className="trip-section">
           <h3>Available Sets:</h3>
-          <p className="highlight">300 Person</p>
+          <p className="highlight">{TripData.sets}</p>
           <h3>Agency Name:</h3>
-          <p>Miral Agency</p>
+          <p>{agencyName}</p>
         </div>
 
         <div className="trip-section">
@@ -63,6 +88,8 @@ const TripName = () => {
         </div>
       </div>
 
+
+
       <div className="trip-footer">
         <button className="book-now-button">
           BOOK NOW!
@@ -73,4 +100,4 @@ const TripName = () => {
   );
 };
 
-export default TripName;
+export default Trip;
