@@ -17,6 +17,6 @@ public interface ITripService
         string? q, int start, int len,
         string? destination, DateOnly? startDate,
         DateOnly? endDate, int startPrice, int endPrice,
-        bool isApproved, bool isAdmin, int? agencyId = null);
+        bool isApproved, bool isAdmin, int agencyId);
     Task<bool> ApproveTripAsync(int id, bool isApproved);
 }

@@ -93,7 +93,7 @@ public class TripService : ITripService
         string? q, int start, int len,
         string? destination, DateOnly? startDate,
         DateOnly? endDate, int startPrice, int endPrice,
-        bool isApproved, bool isAdmin, int? agencyId = null)
+        bool isApproved, bool isAdmin, int agencyId)
     {
         // 1. Build the base query and filter as much as possible in the DB
         var tripsQuery = _unitOfWork.Trip.Query();
