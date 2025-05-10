@@ -22,14 +22,18 @@ const TravelCards = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const trips = await SearchTrips(start, itemsPerPage,
+        const trips = await SearchTrips(
+          start,
+          itemsPerPage,
           null /* destination */,
           null /* startDate */,
           null /* endDate */,
           null /* price */,
           true /* isApproved */,
-          searchTerm);
-          
+          searchTerm,
+          id,
+        );
+
         setTripsData(trips);
         if (trips.length === 0) {
           setCurrentPage(1);

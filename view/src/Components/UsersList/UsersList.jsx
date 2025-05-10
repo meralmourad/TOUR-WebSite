@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import "./UsersList.scss";
 import { useNavigate } from "react-router-dom";
+import { SearchUsers } from "../../service/UserService";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -21,19 +22,12 @@ const UsersList = () => {
 
   useEffect(() => {
     const start = (pageNumber - 1) * 9;
-    const { token } = JSON.parse(localStorage.getItem("Token"));
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/Search/users?admin=${Admin}&start=${start}&len=${9}&tourist=${Tourist}&agency=${Agency}&q=${searchTerm}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        const users = await SearchUsers(start, 9, Tourist, Agency, Admin, true, searchTerm);
 
-        setUsers(response.data?.$values || []);
-
+        setUsers(users);
       } catch (error) {
         console.error("Error fetching users:", error);
       }

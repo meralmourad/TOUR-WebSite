@@ -25,7 +25,7 @@ function Profile() {
         };
         if(user?.id)
             fetchProfile();
-    }, []);
+    }, [user, id]);
 
     if(!error && !userprofile) {
         return (

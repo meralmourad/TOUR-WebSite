@@ -113,7 +113,7 @@ export const ApproveTrip = async (id) => {
     }
 }
 
-export const SearchTrips = async (start, len, destination, startDate, endDate, price, isApproved, searchTerm) => {
+export const SearchTrips = async (start, len, destination, startDate, endDate, price, isApproved, searchTerm, agencyId = 0, sortBy = true) => {
     start = start ?? 0;
     len = len ?? 2147483647;
     destination = destination ?? "";
@@ -122,14 +122,15 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
     price = price ?? 2147483647;
     isApproved = isApproved ?? true;
     searchTerm = searchTerm ?? "";
+    agencyId = agencyId ?? 0;
     try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}`, {
+        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating${sortBy}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        const trips = response.data.$values;
-
+        const trips = response.data.trips.$values;
+        const totalCount = response.data.totalCount;
         for (let i = 0; i < trips.length; i++) {
             const agence = await getUserById(trips[i].agenceId);
             trips[i].agence = agence;

@@ -55,3 +55,27 @@ export const updateUser = async (id, user) => {
         throw error;
     }
 };
+
+export const SearchUsers = async (start, len, tourist, agency, admin, isApproved, q) => {
+    start = start || 0;
+    len = len || 2147483647;
+    tourist = tourist || false;
+    agency = agency || false;
+    admin = admin || false;
+    isApproved = isApproved || true;
+    q = q || "";
+    try {
+        console.log(`${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`);
+        
+        const response = await axios.get(`${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`, {
+            headers: {
+            'Authorization': `Bearer ${token}`
+            }
+        });
+        const users = response.data.users?.$values || [];
+        const totalCount = response.data.totalCount || 0;
+        return users;
+    } catch (error) {
+        throw error;
+    }
+};
