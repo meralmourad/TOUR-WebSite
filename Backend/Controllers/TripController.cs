@@ -3,6 +3,7 @@ using Backend.DTOs.TripDTOs;
 using Backend.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Controllers{
 
@@ -11,35 +12,50 @@ namespace Backend.Controllers{
 public class TripController : ControllerBase
 {
     private readonly ITripService _tripService;
+    private readonly ILogger<TripController> _logger;
 
-    public TripController(ITripService tripService)
+    public TripController(ITripService tripService, ILogger<TripController> logger)
     {
         _tripService = tripService;
+        _logger = logger;
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Agency")]
+    // [Authorize(Roles = "Admin,Agency")]
     public async Task<IActionResult> CreateTrip(
-        [FromForm] CreateTripDTO tripDto
-        ,[FromForm] List<IFormFile> images)
+        [FromForm] CreateTripDTO tripDto,
+        [FromForm] List<IFormFile> images)
     {
-    var imageUrls = new List<string>();
-    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-    if (!Directory.Exists(uploadsFolder))
-        Directory.CreateDirectory(uploadsFolder);
-
-    foreach (var image in images)
-    {
-        var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
-        var filePath = Path.Combine(uploadsFolder, fileName);
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        if (tripDto == null || images == null || !images.Any())
         {
-            await image.CopyToAsync(stream);
+            return BadRequest("Invalid input data. Trip details and images are required.");
         }
-        imageUrls.Add($"/images/{fileName}");
-    }
 
-    tripDto.Images = imageUrls.ToArray();
+        var imageUrls = new List<string>();
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+
+        foreach (var image in images)
+        {
+            var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                imageUrls.Add($"/images/{fileName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while saving image: {FileName}", image.FileName);
+                return StatusCode(500, "An error occurred while uploading images.");
+            }
+        }
+
+        tripDto.Images = imageUrls.ToArray();
         try
         {
             var result = await _tripService.CreateTripAsync(tripDto);
@@ -47,7 +63,8 @@ public class TripController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            _logger.LogError(ex, "Error while creating trip.");
+            return StatusCode(500, "An error occurred while saving the trip. Please try again.");
         }
     }
 

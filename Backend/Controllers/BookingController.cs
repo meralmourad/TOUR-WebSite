@@ -29,15 +29,16 @@ namespace Backend.Controllers
                     var bk = await _bookingService.GetAllBookings();
                     return Ok(bk);
                 }
-                    var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                    var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                     var role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
                     if (role == "Agency")
                     {
-                        var agencyId = User.Claims.FirstOrDefault(c => c.Type == "agencyId")?.Value;
+                        var agencyId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                         var bks = await _bookingService.GetBookingsByAgencyId(int.Parse(agencyId));
                         return Ok(bks);
                     }
                     var touristId = int.TryParse(userId, out var id) ? id : 0;
+                    Console.WriteLine($"Tourist ID: {touristId}");
                     var bookings = await _bookingService.GetBookingsByTouristId(touristId);
                     return Ok(bookings);
                 
@@ -55,7 +56,7 @@ namespace Backend.Controllers
             {
                 var booking = await _bookingService.GetBookingById(id);
              
-                var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 
                 if (userId != booking.TouristId.ToString() && !User.IsInRole("Admin") && !User.IsInRole("Agent"))
                     return Forbid();
@@ -76,7 +77,7 @@ namespace Backend.Controllers
         {
             try
             {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 var role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
                 if (role == "Agency")
                 {

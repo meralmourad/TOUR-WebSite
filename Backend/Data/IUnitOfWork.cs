@@ -1,5 +1,6 @@
 using System;
 using Backend.IServices;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Repositories.Interfaces;
 
@@ -9,6 +10,7 @@ public interface IUnitOfWork : IDisposable
 {
     ITripRepository Trip { get; }
     IUserRepository User { get; }
+    UserNotificationRepository userNotification { get; }
     IBookingRepository BookingRepository { get; }
     INotificationRepository Notification { get; }
     IMessageRepositories Message{ get; }

@@ -23,6 +23,9 @@ public class BookingService : IBookingService
         var booking = _unitOfWork.BookingRepository.GetByIdAsync(id).Result;
         if (booking == null)
             return Task.FromResult(false);
+        // check if the booking is already approved
+        if (booking.IsApproved == Approved)
+            return Task.FromResult(true);
         booking.IsApproved = Approved;
         _unitOfWork.BookingRepository.Update(booking);
         _unitOfWork.CompleteAsync();

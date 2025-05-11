@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Builder; // Ensure this namespace is included
 using Backend.Data;
 using Backend.IServices;
 using Backend.Repositories.Interfaces;
+using Backend.Repositories;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 //jwt services
@@ -55,14 +57,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // services and middlewares
-builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<UserNotificationRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
+builder.Services.AddScoped<UserNotification>();
+builder.Services.AddScoped<Notificationservices>();
 // builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<IKafkaProducerService,KafkaProducerService>();
+builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddScoped<KafkaProducerService>(); // Add this line to register KafkaProducerService
 // builder.Services.AddScoped<IReportService, ReportService>();
 // builder.Services.AddScoped<TripPl>();
 builder.Services.AddEndpointsApiExplorer();

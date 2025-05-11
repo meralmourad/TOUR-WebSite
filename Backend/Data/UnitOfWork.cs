@@ -1,10 +1,11 @@
 using System;
 using Backend.Repositories;
 using Backend.Repositories.Interfaces;
+using Backend.Models;
 
 namespace Backend.Data;
 
-public class UnitOfWork :IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
     public ITripRepository Trip { get; private set; }
@@ -16,10 +17,11 @@ public class UnitOfWork :IUnitOfWork
     public IplacePepoitory Place { get; private set; }
     public TripPlaceRepository TripPlace { get; private set; }
     public ImageRepository image { get; private set; }
-    public Backend.Repositories.TripCategory tripCategory{get; private set;}
-    public Category category{get; private set;}
-    
-    public UnitOfWork(AppDbContext context)
+    public Backend.Repositories.TripCategory tripCategory { get; private set; }
+    public Category category { get; private set; }
+    public UserNotificationRepository userNotification { get; }
+
+    public UnitOfWork(AppDbContext context, UserNotificationRepository userNotificationRepository)
     {    
         _context = context;
         Notification = new NotificationRepository(_context);
@@ -31,9 +33,10 @@ public class UnitOfWork :IUnitOfWork
         Place = new PlaceRepository(_context);
         TripPlace = new TripPlaceRepository(_context);
         image = new ImageRepository(_context);
-        tripCategory = new TripCategory(_context);
+        tripCategory = new Repositories.TripCategory(_context);
         category = new Category(_context);
+        userNotification = new UserNotificationRepository(_context);
     }
-    public async Task<int> CompleteAsync() =>await _context.SaveChangesAsync();
+    public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
     public void Dispose() => _context.Dispose();
 }

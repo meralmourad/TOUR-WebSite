@@ -14,6 +14,7 @@ public class TripService : ITripService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly TripMapper _tripMapper;
+    private static int imageIndex = 1; // Global image index
 
     public TripService(IUnitOfWork unitOfWork)
     {
@@ -29,9 +30,11 @@ public class TripService : ITripService
 
     public async Task<(bool Success, string Message)> CreateTripAsync(CreateTripDTO tripDto)
     {
-        ThrowIfErrorFound(tripDto.Price <= 0, "Price must be greater than zero.");
+        try
+        {
+            ThrowIfErrorFound(tripDto.Price <= 0, "Price must be greater than zero.");
 
-        var trip = new Trip
+                    var trip = new Trip
         {
             VendorId = tripDto.AgenceId,
             Title = tripDto.Title,
@@ -43,9 +46,30 @@ public class TripService : ITripService
             AvailableSets = tripDto.AvailableSets,
         };
         await _unitOfWork.Trip.AddAsync(trip);
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.CompleteAsync(); // Ensure trip.Id is set
+
+        Console.WriteLine("()()()()()()()(-----------------------------------------------Trip created successfully. id is: " + trip.Id);
+
+        foreach (var imageUrl in tripDto.Images)
+        {
+            var image = new Images
+            {
+                ImageUrl = $"{imageIndex}_{imageUrl}",
+                tripId = trip.Id
+            };
+            await _unitOfWork.image.AddAsync(image);
+            imageIndex++;
+        }
+        await _unitOfWork.CompleteAsync(); // Save images
+
         return (true, "Trip created successfully.");    
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error in CreateTripAsync: " + ex.Message); // Add this for debugging
+        return (false, "An error occurred while saving the trip. Please try again.");
+    }
+} 
 
     public async Task<(bool Success, string Message)> DeleteTripAsync(int id)
     {
