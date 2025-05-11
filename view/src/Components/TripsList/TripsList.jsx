@@ -64,7 +64,7 @@ const TravelCards = () => {
     fetchTrips();
 //     setTripsData([{id: 1, city: "Paris", description: "Beautiful city", rating: 4}
 // , {id: 2, city: "London", description: "Historic city", rating: 5}]);
-  }, [start, currentPage, searchTerm, startDate, endDate, price, id]);
+  }, [start, currentPage, searchTerm, startDate, endDate, price, id , user]);
 
   const currentTrips = tripsData;
 

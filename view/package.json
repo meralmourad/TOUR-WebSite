@@ -17,6 +17,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.2",
     "react-scripts": "5.0.1",
+    "react-select": "^5.10.1",
     "redux": "^5.0.1",
     "sass": "^1.87.0",
     "sweetalert": "^2.1.2",
