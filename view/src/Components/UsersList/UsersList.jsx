@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
 import "./UsersList.scss";
 import { useNavigate } from "react-router-dom";
 import { SearchUsers } from "../../service/UserService";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const numberOfUsersPerPage = 9;
 
 const UsersList = () => {
   const navigate = useNavigate();
@@ -12,8 +11,11 @@ const UsersList = () => {
   const [Agency, setAgency] = useState(false);
   const [Tourist, setTourist] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
+  const [numOfUsers, setNumOfUsers] = useState(0);
   const [users, setUsers] = useState([]);
 
+  const numberOfPages = Math.ceil(numOfUsers / numberOfUsersPerPage);
+  
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event) => {
@@ -21,12 +23,13 @@ const UsersList = () => {
   };
 
   useEffect(() => {
-    const start = (pageNumber - 1) * 9;
+    const start = (pageNumber - 1) * numberOfUsersPerPage;
 
     const fetchUsers = async () => {
       try {
-        const users = await SearchUsers(start, 9, Tourist, Agency, Admin, true, searchTerm);
+        const { users, totalCount } = !Tourist && !Admin && !Agency? await SearchUsers(start, numberOfUsersPerPage, true, true, true, true, searchTerm): await SearchUsers(start, numberOfUsersPerPage, Tourist, Agency, Admin, true, searchTerm);
 
+        setNumOfUsers(totalCount);
         setUsers(users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -35,7 +38,6 @@ const UsersList = () => {
     fetchUsers();
   }, [Admin, Agency, Tourist, pageNumber, searchTerm]);
 
-  const numberOfPages = 100;
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);

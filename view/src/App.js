@@ -31,7 +31,7 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={ <WelcomePage/> } />
-        <Route path="/home" element={ <TripsList /> } /> 
+        <Route path="/home/:id?" element={ <TripsList /> } /> 
         <Route path="/Profile/:id" element={ <Profile/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />

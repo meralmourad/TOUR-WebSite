@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { SearchTrips } from "../../service/TripsService";
 
+const itemsPerPage = 10;
+
 const TravelCards = () => {
   const id = useParams()?.id;
   const navigate = useNavigate();
@@ -15,26 +17,37 @@ const TravelCards = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [Showfilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [numberOfItems, setNumberOfItems] = useState(0);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [price, setPrice] = useState(null);
   const { user, loading, isLoggedIn } = useSelector((store) => store.info);
-
-  const itemsPerPage = 10;
-
+  
+  const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
+  
   useEffect(() => {
+    const convertTime = (time) => {
+      if(!time) return null;
+      const date = new Date(time);
+      return date.toISOString().split("T")[0];
+    }
     const fetchTrips = async () => {
       try {
-        const trips = await SearchTrips(
+        const { trips, totalCount } = await SearchTrips(
           start,
           itemsPerPage,
           null /* destination */,
-          null /* startDate */,
-          null /* endDate */,
-          null /* price */,
+          convertTime(startDate) /* startDate */,
+          convertTime(endDate) /* endDate */,
+          price /* price */,
           true /* isApproved */,
           searchTerm,
           id,
         );
 
+        setNumberOfItems(totalCount);
         setTripsData(trips);
+
         if (trips.length === 0) {
           setCurrentPage(1);
           setStart(0);
@@ -42,7 +55,7 @@ const TravelCards = () => {
         } else {
           setCurrentPage(currentPage);
         }
-        console.log(trips);
+        // console.log(trips);
       } catch (error) {
         console.error("Error fetching trips:", error);
       }
@@ -51,7 +64,7 @@ const TravelCards = () => {
     fetchTrips();
 //     setTripsData([{id: 1, city: "Paris", description: "Beautiful city", rating: 4}
 // , {id: 2, city: "London", description: "Historic city", rating: 5}]);
-  }, [start, currentPage, searchTerm]);
+  }, [start, currentPage, searchTerm, startDate, endDate, price, id]);
 
   const currentTrips = tripsData;
 
@@ -79,7 +92,7 @@ const TravelCards = () => {
         <div className="search-filter">
           <span role="img" aria-label="search" style={{ marginRight: "10px" }}>
             <img
-              src="Icons/search.jpg"
+              src="/Icons/search.jpg"
               alt=""
               style={{
                 width: "20px",
@@ -100,7 +113,7 @@ const TravelCards = () => {
             onClick={() => setShowFilter(!Showfilter)}
           >
             <img
-              src="Icons/Filter.jpg"
+              src="/Icons/Filter.jpg"
               alt=""
               style={{
                 width: "20px",
@@ -109,7 +122,18 @@ const TravelCards = () => {
             ></img>
           </span>
         </div>
-        {Showfilter && <Filter ShowFilter={Showfilter} />}
+        
+        {Showfilter &&   
+          <Filter
+            setShowFilter={setShowFilter}
+            startDate={startDate}
+            endDate={endDate}
+            price={price}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setPrice={setPrice}
+          />
+        }
         <div className="cards-grid">
           {currentTrips.map((trip) => (
             <div className="trip-card" key={trip.id}>
@@ -121,7 +145,7 @@ const TravelCards = () => {
                 <h4>{trip.city}</h4>
                 <p>{trip.description}</p>
                 <div>
-                  <Rate children={trip.rating} />
+                  <Rate children={Math.round(trip.rating)} />
                 </div>
               </div>
             </div>
@@ -138,7 +162,7 @@ const TravelCards = () => {
             ◀
           </button>
 
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: numberOfPages }).map((_, index) => (
             <button
               key={index}
               className={currentPage === index + 1 ? "active" : ""}

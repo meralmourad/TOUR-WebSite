@@ -47,6 +47,14 @@ const NavBar = () => {
 
                 {isLoggedIn && 
                     <ul className="navbar-links">
+                        {
+                            user.role === "Admin" &&
+                            <li className="nav-item">
+                                <Link to={`/userslist`} className="nav-link">
+                                    <img src={'/Icons/usersList.png'} alt="Profile" className="icon" />
+                                </Link>
+                            </li>
+                        }
                         <li className="nav-item">
                             <Link to={`/profile/${user.id}`} className="nav-link">
                                 <img src={'/Icons/Profile.jpg'} alt="Profile" className="icon" />

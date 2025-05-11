@@ -123,6 +123,7 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
     isApproved = isApproved ?? true;
     searchTerm = searchTerm ?? "";
     agencyId = agencyId ?? 0;
+    // console.log("agencyId", agencyId);
     try {
         const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating${sortBy}`, {
             headers: {
@@ -135,7 +136,7 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
             const agence = await getUserById(trips[i].agenceId);
             trips[i].agence = agence;
         }
-        return trips;
+        return { trips, totalCount };
     } catch (error) {
         throw error;
     }

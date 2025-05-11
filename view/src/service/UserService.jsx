@@ -65,8 +65,6 @@ export const SearchUsers = async (start, len, tourist, agency, admin, isApproved
     isApproved = isApproved || true;
     q = q || "";
     try {
-        console.log(`${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`);
-        
         const response = await axios.get(`${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`, {
             headers: {
             'Authorization': `Bearer ${token}`
@@ -74,7 +72,7 @@ export const SearchUsers = async (start, len, tourist, agency, admin, isApproved
         });
         const users = response.data.users?.$values || [];
         const totalCount = response.data.totalCount || 0;
-        return users;
+        return { users, totalCount };
     } catch (error) {
         throw error;
     }
