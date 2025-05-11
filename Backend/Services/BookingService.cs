@@ -11,9 +11,11 @@ namespace Backend.Services;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    public BookingService(IUnitOfWork unitOfWork)
+    private readonly IKafkaProducerService kafkaProducerService;
+    public BookingService(IUnitOfWork unitOfWork, IKafkaProducerService kafkaProducerService)
     {
         _unitOfWork = unitOfWork;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public Task<bool> ApproveBooking(int id, int Approved)
@@ -24,6 +26,19 @@ public class BookingService : IBookingService
         booking.IsApproved = Approved;
         _unitOfWork.BookingRepository.Update(booking);
         _unitOfWork.CompleteAsync();
+        
+        // send a message to the kafka topic
+        // Produce a message to Kafka topic
+        var message = new 
+        {
+            BookingId = booking.Id,
+            TripId = booking.TripId,
+            NumOfSeats = booking.SeatsNumber
+        };
+        var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
+        kafkaProducerService.ProduceAsync("booking-events", messageJson);
+
+
         // subtract the number of seats from the trip
         var trip = _unitOfWork.Trip.GetByIdAsync(booking.TripId).Result;
         if (trip == null)
@@ -45,22 +60,26 @@ public class BookingService : IBookingService
         {
             throw new Exception("You have already booked this trip");
         }
+        Console.WriteLine((int)bookingDTO.agenceId);
         var booking = new Booking
         {
             TouristId = bookingDTO.TouristId,
+            SeatsNumber = bookingDTO.SeatsNumber,
+            TravelAgencyId = bookingDTO.agenceId ?? 0, // Default to 0 if null
             TripId = bookingDTO.TripId,
             IsApproved = 0,
-            PhoneNumber = bookingDTO.PhoneNumber ?? string.Empty
+            PhoneNumber = bookingDTO.PhoneNumber ?? string.Empty // Default to empty string if null
         };
         await _unitOfWork.BookingRepository.AddAsync(booking);
         await _unitOfWork.CompleteAsync();
         // Booking dto
+    
         var bookingDto = new BookingDTO
         {
             TouristId = booking.TouristId,
             SeatsNumber = bookingDTO.SeatsNumber,
             TripId = booking.TripId,
-            IsApproved = booking.IsApproved,
+            IsApproved = booking.IsApproved, 
             PhoneNumber = booking.PhoneNumber,
             Comment = booking.Comment,
             Rating = booking.Rating
