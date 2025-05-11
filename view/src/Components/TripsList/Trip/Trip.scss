@@ -1,6 +1,6 @@
 .trip-container {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to bottom right, #fdfcfb, #e2d1c3);
+  background: linear-gradient(to bottom right, #e5e3dc, #e5e3dc);
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
@@ -136,6 +136,9 @@
     margin: 30px auto;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
 
     .arrow {
       margin-left: 12px;

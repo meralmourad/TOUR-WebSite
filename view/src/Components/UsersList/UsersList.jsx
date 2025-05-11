@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./UsersList.scss";
 import { useNavigate } from "react-router-dom";
 import { SearchUsers } from "../../service/UserService";
+import { shallowEqual } from "react-redux";
 
 const numberOfUsersPerPage = 9;
 
