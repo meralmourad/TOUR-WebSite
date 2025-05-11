@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import Swal2 from "sweetalert2";
 // import Swal from "sweetalert";
 import withReactContent from "sweetalert2-react-content";
+import { addBooking } from "../../../service/BookingService";
 
 // const images = [
 //   "https://ultimahoracol.com/sites/default/files/2024-12/PORTADAS%20ESCRITORIO%20-%202024-12-19T122111.264.jpg",
@@ -73,13 +74,29 @@ const Trip = () => {
       if (result.isConfirmed) {
         const { phone, seats } = result.value;
 
-        
+        try {
+          await addBooking({
+            touristId: user.id,
+            tripId: tripData.agenceId,
+            seatsNumber: seats,
+            phoneNumber: phone
+          })
+          MySwal.fire({
+            title: "Booking Confirmed!",
+            text: `Your booking for ${seats} seat(s) has been confirmed.`,
+            icon: "success",
+          });
+        }
+        catch (error) {
+          console.error("Error adding booking:", error);
+          MySwal.fire({
+            title: "Booking Failed!",
+            text: error.response.data.message,
+            icon: "error",
+          });
+          return;
+        }
 
-        MySwal.fire({
-          title: "Booking Confirmed!",
-          text: `Your booking for ${seats} seat(s) has been confirmed.`,
-          icon: "success",
-        });
       }
       else {
         MySwal.fire({
