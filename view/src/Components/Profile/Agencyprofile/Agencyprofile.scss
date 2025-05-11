@@ -278,20 +278,54 @@
       }
     }
   }
+.info-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
 
-  .info-input {
-    width: 250px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 15px;
+.info-label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #444;
+    font-weight: bold;
+}
+
+.info-input {
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
     outline: none;
-    transition: border-color 0.3s ease, right 0.3s ease;
-    position: absolute;
-    right: 5%;
+    background: #f9f9f9;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    &:focus {
-      border-color: #42a5f5;
-      box-shadow: 0 0 5px rgba(66, 165, 245, 0.5);
-    }
-  }
+.info-input:focus {
+    border-color: #007bff;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.info-input::placeholder {
+    color: #aaa;
+}
+
+.error-message {
+    font-size: 14px;
+    color: #e74c3c;
+    margin-top: 6px;
+    animation: shake 0.5s ease-in-out;
+    display: block;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
