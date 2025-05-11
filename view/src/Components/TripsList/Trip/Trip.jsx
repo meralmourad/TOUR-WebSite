@@ -50,7 +50,7 @@ const Trip = () => {
             </div>
             <div class="row">
               <span>Payment :</span><span>Cash Only!</span>
-              <span>Seats :</span><input id="swal-input-seats" class="swal2-input" type="number" value="1"/>
+              <span>Seats :</span><input id="swal-input-seats" min=1 class="swal2-input" type="number" value="1"/>
             </div>
           </div>
         `,

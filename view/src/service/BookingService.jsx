@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const { token } = JSON.parse(localStorage.getItem("Token"));
+const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
 export const getBookings = async () => {
     try {
@@ -94,6 +94,7 @@ export const approveBooking = async (id, state = 1) => {
         state: -1 = rejected
         state: 0 = pending
         state: 1 = approved
+        
     */
     try {
         const response = await axios.put(`${API_URL}/Booking/approve/${id}`, state, {
