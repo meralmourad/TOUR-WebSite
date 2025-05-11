@@ -1,27 +1,20 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
 import "./AddTrip.scss";
-import { addTrip } from "../../../../service/TripsService";
+import { addTrip , GetTripCategories  } from "../../../../service/TripsService";
 import Select from "react-select";
+import { useFetcher } from "react-router-dom";
 
 const AddTrip = ({ setShowAddTrip }) => {
   const { user } = useSelector((store) => store.info);
-  const [error, setError] = useState(null);
-  const categoryOptions = [
-    { value: "1", label: "Adventure" },
-    { value: "2", label: "Relaxation" },
-    { value: "3", label: "Cultural" },
-    { value: "4", label: "Nature" },
-    { value: "5", label: "Historical" },
-    { value: "6", label: "Luxury" },
-    { value: "7", label: "Family" },
-    { value: "8", label: "Romantic" },
-    { value: "9", label: "Wildlife" },
-    { value: "10", label: "Sports" },
-    { value: "11", label: "Beach" },
-    { value: "12", label: "Adventure Sports" },
-  ];
+  const [confirm , setConfirm] = useState(false);
+
+    const [categoryOptions, setCategoryOptions] = useState({
+        value: "",
+        label: "",
+    });
+
 
   const [formData, setFormData] = useState({
     title: "",
@@ -29,106 +22,140 @@ const AddTrip = ({ setShowAddTrip }) => {
     sets: "",
     description: "",
     startDate: "",
-    duration: "",
+    endDate: "",
     photos: [],
     category: [],
     Locations: [],
   });
 
-  const handleChange = (e) => {
-    const { name, value, files, options, type } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    
-  };
-  const handlePhotoChange = (e) => {
+
+
+    useEffect(() => {   
+        const fetchCategories = async () => {
+            try {
+                const  categories  = await GetTripCategories();
+
+                const options = categories.map((category) => ({
+                    value: category.id,
+                    label: category.name,
+                }));
+
+                // console.log("options" , options);
+                
+                setCategoryOptions(options);
+
+            }
+             catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, [user]);
+
+    useEffect(() => {
+    if(confirm){ 
+            const hasEmptyFields = Object.values(formData).some(
+            (value) => value === "" || value.length === 0);
+
+            if (hasEmptyFields) {
+                  swal({
+                    title: "Error",
+                    text: "Please fill in all required fields.",
+                    icon: "error",
+                    button: "Ok",
+                });
+                return;
+            }
+
+            try{
+                const Handelsubmit = async ()=> {
+                    
+                    const submit = await addTrip({
+                    AgenceId : user.id,
+                    Title : formData.title,
+                    Price : formData.price,
+                    StartDate  : formData.startDate,
+                    EndDate  : formData.endDate,
+                    Description : formData.description,
+                    AvailableSets : formData.sets,
+                    LocationIds : formData.Locations,
+                    CategoryIds : formData.category,
+                    Photos : formData.photos,
+                });
+            }
+
+            Handelsubmit();
+            swal({
+                title: "Done!",
+                text: "Trip added successfully.",
+                icon: "success",
+                button: "Ok",
+            });
+            setShowAddTrip(false);
+
+            }
+            catch (error) { 
+                console.error("Error adding trip:", error);
+                swal({
+                    title: "Error",
+                    text: "Failed to add trip.",
+                    icon: "error",
+                    button: "Ok",
+                });
+            }
+
+
+    }
+        }, [confirm, user]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+        
+    const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({
+        setFormData((prev) => ({
         ...prev,
         photos: [...prev.photos, file],
-      }));
-      e.target.value = ""; 
+        }));
+        e.target.value = ""; // clear after upload
     }
-  };
-  
-  const handleCategoryChange = (selectedOptions) => {
-    setFormData((prev) => ({
-      ...prev,
-      category: selectedOptions.map((opt) => opt.value),
-    }));
-  };
+    };
+        
+        const handleCategoryChange = (selectedOptions) => {
+        const selectedValues = selectedOptions.map((option) => option.value);
+        setFormData((prev) => ({
+            ...prev,
+            category: selectedValues,
+        }));
+    };
 
-  const handleDiscard = () => {
-    setFormData({
-      title: "",
-      price: "",
-      sets: "",
-      description: "",
-      startDate: "",
-      duration: "",
-      photos: [],
-      category: [],
-      Locations: [],
-    });
-
-    swal({
-      title: "Discarded",
-      text: "Trip Discarded Successfully.",
-      icon: "error",
-      button: "Ok",
-    });
-
-    setShowAddTrip(false);
-  };
-
-  const handleConfirm = () => {
-    const hasEmptyFields = Object.values(formData).some(
-      (value) => value === "" || value.length === 0
-    );
-
-    if (hasEmptyFields) {
-      swal({
-        title: "Error",
-        text: "Please fill in all required fields.",
-        icon: "error",
-        button: "Ok",
-      });
-      return;
-    }
-
-    const submit = async () => {
-      try {
-        await addTrip({
-          AgenceId: user.id,
-          Title: formData.title,
-          Price: formData.price,
-          StartDate: formData.startDate,
-          Duration: formData.duration,
-          Description: formData.description,
-          AvailableSets: formData.sets,
-          Category: formData.category,
-          Images: formData.photos,
-          LocationIds: formData.Locations,
+    const handleDiscard = () => {
+        setFormData({
+        title: "",
+        price: "",
+        sets: "",
+        description: "",
+        startDate: "",
+        duration: "",
+        photos: [],
+        category: [],
+        Locations: [],
         });
 
         swal({
-          title: "Done!",
-          text: "Trip added successfully.",
-          icon: "success",
-          button: "Ok",
+        title: "Discarded",
+        text: "Trip Discarded Successfully.",
+        icon: "error",
+        button: "Ok",
         });
 
-        setShowAddTrip(false);
-      } catch (error) {
-        setError(error.response?.data?.errors?.[0] || "An error occurred");
-        console.error("Error adding trip:", error);
-      }
-    };
-
-    submit();
+    setShowAddTrip(false);
   };
 
 return (
@@ -158,7 +185,7 @@ return (
                     type="text"
                     name="title"
                     value={formData.title}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                 />
             </div>
 
@@ -168,7 +195,7 @@ return (
                     type="number"
                     name="price"
                     value={formData.price}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                 />
             </div>
 
@@ -177,7 +204,7 @@ return (
                 <input
                     type="file"
                     name="photo"
-                    onChange={handlePhotoChange}
+                    onChange={handlePhotoUpload}
                     style={{ display: "none" }}
                     id="photoInput"
                 />
@@ -277,16 +304,16 @@ return (
                     type="number"
                     name="sets"
                     value={formData.sets}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                 />
             </div>
-
             <div className="form-group">
-                <label>Description:</label>
-                <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
+                <label>Destinations:</label>
+                <input
+                    type="text"
+                    name="Locations"
+                    value={formData.Locations}
+                    onChange={handleInputChange}
                 />
             </div>
 
@@ -296,25 +323,33 @@ return (
                     type="date"
                     name="startDate"
                     value={formData.startDate}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                 />
             </div>
+            <div className="form-group">
+                <label>Description:</label>
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                />
+            </div>
+
 
             <div className="form-group">
-                <label>Duration:</label>
+                <label>End Date:</label>
                 <input
-                    type="text"
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleChange}
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
                 />
             </div>
-
             <div className="button-group">
                 <button className="discard-button" onClick={handleDiscard}>
                     Discard
                 </button>
-                <button className="confirm-button" onClick={handleConfirm}>
+                <button className="confirm-button" onClick={()=>setConfirm(true)}>
                     Confirm
                 </button>
             </div>

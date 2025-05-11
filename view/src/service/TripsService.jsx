@@ -17,6 +17,22 @@ export const addTrip = async (trip) => {
     }
 };
 
+export const GetTripCategories = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/Category`, {   
+            headers: {  
+                'Authorization': `Bearer ${token}`
+            }
+            });
+            console.log(response.data.$values);
+            
+            return response.data.$values;
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
 export const getTrips = async () => {
     try {
         const response = await axios.get(`${API_URL}/Trip`, {
