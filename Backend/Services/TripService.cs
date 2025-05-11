@@ -112,7 +112,10 @@ public class TripService : ITripService
         {
             tripsQuery = tripsQuery.Where(t => t.Status == 1);
         }
-
+        if(agencyId != 0)
+        {
+            tripsQuery = tripsQuery.Where(t => t.VendorId == agencyId);
+        }
         start = Math.Max(0, start);
         len = Math.Max(1, len);
         startPrice = Math.Max(0, startPrice);

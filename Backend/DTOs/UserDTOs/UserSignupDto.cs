@@ -17,9 +17,7 @@ public class UserSignupDto
     [MinLength(6)]
     public required string Password { get; init; }
 
-    [Required]
-    [Compare("Password", ErrorMessage = "Passwords do not match.")]
-    public required string ConfirmPassword { get; init; }
+    public string? ConfirmPassword { get; init; }
 
     [Phone]
     public string? PhoneNumber { get; init; }
