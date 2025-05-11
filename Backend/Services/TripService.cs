@@ -48,13 +48,12 @@ public class TripService : ITripService
         await _unitOfWork.Trip.AddAsync(trip);
         await _unitOfWork.CompleteAsync(); // Ensure trip.Id is set
 
-        Console.WriteLine("()()()()()()()(-----------------------------------------------Trip created successfully. id is: " + trip.Id);
 
         foreach (var imageUrl in tripDto.Images)
         {
             var image = new Images
             {
-                ImageUrl = $"{imageIndex}_{imageUrl}",
+                ImageUrl = $"{imageUrl}_{imageIndex}",
                 tripId = trip.Id
             };
             await _unitOfWork.image.AddAsync(image);
@@ -283,17 +282,20 @@ public class TripService : ITripService
         return Task.FromResult(_tripMapper.MapToTripDtoList(trips));
     }
 
-    public Task<bool> ApproveTripAsync(int id, bool isApproved)
-    {
-        var trip = _unitOfWork.Trip.GetByIdAsync(id).Result;
+    public async Task<bool> ApproveTripAsync(int id, int isApproved)
+{
+    try {
+        var trip = await _unitOfWork.Trip.GetByIdAsync(id);
         if (trip == null)
-        {
-            return Task.FromResult(false);
-        }
-
-        trip.Status = isApproved ? 1 : 2; // 1 for approved, 2 for rejected
+            return false;
+            
+        trip.Status = isApproved;
         _unitOfWork.Trip.Update(trip);
-        _unitOfWork.CompleteAsync();
-        return Task.FromResult(true);
+        await _unitOfWork.CompleteAsync();
+        return true;
     }
+    catch (Exception) {
+        return false;
+    }
+}
 }
