@@ -28,7 +28,7 @@ const Trip = () => {
     };
 
     fetchTripData();
-  },[]);
+  },[user, id]);
 
   const handleBooking = () => {
     const wrapper = document.createElement("div");
