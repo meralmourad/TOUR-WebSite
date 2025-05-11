@@ -22,7 +22,7 @@ function EditAgency({ user, setEdit }) {
                 phoneNumber,
                 address
             });
-            console.log("User updated successfully");
+            // console.log("User updated successfully");
             const new_data = {user, token};
             new_data.user.name = name;
             new_data.user.phoneNumber = phoneNumber;
@@ -30,14 +30,13 @@ function EditAgency({ user, setEdit }) {
             dispatch(setUser(new_data));
             setEdit(false);
         } catch (error) {
-            setError(error.response.data.errors[0]);
+            setError(error.response.data.errors);
             console.error("Error fetching profile:", error);
         }
     }
 
     return (
         <div className="agency-info">
-            {error && <h1 className="error-message">{error}</h1>}
             <div className="info-item">
                 <label className="info-label">Name:</label>
                 <input
@@ -46,7 +45,7 @@ function EditAgency({ user, setEdit }) {
                     onChange={(e) => setName(e.target.value)}
                 />
 
-            {error?.name && <span className="error-message">{error.name}</span>}
+                {error?.Name && <span className="error-message">{error.Name[0]}</span>}
             </div>
             <div className="info-item">
                 <label className="info-label">E-mail:</label>
@@ -55,6 +54,7 @@ function EditAgency({ user, setEdit }) {
                     value={user.email}
                     disabled
                     />
+                {error?.Email && <span className="error-message">{error.Email[0]}</span>}
             </div>
             <div className="info-item">
                 <label className="info-label">Phone:</label>
@@ -63,7 +63,7 @@ function EditAgency({ user, setEdit }) {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-                {error?.phoneNumber && <span className="error-message">{error.name}</span>}
+                {error?.PhoneNumber && <span className="error-message">{error.PhoneNumber[0]}</span>}
             </div>
             <div className="info-item">
                 <label className="info-label">Country:</label>
@@ -72,6 +72,7 @@ function EditAgency({ user, setEdit }) {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
+                {error?.Address && <span className="error-message">{error.Address[0]}</span>}
             </div>
 
             <div className="button-group">
