@@ -99,17 +99,7 @@ namespace Backend.Controllers
             try
             {
 
-                var agencyId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(agencyId))
-                {
-                    return BadRequest(new { message = "Agency ID claim is missing." });
-                }
-
-                bookingDTO.agenceId = int.Parse(agencyId);
-
-                // Use logging instead of Console.WriteLine
-                Console.WriteLine($"Agency ID: {bookingDTO.agenceId}");
-
+                
                 var booking = await _bookingService.CreateBooking(bookingDTO);
                 return Ok(booking);
             }
