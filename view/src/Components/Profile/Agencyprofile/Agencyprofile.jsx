@@ -4,11 +4,13 @@ import EditAgency from "./EditAgency";
 import { SearchTrips } from "../../../service/TripsService";
 import { useNavigate } from "react-router-dom";
 import Rate from "../../Rate/Rate";
+import AddTrip from "./AddTrip/AddTrip";
 
 const AgencyProfile = ({ userprofile, myProfile }) => {
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
   const [highestTrip, setHighestTrip] = useState([]);
+  const[showAddTrip, setShowAddTrip] = useState(false);
   // console.log(highestTrip);
   
   useEffect(() => {
@@ -24,6 +26,14 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
   return ( 
   <>
     <div className="agency-profile">
+    <button
+      onClick={() => setShowAddTrip(!showAddTrip)}
+      className="add-trip-button"
+    >
+      +
+    </button>
+    {showAddTrip ? <AddTrip setShowAddTrip ={setShowAddTrip} /> : 
+    <>
       <div className="header">
         <div className="header-images">
           <img
@@ -91,6 +101,7 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
             <EditAgency user={userprofile} setEdit={setEdit} />
         }
       </div>
+      </>}
     </div>
     </>
   );

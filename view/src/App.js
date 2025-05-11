@@ -11,7 +11,7 @@ import Trip from "./Components/TripsList/Trip/Trip";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
 // import BookingPending from "./Components/BookingPending/BookingPending.jsx";
-// import AddTrip from "./Components/AddTrip/AddTrip.jsx";
+
 
 function App() {
   const { user } = useSelector((store) => store.info);
