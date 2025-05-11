@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Filter.scss";
 import swal from "sweetalert";
-import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
-const Filter = ({ ShowFilter }) => {
-  const [price, setPrice] = useState(350);
-  const [seats, setSeats] = useState(10);
-  const [rate, setRate] = useState(4);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [destination, setDestination] = useState("");
+const Filter = ({ setShowFilter, price, startDate, endDate, setPrice, setStartDate, setEndDate }) => {
+  const [pricce, setPricce] = React.useState(price || 1500);
+  const [fromDate, setFromDate] = React.useState(startDate || "");
+  const [toDate, setToDate] = React.useState(endDate || "");
 
   const getGradient = (value, max) => {
     const percentage = (value / max) * 100;
@@ -33,42 +27,30 @@ const Filter = ({ ShowFilter }) => {
       swal("Error", "From date cannot be later than To date", "error");
       return;
     }
+    setPrice(pricce);
+    setStartDate(fromDate);
+    setEndDate(toDate);
+    setShowFilter(false);
 
-    try {
-      const response = await axios.get(`${API_URL}/Search/trips`, {
-        params: {
-          endPrice: price,
-          startDate: fromDate,
-          len: (toDateObj - fromDateObj) / (1000 * 60 * 60 * 24),
-          destination: destination,
-          // seats,
-          // rate,
-        },
-      });
-      console.log("Filtered Results:", response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
   };
 
   return (
     <>
-      {ShowFilter && (
         <div className="filter">
           <div className="filter-group">
             <label>Price</label>
             <input
               type="range"
               min="0"
-              max="1000"
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              style={{ background: getGradient(price, 1000) }}
+              max="5000"
+              value={pricce}
+              onChange={(e) => setPricce(Number(e.target.value))}
+              style={{ background: getGradient(pricce, 5000) }}
             />
-            <span>{price}</span>
+            <span>{pricce}</span>
           </div>
 
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <label>Seats</label>
             <input
               type="range"
@@ -79,9 +61,9 @@ const Filter = ({ ShowFilter }) => {
               style={{ background: getGradient(seats, 100) }}
             />
             <span>{seats}</span>
-          </div>
+          </div> */}
 
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <label>Rate</label>
             <input
               type="range"
@@ -93,16 +75,16 @@ const Filter = ({ ShowFilter }) => {
               style={{ background: getGradient(rate, 5) }}
             />
             <span>{rate}</span>
-          </div>
+          </div> */}
 
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <label>Destination</label>
             <input
               type="text"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             />
-          </div>
+          </div> */}
 
           <div className="filter-group dates">
             <label>From Date</label>
@@ -127,8 +109,10 @@ const Filter = ({ ShowFilter }) => {
           <div className="buttons">
             <button
               className="cancel"
-              onClick={() =>
-                swal("Cancelled", "Filters were not applied", "info")
+              onClick={() =>{
+                  swal("Cancelled", "Filters were not applied", "info")
+                  setShowFilter(false);
+                }
               }
             >
               ✖
@@ -138,7 +122,6 @@ const Filter = ({ ShowFilter }) => {
             </button>
           </div>
         </div>
-      )}
     </>
   );
 };

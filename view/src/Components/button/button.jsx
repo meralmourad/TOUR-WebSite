@@ -1,18 +1,7 @@
 import Swal from "sweetalert";
 import ReactDOM from "react-dom/client";
 import Rate from "../Rate/Rate";    
-import "./button.scss"; // تنسيق الأزرار والمودال
-
-
-
-
-
-
-
-
-
-
-
+import "./button.scss";
 
 const RateNowButton = () => {
     const handleRateNow = () => {

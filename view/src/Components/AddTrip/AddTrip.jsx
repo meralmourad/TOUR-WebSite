@@ -42,19 +42,20 @@ const AddTrip = () => {
 
         if (!title || !price || !category || !startDate) {
             swal({
-                title: "خطأ!",
-                text: "من فضلك املأ جميع الحقول الأساسية.",
+                title: "Error",
+                text: "Please fill in all required fields.",
                 icon: "error",
-                button: "حسنًا",
+                button: "Ok",
             });
             return;
         }
 
         swal({
-            title: "تمت الإضافة!",
-            text: "تمت إضافة الرحلة بنجاح.",
+            title: "Done !",
+            text: "Trip added successfully.",
             icon: "success",
-            button: "موافق",
+            button: "Ok",
+
         });
 
         handleDiscard();
@@ -62,7 +63,6 @@ const AddTrip = () => {
 
     return (
         <>
-            {/* عرض الصورتين في الأعلى */}
             <div className="header">
         <div className="header-images">
           <img
@@ -80,8 +80,6 @@ const AddTrip = () => {
           </div>
         </div>
       </div>
-
-            {/* نموذج إضافة الرحلة */}
             <div className="add-trip-container">
                 <div className="form-group">
                     <label>Title:</label>

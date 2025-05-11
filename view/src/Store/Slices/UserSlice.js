@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { getUserById } from '../../service/UserService';
 
 const initialState = {
     user: null,
@@ -9,15 +9,9 @@ const initialState = {
     isLoggedIn: false
 };
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 export const fetchUser = createAsyncThunk("user/fetchUser", async ({token, id}) => {
-    const response = await axios.get(`${API_URL}/User/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-    });
-    return {user: response.data, token};
+    const user = await getUserById(id);
+    return {user, token};
 });
 
 const userSlice = createSlice({

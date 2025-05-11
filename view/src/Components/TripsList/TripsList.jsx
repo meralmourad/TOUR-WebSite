@@ -1,49 +1,70 @@
-import "./Home.scss";
-import Filter from "../Trip/Filter/Filter";
+import "./TripsList.scss";
+import Filter from "./Trip/Filter/Filter";
 import Rate from "../Rate/Rate";
-import axios from "axios";
-import swal from 'sweetalert';
-import { useSelector }  from "react-redux";
-import { useNavigate} from 'react-router-dom'; 
-import React, { useState , useEffect } from "react";
+import swal from "sweetalert";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { SearchTrips } from "../../service/TripsService";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const itemsPerPage = 10;
 
 const TravelCards = () => {
-
+  const id = useParams()?.id;
   const navigate = useNavigate();
-  const [start , setStart] = useState(0);
+  const [start, setStart] = useState(0);
   const [tripsData, setTripsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [Showfilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { user, loading , isLoggedIn } = useSelector((store) => store.info);
-
-  const itemsPerPage = 10 ;
-
+  const [numberOfItems, setNumberOfItems] = useState(0);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [price, setPrice] = useState(null);
+  const { user, loading, isLoggedIn } = useSelector((store) => store.info);
+  
+  const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
+  
   useEffect(() => {
+    const convertTime = (time) => {
+      if(!time) return null;
+      const date = new Date(time);
+      return date.toISOString().split("T")[0];
+    }
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${itemsPerPage}`); 
-        setTripsData(response.data.$values);
-        if(response.data.$values.length === 0 ) {
-          setCurrentPage(1) ;
+        const { trips, totalCount } = await SearchTrips(
+          start,
+          itemsPerPage,
+          null /* destination */,
+          convertTime(startDate) /* startDate */,
+          convertTime(endDate) /* endDate */,
+          price /* price */,
+          true /* isApproved */,
+          searchTerm,
+          id,
+        );
+
+        setNumberOfItems(totalCount);
+        setTripsData(trips);
+
+        if (trips.length === 0) {
+          setCurrentPage(1);
           setStart(0);
           swal("Opps!", "No trips found for this destination", "error");
-        }
-        else {
+        } else {
           setCurrentPage(currentPage);
         }
-        console.log(response.data.$values);
-        
-      } 
-      catch (error) {
+        // console.log(trips);
+      } catch (error) {
         console.error("Error fetching trips:", error);
       }
     };
 
     fetchTrips();
-  }, [start, currentPage]);
+//     setTripsData([{id: 1, city: "Paris", description: "Beautiful city", rating: 4}
+// , {id: 2, city: "London", description: "Historic city", rating: 5}]);
+  }, [start, currentPage, searchTerm, startDate, endDate, price, id]);
 
   const currentTrips = tripsData;
 
@@ -52,11 +73,9 @@ const TravelCards = () => {
     setCurrentPage(1);
   };
 
-  
-
   return (
     <>
-        <div className="travel-cards-container">
+      <div className="travel-cards-container">
         {!loading && isLoggedIn ? (
           <>
             <h2>
@@ -65,14 +84,15 @@ const TravelCards = () => {
           </>
         ) : (
           <h2>
-            Hello<br /> DISCOVER THE WORLD NOW!
+            Hello
+            <br /> DISCOVER THE WORLD NOW!
           </h2>
         )}
 
         <div className="search-filter">
           <span role="img" aria-label="search" style={{ marginRight: "10px" }}>
             <img
-              src="Icons/search.jpg"
+              src="/Icons/search.jpg"
               alt=""
               style={{
                 width: "20px",
@@ -90,10 +110,10 @@ const TravelCards = () => {
             role="img"
             aria-label="filter"
             style={{ marginRight: "10px", cursor: "pointer" }}
-            onClick={() => setShowFilter(!Showfilter) }
+            onClick={() => setShowFilter(!Showfilter)}
           >
             <img
-              src="Icons/Filter.jpg"
+              src="/Icons/Filter.jpg"
               alt=""
               style={{
                 width: "20px",
@@ -102,11 +122,22 @@ const TravelCards = () => {
             ></img>
           </span>
         </div>
-        {Showfilter && <Filter ShowFilter={Showfilter} />}
+        
+        {Showfilter &&   
+          <Filter
+            setShowFilter={setShowFilter}
+            startDate={startDate}
+            endDate={endDate}
+            price={price}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setPrice={setPrice}
+          />
+        }
         <div className="cards-grid">
           {currentTrips.map((trip) => (
             <div className="trip-card" key={trip.id}>
-              <img src="" alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
+              <img src={trip.images.$values[0]? trip.images.$values[0]: 'https://media-public.canva.com/MADQtrAClGY/2/screen.jpg'} alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
               <div
                 className="trip-info"
                 onClick={() => navigate(`/Trip/${trip.id}`)}
@@ -114,7 +145,7 @@ const TravelCards = () => {
                 <h4>{trip.city}</h4>
                 <p>{trip.description}</p>
                 <div>
-                  <Rate children={trip.rating} />
+                  <Rate children={Math.round(trip.rating)} />
                 </div>
               </div>
             </div>
@@ -131,7 +162,7 @@ const TravelCards = () => {
             ◀
           </button>
 
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: numberOfPages }).map((_, index) => (
             <button
               key={index}
               className={currentPage === index + 1 ? "active" : ""}
@@ -156,6 +187,6 @@ const TravelCards = () => {
       </div>
     </>
   );
-}
+};
 
 export default TravelCards;

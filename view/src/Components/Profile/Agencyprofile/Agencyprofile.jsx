@@ -1,14 +1,25 @@
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import "./Agencyprofile.scss";
-import { useParams } from "react-router-dom";
 import EditAgency from "./EditAgency";
-
-const API_URL = process.env.REACT_APP_API_URL;
-
+import { SearchTrips } from "../../../service/TripsService";
+import { useNavigate } from "react-router-dom";
+import Rate from "../../Rate/Rate";
 
 const AgencyProfile = ({ userprofile, myProfile }) => {
   const [edit, setEdit] = useState(false);
+  const navigate = useNavigate();
+  const [highestTrip, setHighestTrip] = useState([]);
+  // console.log(highestTrip);
+  
+  useEffect(() => {
+    const fetchHighestRatedTrips = async () => {
+        // console.log(userprofile.id);
+        const { trips } = await SearchTrips(0, 3, null, null, null, null, true, null, userprofile.id);
+        setHighestTrip(trips);
+    };
+
+    fetchHighestRatedTrips();
+  }, [userprofile]);
 
   return ( 
   <>
@@ -34,31 +45,23 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
 
         <div className="highest-rated">
           <h2>HIGHEST RATED</h2>
-          <div className="rated-item">
-            <img
-              src="https://pbs.twimg.com/media/DYafkmPW0AEYSEI.jpg:large"
-              alt="London"
-              className="rated-img"
-            />
-            <div className="rated-info">
-              <h3>LONDON</h3>
-              <p>An exciting trip to London in 5 days</p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
-            </div>
-          </div>
-          <div className="rated-item">
-            <img
-              src="https://erem-media-service.azurewebsites.net/api/ResizeImage?image=https://cdn.foochia.com/media/2bbfff8c-d39c-482e-8b4c-daff62096a4b.webp&height=780&width=780&fit=cover"
-              alt="London"
-              className="rated-img"
-            />
-            <div className="rated-info">
-              <h3>LONDON</h3>
-              <p>An exciting trip to London in 5 days</p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
-            </div>
-          </div>
-          <button className="see-more">SEE MORE →</button>
+          {
+            highestTrip.map((trip) => (
+                <div key={trip.id} className="rated-item" onClick={() => navigate(`/Trip/${trip.id}`)}>
+                  <img
+                    src={trip.images.$values[0]? trip.images.$values[0]: 'https://media-public.canva.com/MADQtrAClGY/2/screen.jpg'}
+                    alt=""
+                    className="rated-img"
+                  />
+                  <div className="rated-info">
+                    <h3>{trip.city}</h3>
+                    <p>{trip.description}</p>
+                    <Rate children={Math.round(trip.rating)} />
+                  </div>
+                </div>
+            ))
+          }
+          <button className="see-more" onClick={() => navigate(`/home/${userprofile.id}`)}>SEE MORE →</button>
         </div>
 
         {!edit && <>

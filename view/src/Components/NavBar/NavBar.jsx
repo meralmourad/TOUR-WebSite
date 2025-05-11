@@ -24,7 +24,7 @@ const NavBar = () => {
             document.body.style.cursor = 'default';
             window.localStorage.removeItem("Token");
             dispatch(clearUser());
-            navigate("/welcome");
+            navigate("/");
         }, 1500);
     }
 
@@ -47,8 +47,16 @@ const NavBar = () => {
 
                 {isLoggedIn && 
                     <ul className="navbar-links">
+                        {
+                            user.role === "Admin" &&
+                            <li className="nav-item">
+                                <Link to={`/userslist`} className="nav-link">
+                                    <img src={'/Icons/usersList.png'} alt="Profile" className="icon" />
+                                </Link>
+                            </li>
+                        }
                         <li className="nav-item">
-                            <Link to={`/profile`} className="nav-link">
+                            <Link to={`/profile/${user.id}`} className="nav-link">
                                 <img src={'/Icons/Profile.jpg'} alt="Profile" className="icon" />
                             </Link>
                         </li>

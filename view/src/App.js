@@ -6,18 +6,13 @@ import LoginForm from "./Components/Auth/LoginForm/Login.jsx";
 import RegisterForm from "./Components/Auth/RegisterForm/Register.jsx";
 import { useEffect } from "react";
 import { fetchUser } from "./Store/Slices/UserSlice.js";
-import ChatApp from "./Components/Chat/Chat.jsx";
-import Home from "./Components/Home/Home.jsx";
-import Rate from "./Components/Rate/Rate.jsx";
+import TripsList from "./Components/TripsList/TripsList.jsx";
+import Trip from "./Components/TripsList/Trip/Trip";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
-import Trip  from "./Components/Trip/Trip.jsx";
-import BookingPending from "./Components/BookingPending/BookingPending.jsx";
-import Filter from "./Components/Trip/Filter/Filter.jsx"
+// import BookingPending from "./Components/BookingPending/BookingPending.jsx";
+// import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
-import Button from "./Components/button/button.jsx";
-import AddTrip from "./Components/AddTrip/AddTrip.jsx";
-import NotificationPage from "./Components/NotificationPage/NotificationPage.jsx";
 function App() {
   const { user } = useSelector((store) => store.info);
   const usedispatch = useDispatch();
@@ -36,16 +31,14 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={ <WelcomePage/> } />
-        <Route path="/home" element={ <Home /> } /> 
-        <Route path="/Profile" element={ <Profile/> } />
+        <Route path="/home/:id?" element={ <TripsList /> } /> 
+        <Route path="/Profile/:id" element={ <Profile/> } />
         <Route path="/login" element={ <LoginForm /> } />
         <Route path="/signup" element={ <RegisterForm /> } />
-        <Route path="/Trip" element={ <Trip /> } />
-        <Route path="/BookingPending" element={ <BookingPending /> } />
+        <Route path="/Trip/:id" element={ <Trip /> } />
+        {/* <Route path="/BookingPending/:id" element={ <BookingPending /> } /> */}
         <Route path="/userslist" element={ <UsersList /> } />
-        <Route path="/welcome" element={<WelcomePage />} />
         <Route path="*" element={ <h1> Page not found </h1> } />
-        <Route path="/filter" element={ <Filter /> } />
       </Routes>
     </BrowserRouter>
   );
