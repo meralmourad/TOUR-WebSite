@@ -1,7 +1,7 @@
 import { useState , useEffect } from "react";
 import "./Trip.scss";
 import swal from "sweetalert";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getTripById } from "../../../service/TripsService";
 import { useSelector } from "react-redux";
 
@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 const Trip = () => {
   const { user } = useSelector((store) => store.info);
   const id = useParams()?.id;
+  const navigate = useNavigate();
   const [tripData, setTripData] = useState(null);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const Trip = () => {
     };
 
     fetchTripData();
-  },[]);
+  },[user, id]);
 
   const handleBooking = () => {
     const wrapper = document.createElement("div");
@@ -79,8 +80,10 @@ const Trip = () => {
             <div className="trip-section">
               <h3>Available Sets:</h3>
               <p className="highlight">{tripData.availableSets}</p>
-              <h3>Agency Name:</h3>
-              <p>{tripData.agence.name}</p>
+              <div onClick={() => navigate('/profile/' + tripData.agence.id)}>
+                <h3 >Agency Name:</h3>
+                <p>{tripData.agence.name}</p>
+              </div>
             </div>
 
             <div className="trip-section">

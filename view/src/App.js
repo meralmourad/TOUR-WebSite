@@ -11,8 +11,8 @@ import Trip from "./Components/TripsList/Trip/Trip";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
 import Chat from "./Components/Chat/Chat.jsx";
-// import BookingPending from "./Components/BookingPending/BookingPending.jsx";
-
+import BookingPending from "./Components/BookingPending/BookingPending.jsx";
+// import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
 function App() {
   const { user } = useSelector((store) => store.info);
@@ -38,7 +38,7 @@ function App() {
         <Route path="/signup" element={ <RegisterForm /> } />
         <Route path="/Chat" element={ <Chat /> } />
         <Route path="/Trip/:id" element={ <Trip /> } />
-        {/* <Route path="/BookingPending/:id" element={ <BookingPending /> } /> */}
+        <Route path="/BookingPending/:id" element={ <BookingPending /> } />
         <Route path="/userslist" element={ <UsersList /> } />
         <Route path="*" element={ <h1> Page not found </h1> } />
       </Routes>
