@@ -1,15 +1,20 @@
 import { useState , useEffect } from "react";
 import "./Trip.scss";
-import swal from "sweetalert";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTripById } from "../../../service/TripsService";
 import { useSelector } from "react-redux";
+import Swal2 from "sweetalert2";
+// import Swal from "sweetalert";
+import withReactContent from "sweetalert2-react-content";
+import { addBooking } from "../../../service/BookingService";
 
 // const images = [
 //   "https://ultimahoracol.com/sites/default/files/2024-12/PORTADAS%20ESCRITORIO%20-%202024-12-19T122111.264.jpg",
 //   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCVuJDmSjVmO1RzJaVuLlix7evJoVWOhL4ghYK0mlJad4o_w2nu8H3UOUF&s=10",
 //   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ45rDg-QQbP8l4fp0IT1B1zDLU8BdxV_LIFToRuNG9KEPsc52B4B9rlcX4&s=10",
 // ];
+
+const MySwal = withReactContent(Swal2);
 
 const Trip = () => {
   const { user } = useSelector((store) => store.info);
@@ -31,41 +36,75 @@ const Trip = () => {
     fetchTripData();
   },[user, id]);
 
-  const handleBooking = () => {
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = `
-      <div class="custom-form">
-        <div class="row">
-          <span>Name :</span><span>${ user.name }</span>
-          <span>Email :</span><span>${ user.email }</span>
-        </div>
-        <div class="row">
-          <span>Phone :</span><span>${ user.phoneNumber }</span>
-        </div>
-        <div class="row">
-          <span>Payment :</span><span>Cash Only!</span>
-          <span>Sets :</span><span>1 <span style="color: green;"></span></span>
-        </div>
-        <div class="button-row">
-          <button class="discard-button">Discard</button>
-          <button class="confirm-button">Confirm</button>
-        </div>
-      </div>
-    `;
+  const handleBooking = async () => {
+      const result = await MySwal.fire({
+        title: "Booking Details",
+        html: `
+          <div class="custom-form">
+            <div class="row">
+              <span>Name :</span><span>${ user.name }</span>
+              <span>Email :</span><span>${ user.email }</span>
+            </div>
+            <div class="row">
+              <span>Phone :</span><input id="swal-input-phone" class="swal2-input" value="${ user.phoneNumber }" />
+            </div>
+            <div class="row">
+              <span>Payment :</span><span>Cash Only!</span>
+              <span>Seats :</span><input id="swal-input-seats" class="swal2-input" type="number" value="1"/>
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Confirm",
+        cancelButtonText: "Discard",
+        focusConfirm: false,
+        preConfirm: () => {
+          const phone = document.getElementById("swal-input-phone").value;
+          const seats = document.getElementById("swal-input-seats").value;
 
-    swal({
-      content: wrapper,
-      buttons: false,
-    });
+          if (!phone || !seats) {
+            Swal2.showValidationMessage("Please fill out all fields.");
+            return;
+          }
 
-    setTimeout(() => {
-      document.querySelector(".discard-button")?.addEventListener("click", () => {
-        swal("Cancelled", "Booking discarded.", "error");
+          return { phone, seats };
+        },
       });
-      document.querySelector(".confirm-button")?.addEventListener("click", () => {
-        swal("Confirmed", "Your booking has been confirmed!", "success");
-      });
-    }, 100);
+
+      if (result.isConfirmed) {
+        const { phone, seats } = result.value;
+
+        try {
+          await addBooking({
+            touristId: user.id,
+            tripId: tripData.agenceId,
+            seatsNumber: seats,
+            phoneNumber: phone
+          })
+          MySwal.fire({
+            title: "Booking Confirmed!",
+            text: `Your booking for ${seats} seat(s) has been confirmed.`,
+            icon: "success",
+          });
+        }
+        catch (error) {
+          console.error("Error adding booking:", error);
+          MySwal.fire({
+            title: "Booking Failed!",
+            text: error.response.data.message,
+            icon: "error",
+          });
+          return;
+        }
+
+      }
+      else {
+        MySwal.fire({
+          title: "Booking Discarded!",
+          text: "Booking Discarded!",
+          icon: "error",
+        });
+      }
   };
 
   return (

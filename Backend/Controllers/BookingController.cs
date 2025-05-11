@@ -92,7 +92,7 @@ namespace Backend.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,Agency")]
+        [Authorize(Roles = "Admin,Agency,Tourist")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto bookingDTO)
         {
             try
