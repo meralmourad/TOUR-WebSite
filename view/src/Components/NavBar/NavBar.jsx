@@ -34,14 +34,9 @@ const NavBar = () => {
                 
                 <div className="navbar-left">
                     {(url.includes("/profile")) &&
-                        <>
-                            <Link to="#flag" className="nav-link">
-                                <img src={'/Icons/flag icon.jpg'} alt="Flag" className="icon" />
-                            </Link>
                             <Link to="#chat" className="nav-link">
                                 <img src={'/Icons/chat icon.jpg'} alt="Chat" className="icon" />
                             </Link>
-                        </>
                     }
                 </div>
 

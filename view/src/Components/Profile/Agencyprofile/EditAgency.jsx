@@ -17,11 +17,12 @@ function EditAgency({ user, setEdit }) {
         // console.log(`${API_URL}/User/${user.id}`);
         // console.log(token);
         try {
-            updateUser(user.id, {
+            await updateUser(user.id, {
                 name,
                 phoneNumber,
                 address
             });
+            console.log("User updated successfully");
             const new_data = {user, token};
             new_data.user.name = name;
             new_data.user.phoneNumber = phoneNumber;
@@ -29,7 +30,7 @@ function EditAgency({ user, setEdit }) {
             dispatch(setUser(new_data));
             setEdit(false);
         } catch (error) {
-            setError(error.response.data);
+            setError(error.response.data.errors[0]);
             console.error("Error fetching profile:", error);
         }
     }
@@ -44,6 +45,8 @@ function EditAgency({ user, setEdit }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
+
+            {error?.name && <span className="error-message">{error.name}</span>}
             </div>
             <div className="info-item">
                 <label className="info-label">E-mail:</label>
@@ -60,6 +63,7 @@ function EditAgency({ user, setEdit }) {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                 />
+                {error?.phoneNumber && <span className="error-message">{error.name}</span>}
             </div>
             <div className="info-item">
                 <label className="info-label">Country:</label>
