@@ -60,7 +60,11 @@ public class BookingService : IBookingService
         {
             throw new Exception("You have already booked this trip");
         }
-        Console.WriteLine((int)bookingDTO.agenceId);
+        // check if the trip has enough available seats
+        if (trip.AvailableSets < bookingDTO.SeatsNumber)
+            throw new Exception("Not enough available seats");
+
+
         var booking = new Booking
         {
             TouristId = bookingDTO.TouristId,
