@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Backend.DTOs.BookingDTOs;
 using Backend.IServices;
+using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +12,7 @@ namespace Backend.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;
-
-        public BookingController(IBookingService bookingService)
+        public BookingController(IBookingService bookingService, IKafkaProducerService kafkaProducerService)
         {
             _bookingService = bookingService;
         }
@@ -91,13 +92,23 @@ namespace Backend.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Admin,Agency")]
+        [Authorize(Roles = "Admin,Agency,Tourist")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto bookingDTO)
         {
             try
             {
-                var agencyId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+                var agencyId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(agencyId))
+                {
+                    return BadRequest(new { message = "Agency ID claim is missing." });
+                }
+
                 bookingDTO.agenceId = int.Parse(agencyId);
+
+                // Use logging instead of Console.WriteLine
+                Console.WriteLine($"Agency ID: {bookingDTO.agenceId}");
+
                 var booking = await _bookingService.CreateBooking(bookingDTO);
                 return Ok(booking);
             }
@@ -116,7 +127,7 @@ namespace Backend.Controllers
                 if (!User.IsInRole("Admin"))
                 {
                     var booking = await _bookingService.GetBookingById(id);
-                    var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+                    var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                     if (userId != booking.TouristId.ToString() && 
                         !User.IsInRole("Admin") && !User.IsInRole("Agent"))
                         return Forbid();
@@ -155,6 +166,7 @@ namespace Backend.Controllers
                 var booking = await _bookingService.ApproveBooking(id, Approved);
                 if (booking == null)
                     return NotFound();
+
                 return Ok(booking);
             }
             catch (Exception ex)

@@ -62,6 +62,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
 // builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IKafkaProducerService,KafkaProducerService>();
 // builder.Services.AddScoped<IReportService, ReportService>();
 // builder.Services.AddScoped<TripPl>();
 builder.Services.AddEndpointsApiExplorer();
