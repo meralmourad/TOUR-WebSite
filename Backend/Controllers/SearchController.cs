@@ -97,7 +97,8 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-            agencyId = intUserIdClaim;
+            if(intUserIdClaim != agencyId)
+                IsApproved = true;
         }
 
         Console.WriteLine("\n\n\n\nisapproved: " + IsApproved+" agencyid "+ agencyId+"\n\n\n\n\n");

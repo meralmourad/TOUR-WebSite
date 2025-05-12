@@ -11,11 +11,9 @@ namespace Backend.Services;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IKafkaProducerService kafkaProducerService;
-    public BookingService(IUnitOfWork unitOfWork, IKafkaProducerService kafkaProducerService)
+    public BookingService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        this.kafkaProducerService = kafkaProducerService;
     }
 
     public async Task<bool> ApproveBooking(int id, int approved)

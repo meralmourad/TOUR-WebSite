@@ -67,8 +67,6 @@ builder.Services.AddScoped<UserNotification>();
 builder.Services.AddScoped<Notificationservices>();
 // builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
-builder.Services.AddScoped<KafkaProducerService>(); // Add this line to register KafkaProducerService
 // builder.Services.AddScoped<IReportService, ReportService>();
 // builder.Services.AddScoped<TripPl>();
 builder.Services.AddEndpointsApiExplorer();
