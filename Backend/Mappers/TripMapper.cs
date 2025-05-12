@@ -33,6 +33,9 @@ public class TripMapper
                 .Select(l => l.Name)
                 .ToList(),
             StartDate = trip.StartDate,
+            Status = trip.Status,
+            EndDate = trip.EndDate,
+            
             Description = trip.Description,
             Rating = trip.Rating,
             Images = allImages.Select(img => img.ImageUrl).ToList(),
