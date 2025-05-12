@@ -93,12 +93,12 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
             IsApproved = true;
         var isAdmin = User.IsInRole("Admin");
         // If the user is an agency, check if they requested their own trips
-        if (User.IsInRole("Agency"))
-        {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-            agencyId = intUserIdClaim;
-        }
+        // if (User.IsInRole("Agency"))
+        // {
+        //     var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        //     var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+        //     agencyId = intUserIdClaim;
+        // }
 
         Console.WriteLine("\n\n\n\nisapproved: " + IsApproved+" agencyid "+ agencyId+"\n\n\n\n\n");
         var result = _tripService.SearchTripsByQuery(
