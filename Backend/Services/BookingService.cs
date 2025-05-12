@@ -11,45 +11,54 @@ namespace Backend.Services;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IKafkaProducerService kafkaProducerService;
-    public BookingService(IUnitOfWork unitOfWork, IKafkaProducerService kafkaProducerService)
+    public BookingService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        this.kafkaProducerService = kafkaProducerService;
     }
 
-    public Task<bool> ApproveBooking(int id, int Approved)
+    public async Task<bool> ApproveBooking(int id, int approved)
     {
-        var booking = _unitOfWork.BookingRepository.GetByIdAsync(id).Result;
-        if (booking == null)
-            return Task.FromResult(false);
-        booking.IsApproved = Approved;
-        _unitOfWork.BookingRepository.Update(booking);
-        _unitOfWork.CompleteAsync();
-        
-        // send a message to the kafka topic
-        // Produce a message to Kafka topic
-        var message = new 
-        {
-            BookingId = booking.Id,
-            TripId = booking.TripId,
-            NumOfSeats = booking.SeatsNumber
-        };
-        var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
-        kafkaProducerService.ProduceAsync("booking-events", messageJson);
-
-
-        // subtract the number of seats from the trip
-        var trip = _unitOfWork.Trip.GetByIdAsync(booking.TripId).Result;
-        if (trip == null)
-            return Task.FromResult(false);
-        trip.AvailableSets -= booking.SeatsNumber;
-        _unitOfWork.Trip.Update(trip);
-        return Task.FromResult(true);
+        try {
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
+            if (booking == null) return false;
+            
+            if (booking.IsApproved == approved) return true;
+            
+            booking.IsApproved = approved;
+            _unitOfWork.BookingRepository.Update(booking);
+            
+            if (approved == 1) {
+                var trip = await _unitOfWork.Trip.GetByIdAsync(booking.TripId);
+                if (trip == null) return false;
+                
+                if (trip.AvailableSets < booking.SeatsNumber)
+                    throw new InvalidOperationException("Not enough available seats");
+                    
+                trip.AvailableSets -= booking.SeatsNumber;
+                _unitOfWork.Trip.Update(trip);
+            }
+            
+            await _unitOfWork.CompleteAsync();
+            
+            var message = new { BookingId = booking.Id, TripId = booking.TripId, NumOfSeats = booking.SeatsNumber };
+            var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
+            // await kafkaProducerService.ProduceAsync("booking-events", messageJson);
+            
+            return true;
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Error approving booking: {ex.Message}");
+            return false;
+        }
     }
 
     public async Task<BookingDTO> CreateBooking(CreateBookingDto bookingDTO)
     {
+        var agenceId = _unitOfWork.Trip.Query()
+            .Where(t => t.Id == bookingDTO.TripId)
+            .Select(t => t.VendorId)
+            .FirstOrDefault();
+        bookingDTO.agenceId = agenceId;
         var user = _unitOfWork.User.GetByIdAsync(bookingDTO.TouristId).Result
              ?? throw new Exception("User not found");
         var trip = _unitOfWork.Trip.GetByIdAsync(bookingDTO.TripId).Result 
@@ -178,7 +187,6 @@ public class BookingService : IBookingService
         if (booking == null)
             return false;
 
-        booking.IsApproved = bookingDTO.IsApproved ?? booking.IsApproved;
         booking.PhoneNumber = bookingDTO.PhoneNumber ?? booking.PhoneNumber;
         booking.Comment = bookingDTO.Comment ?? booking.Comment;
         booking.Rating = bookingDTO.Rating ?? booking.Rating;
@@ -188,12 +196,13 @@ public class BookingService : IBookingService
         return true;
     }
 
-    public async Task<List<BookingDTO>> SearchBookingsByQuery(
+    public async Task<(IEnumerable<BookingDTO> Trips, int TotalCount)> SearchBookingsByQuery(
         int start,
         int len,
         bool isApproved,
         bool isAdmin,
-        int? agencyId)
+        int? USERID,
+        int? tripId)
     {
         // Filter bookings based on the provided parameters
         var bookingsQuery = _unitOfWork.BookingRepository.Query();
@@ -201,16 +210,20 @@ public class BookingService : IBookingService
         // Apply filters
         int isApprovedInt = isApproved ? 1 : 0;
         bookingsQuery = bookingsQuery.Where(b => b.IsApproved == isApprovedInt);
-        if (agencyId.HasValue)
+        if (USERID.HasValue)
         {
-            bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == agencyId.Value);
+            bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == USERID.Value || b.TouristId == USERID.Value);
         }
-
+        if (tripId > 0)
+        {
+            bookingsQuery = bookingsQuery.Where(b => b.TripId == tripId);
+        }
+        var totalCount = await Task.Run(() => bookingsQuery.Count());
         // Materialize the query to avoid serialization issues
-        var bookings = bookingsQuery
+        var bookings = await Task.Run(() => bookingsQuery
             .Skip(start)
             .Take(len)
-            .ToList();
+            .ToList());
 
         // Map to DTOs
         var bookingDtos = bookings.Select(b => new BookingDTO
@@ -224,7 +237,6 @@ public class BookingService : IBookingService
             Comment = b.Comment,
             Rating = b.Rating
         }).ToList();
-
-        return bookingDtos;
+        return (bookingDtos, totalCount);
     }
 }

@@ -146,7 +146,7 @@ function RegisterForm() {
                                 <option value="Agency">Agency</option>
                             </select>
                         </div>
-                        <div className="button-group">
+                        <div className="buttonreg-group">
                             <button type="button" onClick={()=>navigate('/login')}>BACK</button>
                             <button type="submit">SIGN UP</button>
                         </div>

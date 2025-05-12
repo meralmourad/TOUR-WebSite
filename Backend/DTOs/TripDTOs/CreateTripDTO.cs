@@ -2,6 +2,7 @@ namespace Backend.DTOs.TripDTOs;
 
 public record class CreateTripDTO
 {
+    public int id { get; set; }
     public required int AgenceId { get; set; }  
     public required string Title { get; set; }
     public required int Price { get; set; }

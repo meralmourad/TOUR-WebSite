@@ -3,6 +3,7 @@ using Backend.DTOs.TripDTOs;
 using Backend.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Controllers{
 
@@ -11,35 +12,51 @@ namespace Backend.Controllers{
 public class TripController : ControllerBase
 {
     private readonly ITripService _tripService;
+    private readonly ILogger<TripController> _logger;
 
-    public TripController(ITripService tripService)
+    public TripController(ITripService tripService, ILogger<TripController> logger)
     {
         _tripService = tripService;
+        _logger = logger;
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,Agency")]
     public async Task<IActionResult> CreateTrip(
-        [FromForm] CreateTripDTO tripDto
-        ,[FromForm] List<IFormFile> images)
+        [FromForm] CreateTripDTO tripDto,
+        [FromForm] List<IFormFile> images)
     {
-    var imageUrls = new List<string>();
-    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-    if (!Directory.Exists(uploadsFolder))
-        Directory.CreateDirectory(uploadsFolder);
-
-    foreach (var image in images)
-    {
-        var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
-        var filePath = Path.Combine(uploadsFolder, fileName);
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        if (tripDto == null || images == null || !images.Any())
         {
-            await image.CopyToAsync(stream);
+            return BadRequest("Invalid input data. Trip details and images are required.");
         }
-        imageUrls.Add($"/images/{fileName}");
-    }
 
-    tripDto.Images = imageUrls.ToArray();
+        var imageUrls = new List<string>();
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+        int index = 0;
+        foreach (var image in images)
+        {
+            // Generate a unique name for each image based on the current date and time
+            var uniqueName = $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_{Guid.NewGuid()}{index}{Path.GetExtension(image.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, uniqueName);
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                imageUrls.Add($"/images/{uniqueName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while saving image: {FileName}", image.FileName);
+                return StatusCode(500, "An error occurred while uploading images.");
+            }
+        }
+
+        tripDto.Images = imageUrls.ToArray();
         try
         {
             var result = await _tripService.CreateTripAsync(tripDto);
@@ -47,7 +64,8 @@ public class TripController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            _logger.LogError(ex, "Error while creating trip.");
+            return StatusCode(500, "An error occurred while saving the trip. Please try again.");
         }
     }
 
@@ -64,19 +82,19 @@ public class TripController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
-    [HttpGet]
-    public async Task<IActionResult> GetAllTrips()
-    {
-        try
-        {
-            var trips = await _tripService.GetAllTripsAsync();
-            return Ok(trips);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
+    // [HttpGet]
+    // public async Task<IActionResult> GetAllTrips()
+    // {
+    //     try
+    //     {
+    //         var trips = await _tripService.GetAllTripsAsync();
+    //         return Ok(trips);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, ex.Message);
+    //     }
+    // }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTrip(int id, [FromBody] UpdateTripDTO tripDto)
@@ -93,7 +111,7 @@ public class TripController : ControllerBase
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
-                    return Forbid("You are not authorized to update this trip.");
+                    return StatusCode(403, "You are not authorized to update this trip.");
                 }
             }
             var result = await _tripService.UpdateTripAsync(id, tripDto);
@@ -120,7 +138,7 @@ public class TripController : ControllerBase
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
-                    return Forbid("You are not authorized to delete this trip.");
+                    return StatusCode(403, "You are not authorized to update this trip.");
                 }
             }
             var result = await _tripService.DeleteTripAsync(id);
@@ -132,25 +150,25 @@ public class TripController : ControllerBase
         }
     }
 
-    //get all trips by agency id
-    [HttpGet("agency/{id}")]
-    [Authorize(Roles = "Admin,Agency")]
-    public async Task<IActionResult> GetTripsByAgencyId(int id)
-    {
-        try
-        {
-            var trips = await _tripService.GetTripsByAgencyIdAsync(id);
-            return Ok(trips);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
+    // //get all trips by agency id
+    // [HttpGet("agency/{id}")]
+    // [Authorize(Roles = "Admin,Agency")]
+    // public async Task<IActionResult> GetTripsByAgencyId(int id)
+    // {
+    //     try
+    //     {
+    //         var trips = await _tripService.GetTripsByAgencyIdAsync(id);
+    //         return Ok(trips);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, ex.Message);
+    //     }
+    // }
     // admin can approve or reject trips
     [HttpPut("approve/{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> ApproveTrip(int id, [FromBody] bool isApproved)
+    public async Task<IActionResult> ApproveTrip(int id, [FromBody] int isApproved)
     {
         try
         {

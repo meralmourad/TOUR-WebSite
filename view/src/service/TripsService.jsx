@@ -2,16 +2,47 @@ import axios from 'axios';
 import { getUserById } from './UserService';
 
 const API_URL = process.env.REACT_APP_API_URL;
+const API_PHOTO = process.env.REACT_APP_API_PHOTO;
 const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
 export const addTrip = async (trip) => {
     try {
         const response = await axios.post(`${API_URL}/Trip`, trip, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
         }
         });
         return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const GetTripCategories = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/Category`, {   
+            headers: {  
+                'Authorization': `Bearer ${token}`
+            }
+            });
+            // console.log(response.data.$values);
+            
+            return response.data.$values;
+    } 
+    catch (error) {
+        throw error;
+    }
+};
+
+export const GetTripLocations = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/Place/all`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data.$values;
     } catch (error) {
         throw error;
     }
@@ -29,6 +60,9 @@ export const getTrips = async () => {
         for (let i = 0; i < trips.length; i++) {
             const agence = await getUserById(trips[i].agenceId);
             trips[i].agence = agence;
+            for(let j = 0; j < trips[i].images.$values.length; j++){
+                trips[i].images.$values[j] = `${API_PHOTO}${trips[i].images.$values[j]}`;
+            }
         }
 
         return trips;
@@ -46,6 +80,9 @@ export const getTripById = async (id) => {
         });
         const trip = response.data;
         const agence = await getUserById(trip.agenceId);
+        for(let j = 0; j < trip.images.$values.length; j++){
+            trip.images.$values[j] = `${API_PHOTO}${trip.images.$values[j]}`;
+        }
         trip.agence = agence;
         return trip;
     }
@@ -92,6 +129,9 @@ export const getTripsByAgenceId = async (id) => {
         const agence = await getUserById(id);
         for (let i = 0; i < trips.length; i++) {
             trips[i].agence = agence;
+            for(let j = 0; j < trips[i].images.$values.length; j++){
+                trips[i].images.$values[j] = `${API_PHOTO}${trips[i].images.$values[j]}`;
+            }
         }
 
         return trips;
@@ -135,6 +175,9 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
         for (let i = 0; i < trips.length; i++) {
             const agence = await getUserById(trips[i].agenceId);
             trips[i].agence = agence;
+            for(let j = 0; j < trips[i].images.$values.length; j++){
+                trips[i].images.$values[j] = `${API_PHOTO}${trips[i].images.$values[j]}`;
+            }
         }
         return { trips, totalCount };
     } catch (error) {

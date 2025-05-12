@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Data;
 using Backend.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -82,11 +83,24 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     {
         if (endDate == null || (startDate.HasValue && endDate < startDate))
             endDate = DateOnly.MaxValue;
-
-        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
+        //write user role
+        Console.WriteLine("User role: " + User.IsInRole("Tourist") + " " + User.IsInRole("Agency") + " " + User.IsInRole("Admin"));
+        //check if the user is authenticated
+        if (!User.Identity?.IsAuthenticated ?? true)
+            IsApproved = true;
+        //if the user is a tourist, set IsApproved to true
+        if (User.IsInRole("Tourist"))
             IsApproved = true;
         var isAdmin = User.IsInRole("Admin");
+        // If the user is an agency, check if they requested their own trips
+        if (User.IsInRole("Agency"))
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+            agencyId = intUserIdClaim;
+        }
 
+        Console.WriteLine("\n\n\n\nisapproved: " + IsApproved+" agencyid "+ agencyId+"\n\n\n\n\n");
         var result = _tripService.SearchTripsByQuery(
             q, start, len,
             destination, startDate, endDate,
@@ -106,26 +120,31 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     public IActionResult SearchBookings(
     [FromQuery] int start = 0,
     [FromQuery] int len = int.MaxValue,
-    [FromQuery] bool? IsApproved = null,
-    [FromQuery] int? agencyId = null)
+    [FromQuery] bool? IsApproved = true,
+    [FromQuery] int tripId = 0,
+    [FromQuery] int? USERID = null)
     {
         //if the user is not authenticated, set IsApproved to true
         if(!User.Identity?.IsAuthenticated ?? true)
             return Unauthorized();
 
-        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
-            IsApproved ??= true;
+        if (User.IsInRole("Tourist")){
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+            USERID = intUserIdClaim;
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID+ " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
+            }
 
         //if the user is an agency check if he requested his own bookings
         var isAdmin = User.IsInRole("Admin");
         if (User.IsInRole("Agency"))
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-            agencyId ??= intUserIdClaim;
+            USERID = intUserIdClaim;
         }
-        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? false, isAdmin, agencyId);
-        var totalCount = bookings.Result.Count;
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? true, isAdmin, USERID,tripId);
+        var totalCount = bookings.Result.TotalCount;
 
         return Ok(new { TotalCount = totalCount, Bookings = bookings.Result });
     }

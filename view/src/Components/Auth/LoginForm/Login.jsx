@@ -74,7 +74,7 @@ function LoginForm() {
               required
               />
               {error && <p className='error'>{error}</p>}
-            <div className='button-group'>
+            <div className='buttonlogin-group'>
               <button type="button" onClick={() => navigate('/signup')}>SIGN UP</button>
               <button type="submit">LOGIN</button>
             </div>

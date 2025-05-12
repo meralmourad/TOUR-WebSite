@@ -26,7 +26,7 @@ const Trip = () => {
     const fetchTripData = async () => {
       try {
         const trip = await getTripById(id);
-        console.log(trip);
+        // console.log(trip);
         setTripData(trip);
       } catch (error) {
         console.error("Error fetching trip data:", error);
@@ -50,7 +50,7 @@ const Trip = () => {
             </div>
             <div class="row">
               <span>Payment :</span><span>Cash Only!</span>
-              <span>Seats :</span><input id="swal-input-seats" class="swal2-input" type="number" value="1"/>
+              <span>Seats :</span><input id="swal-input-seats" min=1 class="swal2-input" type="number" value="1"/>
             </div>
           </div>
         `,
@@ -77,7 +77,7 @@ const Trip = () => {
         try {
           await addBooking({
             touristId: user.id,
-            tripId: tripData.agenceId,
+            tripId: tripData.id,
             seatsNumber: seats,
             phoneNumber: phone
           })
@@ -143,7 +143,11 @@ const Trip = () => {
               <p>{tripData.description}</p>
             </div>
           </div>
-
+                  {/* {console.log(tripData)} */}
+          {(user.role === 'Admin' || user.id === tripData.agenceId) && <button className="pending-bookings-button" onClick={() => navigate(`/BookingPending/${tripData.id}`)}>
+            pending bookings
+            <span className="arrow">→</span>
+          </button> }
           <button className="book-now-button" onClick={handleBooking}>
             BOOK NOW!
             <span className="arrow">→</span>

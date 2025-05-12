@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { getTripById } from './TripsService';
+import { getUserById } from './UserService';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const { token } = JSON.parse(localStorage.getItem("Token"));
+const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
 export const getBookings = async () => {
     try {
@@ -11,6 +13,10 @@ export const getBookings = async () => {
             }
         });
         const bookings = response.data.$values;
+        for(let i = 0; i < bookings.length; i++) {
+            bookings[i].trip = await getTripById(bookings[i].tripId);
+            bookings[i].tourist = await getUserById(bookings[i].touristId);
+        }
         return bookings;
     } catch (error) {
         throw error;
@@ -74,15 +80,19 @@ export const updateBooking = async (id, booking) => {
     }
 };
 
-export const getBookingByTripId = async (tripId) => {
+export const getBookingsByTripId = async (tripId) => {
     try {
         const response = await axios.get(`${API_URL}/Booking/trip/${tripId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        const booking = response.data;
-        return booking;
+        const bookings = response.data.$values;
+        for(let i = 0; i < bookings.length; i++) {
+            bookings[i].trip = await getTripById(bookings[i].tripId);
+            bookings[i].tourist = await getUserById(bookings[i].touristId);
+        }
+        return bookings;
     }
     catch (error) {
         throw error;
@@ -96,10 +106,13 @@ export const approveBooking = async (id, state = 1) => {
         state: 1 = approved
     */
     try {
-        const response = await axios.put(`${API_URL}/Booking/approve/${id}`, state, {
+        const response = await fetch(`${API_URL}/Booking/approve/${id}`, {
+            method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(state),
         });
         return response.data;
     }
