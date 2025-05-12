@@ -13,12 +13,10 @@ namespace Backend.Services;
 public class Notificationservices
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly KafkaProducerService _kafkaProducerService;
 
-    public Notificationservices(IUnitOfWork unitOfWork, KafkaProducerService kafkaProducerService)
+    public Notificationservices(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _kafkaProducerService = kafkaProducerService;
     }
 
     public async Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync()
@@ -136,8 +134,6 @@ public class Notificationservices
             Content = notification.Content,
             TripId = tripId
         });
-        await _kafkaProducerService.ProduceAsync("notifications-topic", kafkaMessage);
-        Console.WriteLine("[DEBUG] Kafka message sent for notification.");
 
         // Create user notifications for each tourist in the trip
         foreach (var booking in bookings)
@@ -192,7 +188,6 @@ public class Notificationservices
             Content = notification.Content,
             ReceiverIds = receiverIds
         });
-        await _kafkaProducerService.ProduceAsync("notifications-topic", kafkaMessage);
         Console.WriteLine("[DEBUG] Kafka message sent for notification.");
 
         await _unitOfWork.CompleteAsync();
