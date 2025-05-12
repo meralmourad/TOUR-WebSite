@@ -35,18 +35,19 @@ public class TripController : ControllerBase
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
         if (!Directory.Exists(uploadsFolder))
             Directory.CreateDirectory(uploadsFolder);
-
+        int index = 0;
         foreach (var image in images)
         {
-            var fileName =  Path.GetExtension(image.FileName);
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            // Generate a unique name for each image based on the current date and time
+            var uniqueName = $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_{Guid.NewGuid()}{index}{Path.GetExtension(image.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, uniqueName);
             try
             {
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
                 }
-                imageUrls.Add($"/images/{fileName}");
+                imageUrls.Add($"/images/{uniqueName}");
             }
             catch (Exception ex)
             {
