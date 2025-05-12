@@ -22,6 +22,7 @@ const TravelCards = () => {
   const [endDate, setEndDate] = useState(null);
   const [price, setPrice] = useState(null);
   const { user, loading, isLoggedIn } = useSelector((store) => store.info);
+  const [isApproved, setIsApproved] = useState(true);
   
   const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
   
@@ -132,6 +133,8 @@ const TravelCards = () => {
             setStartDate={setStartDate}
             setEndDate={setEndDate}
             setPrice={setPrice}
+            setIsApproved={setIsApproved}
+            isApproved={isApproved}
           />
         }
         <div className="cards-grid">

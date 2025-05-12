@@ -165,7 +165,7 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
     agencyId = agencyId ?? 0;
     // console.log("agencyId", agencyId);
     try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating${sortBy}`, {
+        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating=${sortBy}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
