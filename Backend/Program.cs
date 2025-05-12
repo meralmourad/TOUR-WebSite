@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Backend.Models;
+using Backend.WebSockets; // Ensure this namespace is included
 
 var builder = WebApplication.CreateBuilder(args);
 //jwt services
@@ -72,9 +73,14 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<Backend.WebSockets.WebSocketManager>(); // Explicitly register the correct WebSocketManager
+
 builder.Logging.AddConsole();
 
 var app = builder.Build();
+
+// Enable WebSocket support
+app.UseWebSockets();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
