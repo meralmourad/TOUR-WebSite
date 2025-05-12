@@ -41,7 +41,7 @@ const TravelCards = () => {
           convertTime(startDate) /* startDate */,
           convertTime(endDate) /* endDate */,
           price /* price */,
-          true /* isApproved */,
+          isApproved /* isApproved */,
           searchTerm,
           id,
         );
@@ -65,7 +65,7 @@ const TravelCards = () => {
     fetchTrips();
 //     setTripsData([{id: 1, city: "Paris", description: "Beautiful city", rating: 4}
 // , {id: 2, city: "London", description: "Historic city", rating: 5}]);
-  }, [start, currentPage, searchTerm, startDate, endDate, price, id , user]);
+  }, [start, currentPage, searchTerm, startDate, endDate, price, id , user, isApproved]);
 
   const currentTrips = tripsData;
 
@@ -123,9 +123,10 @@ const TravelCards = () => {
             ></img>
           </span>
         </div>
-        
+
         {Showfilter &&   
           <Filter
+            id={id}
             setShowFilter={setShowFilter}
             startDate={startDate}
             endDate={endDate}
@@ -140,6 +141,7 @@ const TravelCards = () => {
         <div className="cards-grid">
           {currentTrips.map((trip) => (
             <div className="trip-card" key={trip.id}>
+              {/* {console.log(trip)} */}
               <img src={trip.images.$values[0]? trip.images.$values[0]: 'https://media-public.canva.com/MADQtrAClGY/2/screen.jpg'} alt="" onClick={() => navigate(`/Trip/${trip.id}`)} />
               <div
                 className="trip-info"
@@ -178,7 +180,7 @@ const TravelCards = () => {
             </button>
           ))}
           <button
-            disabled={currentPage === 4}
+            disabled={currentPage === numberOfPages}
             onClick={() => {
               setCurrentPage(currentPage + 1);
               setStart(start + itemsPerPage);

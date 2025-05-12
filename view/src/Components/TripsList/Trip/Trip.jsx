@@ -143,8 +143,8 @@ const Trip = () => {
               <p>{tripData.description}</p>
             </div>
           </div>
-                  {/* {console.log(tripData)} */}
-          {(user.role === 'Admin' || user.id === tripData.agenceId) && <button className="pending-bookings-button" onClick={() => navigate(`/BookingPending/${tripData.id}`)}>
+          {/* {console.log(tripData)} */}
+          {tripData.status === 1 && (user.role === 'Admin' || user.id === tripData.agenceId) && <button className="pending-bookings-button" onClick={() => navigate(`/BookingPending/${tripData.id}`)}>
             pending bookings
             <span className="arrow">→</span>
           </button> }

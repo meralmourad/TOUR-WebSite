@@ -1,45 +1,40 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import "./UserProfile.scss";
 import { FaArrowRight, FaUser } from "react-icons/fa";
 import { updateUser } from "../../../service/UserService";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../Store/Slices/UserSlice";
+import { useNavigate } from "react-router-dom";
+import { searchBookings } from "../../../service/BookingService";
 
 const UserProfile = ({ userprofile, myProfile }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [user, setUser1] = useState(userprofile);
   const [start, setStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [bookings, setBookings] = useState([]);
   const itemsPerPage = 3;
 
   const changehandle = (e) => {
     setUser1({ ...user, [e.target.name]: e.target.value });
   };
 
-  // useEffect(() => {
-  //   const fetchUserTrips = async () => {
-  //     try {
-  //       const response = await axios.get(`${API_URL}/User/${userprofile.id}/start?=${start}len=${itemsPerPage}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       if(response.data.$values.length === 0) {
-  //         setCurrentPage(1);
-  //         setStart(0);
-  //         swal("Sorry!", "No trips found", "error");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user profile:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetching = async () => {
+      try {
+        const { bookings, totalCount } = await searchBookings(start, itemsPerPage, null, userprofile.id);
+        setBookings(bookings);
+        // console.log(bookingsData);
+      }
+      catch (error) {
+        console.error("Error Fetching Data: ", error);
+      }
+    };
 
-  //   fetchUserTrips();
-  // }, start , currentPage);
-  
-  
-  // api for fetching how many pages found ??
+    fetching();
+  }, [user, userprofile, start]);
 
   const updateUserForm = async () => {
       const { token } = JSON.parse(localStorage.getItem("Token"));
@@ -59,35 +54,23 @@ const UserProfile = ({ userprofile, myProfile }) => {
       <div className="left-section">
         <div className="last-trips">Last Trips</div>
 
-        <div className="trip green">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
-
-        <div className="trip red">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
-
-        <div className="trip blue">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
+        {
+          bookings.map((booking) => 
+            <div className={`trip ${booking.IsApproved === -1? "red": 
+                                    booking.IsApproved === 0? "yellow":
+                                    booking.endTime < new Date()? "blue":
+                                    "green"}`}
+                  key={booking.id}>
+              <div className="trip-text">
+                {booking.location} trip<br />
+                <span>{booking.trip.title}</span>
+              </div>
+              <div className="arrow-wrapper" onClick={() => navigate(`/Trip/${booking.TripId}`)}>
+                <FaArrowRight className="arrow-icon" />
+              </div>
+            </div>
+          )
+        }
 
         <div className="pagination">
           <button

@@ -11,7 +11,7 @@ const Chat = () => {
       const newMessages = [
         ...messages,
         { text: input, sender: 'user' },
-        { text: 'تم استلام رسالتك ✅', sender: 'bot' },
+        { text: 'hello, how can i help you ✅', sender: 'bot' },
       ];
       setMessages(newMessages);
       setInput('');
