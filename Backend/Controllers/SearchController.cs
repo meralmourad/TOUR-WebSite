@@ -147,6 +147,6 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? true, isAdmin, USERID,tripId);
         var totalCount = bookings.Result.TotalCount;
 
-        return Ok(new { TotalCount = totalCount, Bookings = bookings.Result });
+        return Ok(new { TotalCount = totalCount, Bookings = bookings.Result.Trips });
     }
 }

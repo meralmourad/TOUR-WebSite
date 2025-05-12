@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Net.WebSockets;
+using System.Text;
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
-using Backend.Services; // Ensure this namespace is included
+using Backend.Services;
+using Backend.WebSockets; // Ensure this namespace is included
 
 namespace Backend.Services;
 
 public class Notificationservices
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly WebSockets.WebSocketManager _webSocketManager; // Use the correct WebSocketManager
 
-    public Notificationservices(IUnitOfWork unitOfWork)
+    public Notificationservices(IUnitOfWork unitOfWork, WebSockets.WebSocketManager webSocketManager)
     {
         _unitOfWork = unitOfWork;
+        _webSocketManager = webSocketManager; // Initialize the correct WebSocketManager
     }
 
     public async Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync()
@@ -126,15 +131,6 @@ public class Notificationservices
         await _unitOfWork.Notification.AddAsync(notification);
         Console.WriteLine($"[DEBUG] Notification created with ID: {notification.Id}");
 
-        // Send Kafka message for the notification
-        var kafkaMessage = System.Text.Json.JsonSerializer.Serialize(new
-        {
-            NotificationId = notification.Id,
-            SenderId = notification.SenderId,
-            Content = notification.Content,
-            TripId = tripId
-        });
-
         // Create user notifications for each tourist in the trip
         foreach (var booking in bookings)
         {
@@ -151,6 +147,15 @@ public class Notificationservices
                 Notification = notification,
             };
             await _unitOfWork.userNotification.AddAsync(userNotification);
+            //send notification via WebSocket
+            var message = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                NotificationId = notification.Id,
+                SenderId = notification.SenderId,
+                Content = notification.Content,
+                ReceiverId = booking.TouristId
+            });
+            await _webSocketManager.SendMessageToUserAsync(booking.TouristId, message);
             Console.WriteLine($"[DEBUG] UserNotification created for TouristId: {booking.TouristId}");
         }
 
@@ -165,7 +170,6 @@ public class Notificationservices
         {
             SenderId = notificationDto.SenderId,
             Content = notificationDto.Context,
-
         };
 
         await _unitOfWork.Notification.AddAsync(notification);
@@ -178,17 +182,18 @@ public class Notificationservices
                 Notification = notification,
             };
             await _unitOfWork.userNotification.AddAsync(userNotification);
+
+            // Broadcast notification via WebSocket
+            var message = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                NotificationId = notification.Id,
+                SenderId = notification.SenderId,
+                Content = notification.Content,
+                ReceiverId = receiverId
+            });
+            await _webSocketManager.SendMessageToUserAsync(receiverId, message);
         }
 
-        // Send Kafka message for the notification
-        var kafkaMessage = System.Text.Json.JsonSerializer.Serialize(new
-        {
-            NotificationId = notification.Id,
-            SenderId = notification.SenderId,
-            Content = notification.Content,
-            ReceiverIds = receiverIds
-        });
-        Console.WriteLine("[DEBUG] Kafka message sent for notification.");
 
         await _unitOfWork.CompleteAsync();
         return true;

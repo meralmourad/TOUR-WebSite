@@ -218,12 +218,18 @@ public class BookingService : IBookingService
         {
             bookingsQuery = bookingsQuery.Where(b => b.TripId == tripId);
         }
-        var totalCount = await Task.Run(() => bookingsQuery.Count());
-        // Materialize the query to avoid serialization issues
+        var totalCount = await bookingsQuery.CountAsync();
+
         var bookings = await Task.Run(() => bookingsQuery
             .Skip(start)
             .Take(len)
             .ToList());
+
+        // Ensure bookings are not null or empty
+        if (bookings == null || !bookings.Any())
+        {
+            return (Enumerable.Empty<BookingDTO>(), totalCount);
+        }
 
         // Map to DTOs
         var bookingDtos = bookings.Select(b => new BookingDTO
@@ -237,6 +243,7 @@ public class BookingService : IBookingService
             Comment = b.Comment,
             Rating = b.Rating
         }).ToList();
+
         return (bookingDtos, totalCount);
     }
 }
