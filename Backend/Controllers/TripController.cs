@@ -82,19 +82,19 @@ public class TripController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
-    [HttpGet]
-    public async Task<IActionResult> GetAllTrips()
-    {
-        try
-        {
-            var trips = await _tripService.GetAllTripsAsync();
-            return Ok(trips);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
+    // [HttpGet]
+    // public async Task<IActionResult> GetAllTrips()
+    // {
+    //     try
+    //     {
+    //         var trips = await _tripService.GetAllTripsAsync();
+    //         return Ok(trips);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, ex.Message);
+    //     }
+    // }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTrip(int id, [FromBody] UpdateTripDTO tripDto)
@@ -111,7 +111,7 @@ public class TripController : ControllerBase
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
-                    return Forbid("You are not authorized to update this trip.");
+                    return StatusCode(403, "You are not authorized to update this trip.");
                 }
             }
             var result = await _tripService.UpdateTripAsync(id, tripDto);
@@ -138,7 +138,7 @@ public class TripController : ControllerBase
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
-                    return Forbid("You are not authorized to delete this trip.");
+                    return StatusCode(403, "You are not authorized to update this trip.");
                 }
             }
             var result = await _tripService.DeleteTripAsync(id);
@@ -150,21 +150,21 @@ public class TripController : ControllerBase
         }
     }
 
-    //get all trips by agency id
-    [HttpGet("agency/{id}")]
-    [Authorize(Roles = "Admin,Agency")]
-    public async Task<IActionResult> GetTripsByAgencyId(int id)
-    {
-        try
-        {
-            var trips = await _tripService.GetTripsByAgencyIdAsync(id);
-            return Ok(trips);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
+    // //get all trips by agency id
+    // [HttpGet("agency/{id}")]
+    // [Authorize(Roles = "Admin,Agency")]
+    // public async Task<IActionResult> GetTripsByAgencyId(int id)
+    // {
+    //     try
+    //     {
+    //         var trips = await _tripService.GetTripsByAgencyIdAsync(id);
+    //         return Ok(trips);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, ex.Message);
+    //     }
+    // }
     // admin can approve or reject trips
     [HttpPut("approve/{id}")]
     [Authorize(Roles = "Admin")]

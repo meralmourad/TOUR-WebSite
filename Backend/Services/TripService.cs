@@ -177,20 +177,15 @@ public class TripService : ITripService
         // 1. Build the base query and filter as much as possible in the DB
         var tripsQuery = _unitOfWork.Trip.Query();
 
-        if (!isApproved)
-        {
+        int Approved = isApproved ? 1 : 0;
             if (isAdmin)
-                tripsQuery = tripsQuery.Where(t => t.Status == 0);
-            else{
-                // If the user is not an egency skip the trips that are not approved
+                tripsQuery = tripsQuery.Where(t => t.Status == Approved);
+            else
                 if(agencyId!=0)
-                    tripsQuery = tripsQuery.Where(t => t.Status == 0 && t.VendorId == agencyId);
-            }
-        }
-        else
-        {
-            tripsQuery = tripsQuery.Where(t => t.Status == 1);
-        }
+                    tripsQuery = tripsQuery.Where(t => t.Status == Approved && t.VendorId == agencyId);
+                else 
+                    tripsQuery = tripsQuery.Where(t => t.Status == Approved);
+            
         if(agencyId != 0)
         {
             tripsQuery = tripsQuery.Where(t => t.VendorId == agencyId);
@@ -216,8 +211,7 @@ public class TripService : ITripService
             if (endDate.HasValue)
                 tripsList = tripsList.Where(t => t.StartDate <= endDate.Value).ToList();
 
-            // Get the total count of trips after filtering
-            int totalCount = tripsList.Count;
+
 
             // Proceed with the rest of the logic
             var tripIds = tripsList.Select(t => t.Id).ToList();
@@ -240,7 +234,9 @@ public class TripService : ITripService
             var allTripCategories = _unitOfWork.tripCategory.Query().Where(tc => tripIds.Contains(tc.tripId)).ToList();
             var allCategories = _unitOfWork.category.Query().ToList();
             var allLocations = _unitOfWork.Place.Query().ToList();
-
+            // Get the total count of trips after filtering
+            int totalCount = tripsList.Count;
+            
             var pagedTrips = tripsList
                 .OrderByDescending(t => t.Rating)
                 .Skip(start)
@@ -256,6 +252,7 @@ public class TripService : ITripService
                         .Select(l => l.Name )
                         .ToList()
                     ,
+                    Status = t.Status,
                     StartDate = t.StartDate,
                     Description = t.Description,
                     Rating = t.Rating,

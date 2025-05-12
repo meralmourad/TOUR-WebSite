@@ -204,7 +204,8 @@ public class BookingService : IBookingService
         int len,
         bool isApproved,
         bool isAdmin,
-        int? agencyId)
+        int? USERID,
+        int? tripId)
     {
         // Filter bookings based on the provided parameters
         var bookingsQuery = _unitOfWork.BookingRepository.Query();
@@ -212,11 +213,14 @@ public class BookingService : IBookingService
         // Apply filters
         int isApprovedInt = isApproved ? 1 : 0;
         bookingsQuery = bookingsQuery.Where(b => b.IsApproved == isApprovedInt);
-        if (agencyId.HasValue)
+        if (USERID.HasValue)
         {
-            bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == agencyId.Value);
+            bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == USERID.Value || b.TouristId == USERID.Value);
         }
-
+        if (tripId > 0)
+        {
+            bookingsQuery = bookingsQuery.Where(b => b.TripId == tripId);
+        }
         // Materialize the query to avoid serialization issues
         var bookings = bookingsQuery
             .Skip(start)
