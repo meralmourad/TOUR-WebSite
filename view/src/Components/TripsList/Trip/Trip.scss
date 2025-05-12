@@ -185,66 +185,109 @@
   font-family: 'Poppins', serif;
   background-color: #fff;
   border-radius: 30px;
-  padding: 30px 40px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  padding: 35px 45px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  max-width: 650px;
   margin: auto;
   text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  }
 
   .row {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    margin: 15px 0;
+    margin: 20px 0;
     font-size: 18px;
+    font-weight: 400;
+    color: #333;
 
     span {
       width: 45%;
-      margin: 5px 0;
+      margin: 10px 0;
+      text-align: left;
+      font-size: 16px;
+      color: #555;
+    }
+
+    input {
+      padding: 12px 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      width: 100%;
+      margin-top: 5px;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+      }
     }
   }
 
   .button-row {
     display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
+    justify-content: space-between;
+    margin-top: 40px;
 
     .discard-button,
     .confirm-button {
       font-size: 18px;
       padding: 12px 28px;
-      border-radius: 20px;
+      border-radius: 25px;
       font-weight: bold;
       cursor: pointer;
       border: none;
       transition: 0.3s ease;
+      letter-spacing: 1px;
     }
 
     .discard-button {
-      background-color: #f87171;
+      background-color: #ff4d4d;
       color: white;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
       &:hover {
-        background-color: #ef4444;
+        background-color: #ff2a2a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(1px);
       }
     }
 
     .confirm-button {
-      background-color: #a7f3d0;
-      color: #1f2937;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      background-color: #4caf50;
+      color: white;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
       &:hover {
-        background-color: #6ee7b7;
+        background-color: #45d47e;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(1px);
       }
     }
   }
+
   .swal-content {
     font-family: 'Poppins', sans-serif;
     font-size: 18px;
     color: #333;
     text-align: center;
+    margin-bottom: 20px;
   }
 }
 
