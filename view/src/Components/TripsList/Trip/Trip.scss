@@ -150,6 +150,35 @@
       transform: scale(1.05);
     }
   }
+    .pending-bookings-button {
+    background: linear-gradient(to right, #63b5e4, #5a92c2);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 14px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 30px auto;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+
+    .arrow {
+      margin-left: 12px;
+      font-size: 22px;
+    }
+
+    &:hover {
+      background: linear-gradient(to right, #5072c8, #4442a7);
+      transform: scale(1.05);
+    }
+  }
 }
 
 .custom-form {

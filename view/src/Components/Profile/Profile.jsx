@@ -16,7 +16,7 @@ function Profile() {
             try {
                 const profile = await getUserById(id);
                 setUserProfile(profile);
-                console.log("Fetched profile:", profile);
+                // console.log("Fetched profile:", profile);
                 
             } catch (error) {
                 setError(error.response.data);

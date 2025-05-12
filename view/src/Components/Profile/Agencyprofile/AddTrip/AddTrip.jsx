@@ -1,20 +1,22 @@
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
 import "./AddTrip.scss";
-import { addTrip , GetTripCategories  } from "../../../../service/TripsService";
+import { addTrip , GetTripCategories, GetTripLocations  } from "../../../../service/TripsService";
 import Select from "react-select";
-import { useFetcher } from "react-router-dom";
 
 const AddTrip = ({ setShowAddTrip }) => {
   const { user } = useSelector((store) => store.info);
   const [confirm , setConfirm] = useState(false);
 
-    const [categoryOptions, setCategoryOptions] = useState({
+    const [categoryOptions, setCategoryOptions] = useState([{
         value: "",
         label: "",
-    });
-
+    }]);
+    const [locationsOptions, setLocationsOptions] = useState([{
+        value: "",
+        label: "",
+    }]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -25,37 +27,47 @@ const AddTrip = ({ setShowAddTrip }) => {
     endDate: "",
     photos: [],
     category: [],
-    Locations: [],
+    Locations: []
   });
-
-
 
     useEffect(() => {   
         const fetchCategories = async () => {
             try {
-                const  categories  = await GetTripCategories();
+                const categories = await GetTripCategories();
 
                 const options = categories.map((category) => ({
                     value: category.id,
                     label: category.name,
                 }));
-
-                // console.log("options" , options);
-                
                 setCategoryOptions(options);
-
+            }
+             catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        const fetchLocations = async () => {
+            try {
+                const locations = await GetTripLocations();
+                const options = locations.map((location) => ({
+                    value: location.id,
+                    label: location.name,
+                }));
+                
+                setLocationsOptions(options);
             }
              catch (error) {
                 console.error("Error fetching categories:", error);
             }
         };
         fetchCategories();
+        fetchLocations();
     }, [user]);
 
     useEffect(() => {
-    if(confirm){ 
+        if(confirm) {
+            setConfirm(false);
             const hasEmptyFields = Object.values(formData).some(
-            (value) => value === "" || value.length === 0);
+                (value) => value === "" || value.length === 0);
 
             if (hasEmptyFields) {
                   swal({
@@ -69,30 +81,37 @@ const AddTrip = ({ setShowAddTrip }) => {
 
             try{
                 const Handelsubmit = async ()=> {
+                    console.log("formData", formData);
+                    const dataToSend = new FormData();
                     
-                    const submit = await addTrip({
-                    AgenceId : user.id,
-                    Title : formData.title,
-                    Price : formData.price,
-                    StartDate  : formData.startDate,
-                    EndDate  : formData.endDate,
-                    Description : formData.description,
-                    AvailableSets : formData.sets,
-                    LocationIds : formData.Locations,
-                    CategoryIds : formData.category,
-                    Photos : formData.photos,
+                    dataToSend.append("AgenceId", user.id);
+                    dataToSend.append("Title", formData.title);
+                    dataToSend.append("Price", +formData.price);
+                    dataToSend.append("StartDate", formData.startDate);
+                    dataToSend.append("EndDate", formData.endDate);
+                    dataToSend.append("Description", formData.description);
+                    dataToSend.append("AvailableSets", +formData.sets);
+                    for(let i = 0; i < formData.Locations.length; i++) {
+                        dataToSend.append("LocationIds", formData.Locations[i]);
+                    }
+                    for(let i = 0; i < formData.category.length; i++) {
+                        dataToSend.append("CategoryIds", formData.category[i]);
+                    }
+                    for(let i = 0; i < formData.photos.length; i++) {
+                        dataToSend.append("images", formData.photos[i], formData.photos[i].name);
+                    }
+                    
+                    const submit = await addTrip(dataToSend);
+                }
+
+                Handelsubmit();
+                swal({
+                    title: "Done!",
+                    text: "Trip added successfully.",
+                    icon: "success",
+                    button: "Ok",
                 });
-            }
-
-            Handelsubmit();
-            swal({
-                title: "Done!",
-                text: "Trip added successfully.",
-                icon: "success",
-                button: "Ok",
-            });
-            setShowAddTrip(false);
-
+                setShowAddTrip(false);
             }
             catch (error) { 
                 console.error("Error adding trip:", error);
@@ -103,10 +122,8 @@ const AddTrip = ({ setShowAddTrip }) => {
                     button: "Ok",
                 });
             }
-
-
-    }
-        }, [confirm, user]);
+        }
+    }, [confirm, user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -117,42 +134,49 @@ const AddTrip = ({ setShowAddTrip }) => {
     };
         
     const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        setFormData((prev) => ({
-        ...prev,
-        photos: [...prev.photos, file],
-        }));
-        e.target.value = ""; // clear after upload
-    }
+        const file = e.target.files[0];
+        if (file) {
+            setFormData((prev) => ({
+                ...prev,
+                photos: [...prev.photos, file],
+            }));
+            e.target.value = ""; // clear after upload
+        }
     };
         
-        const handleCategoryChange = (selectedOptions) => {
+    const handleCategoryChange = (selectedOptions) => {
         const selectedValues = selectedOptions.map((option) => option.value);
         setFormData((prev) => ({
             ...prev,
             category: selectedValues,
         }));
     };
+    const handleLocationsChange = (selectedOptions) => {
+        const selectedValues = selectedOptions.map((option) => option.value);
+        setFormData((prev) => ({
+            ...prev,
+            Locations: selectedValues,
+        }));
+    };
 
     const handleDiscard = () => {
         setFormData({
-        title: "",
-        price: "",
-        sets: "",
-        description: "",
-        startDate: "",
-        duration: "",
-        photos: [],
-        category: [],
-        Locations: [],
+            title: "",
+            price: "",
+            sets: "",
+            description: "",
+            startDate: "",
+            duration: "",
+            photos: [],
+            category: [],
+            Locations: [],
         });
 
         swal({
-        title: "Discarded",
-        text: "Trip Discarded Successfully.",
-        icon: "error",
-        button: "Ok",
+            title: "Discarded",
+            text: "Trip Discarded Successfully.",
+            icon: "error",
+            button: "Ok",
         });
 
     setShowAddTrip(false);
@@ -309,11 +333,16 @@ return (
             </div>
             <div className="form-group">
                 <label>Destinations:</label>
-                <input
-                    type="text"
-                    name="Locations"
-                    value={formData.Locations}
-                    onChange={handleInputChange}
+                <Select
+                    isMulti
+                    options={locationsOptions}
+                    onChange={handleLocationsChange}
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    menuPortalTarget={document.body}
+                    styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
                 />
             </div>
 

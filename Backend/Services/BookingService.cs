@@ -18,37 +18,40 @@ public class BookingService : IBookingService
         this.kafkaProducerService = kafkaProducerService;
     }
 
-    public Task<bool> ApproveBooking(int id, int Approved)
+    public async Task<bool> ApproveBooking(int id, int approved)
     {
-        var booking = _unitOfWork.BookingRepository.GetByIdAsync(id).Result;
-        if (booking == null)
-            return Task.FromResult(false);
-        // check if the booking is already approved
-        if (booking.IsApproved == Approved)
-            return Task.FromResult(true);
-        booking.IsApproved = Approved;
-        _unitOfWork.BookingRepository.Update(booking);
-        _unitOfWork.CompleteAsync();
-        
-        // send a message to the kafka topic
-        // Produce a message to Kafka topic
-        var message = new 
-        {
-            BookingId = booking.Id,
-            TripId = booking.TripId,
-            NumOfSeats = booking.SeatsNumber
-        };
-        var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
-        kafkaProducerService.ProduceAsync("booking-events", messageJson);
-
-
-        // subtract the number of seats from the trip
-        var trip = _unitOfWork.Trip.GetByIdAsync(booking.TripId).Result;
-        if (trip == null)
-            return Task.FromResult(false);
-        trip.AvailableSets -= booking.SeatsNumber;
-        _unitOfWork.Trip.Update(trip);
-        return Task.FromResult(true);
+        try {
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
+            if (booking == null) return false;
+            
+            if (booking.IsApproved == approved) return true;
+            
+            booking.IsApproved = approved;
+            _unitOfWork.BookingRepository.Update(booking);
+            
+            if (approved == 1) {
+                var trip = await _unitOfWork.Trip.GetByIdAsync(booking.TripId);
+                if (trip == null) return false;
+                
+                if (trip.AvailableSets < booking.SeatsNumber)
+                    throw new InvalidOperationException("Not enough available seats");
+                    
+                trip.AvailableSets -= booking.SeatsNumber;
+                _unitOfWork.Trip.Update(trip);
+            }
+            
+            await _unitOfWork.CompleteAsync();
+            
+            var message = new { BookingId = booking.Id, TripId = booking.TripId, NumOfSeats = booking.SeatsNumber };
+            var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
+            // await kafkaProducerService.ProduceAsync("booking-events", messageJson);
+            
+            return true;
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Error approving booking: {ex.Message}");
+            return false;
+        }
     }
 
     public async Task<BookingDTO> CreateBooking(CreateBookingDto bookingDTO)

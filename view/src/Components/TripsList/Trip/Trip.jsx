@@ -26,7 +26,7 @@ const Trip = () => {
     const fetchTripData = async () => {
       try {
         const trip = await getTripById(id);
-        console.log(trip);
+        // console.log(trip);
         setTripData(trip);
       } catch (error) {
         console.error("Error fetching trip data:", error);
@@ -143,7 +143,11 @@ const Trip = () => {
               <p>{tripData.description}</p>
             </div>
           </div>
-
+                  {/* {console.log(tripData)} */}
+          {(user.role === 'Admin' || user.id === tripData.agenceId) && <button className="pending-bookings-button" onClick={() => navigate(`/BookingPending/${tripData.id}`)}>
+            pending bookings
+            <span className="arrow">→</span>
+          </button> }
           <button className="book-now-button" onClick={handleBooking}>
             BOOK NOW!
             <span className="arrow">→</span>

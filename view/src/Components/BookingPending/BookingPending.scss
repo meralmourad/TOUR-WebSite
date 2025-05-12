@@ -10,6 +10,9 @@
       transform: translateY(0);
     }
   }
+  .booking-small {
+    font-size: 1rem;
+  }
   
   .booking-pending-container {
     background-color: #e8e5dd;
@@ -48,18 +51,22 @@
         cursor: pointer;
       }
     }
-  
     .booking-list {
       background: white;
       padding: 2rem;
       border-radius: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 1.5rem;
-      justify-items: center;
+      justify-content: center;
       transition: all 0.3s ease;
+
+      .booking-item {
+        flex: 1 1 calc(33.333% - 1.5rem); // Adjusts to fit 3 items per row
+        max-width: 300px; // Optional: Limit the maximum width of each item
+        min-width: 250px; // Optional: Set a minimum width for better responsiveness
+      }
     }
-  
     .booking-item {
       display: flex;
       align-items: center;
