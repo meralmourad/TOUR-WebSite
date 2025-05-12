@@ -21,7 +21,7 @@ public class TripController : ControllerBase
     }
 
     [HttpPost]
-    // [Authorize(Roles = "Admin,Agency")]
+    [Authorize(Roles = "Admin,Agency")]
     public async Task<IActionResult> CreateTrip(
         [FromForm] CreateTripDTO tripDto,
         [FromForm] List<IFormFile> images)
