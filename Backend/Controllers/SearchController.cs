@@ -120,7 +120,7 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     public IActionResult SearchBookings(
     [FromQuery] int start = 0,
     [FromQuery] int len = int.MaxValue,
-    [FromQuery] bool? IsApproved = null,
+    [FromQuery] bool? IsApproved = true,
     [FromQuery] int tripId = 0,
     [FromQuery] int? USERID = null)
     {
@@ -128,19 +128,23 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         if(!User.Identity?.IsAuthenticated ?? true)
             return Unauthorized();
 
-        if (!User.Identity?.IsAuthenticated ?? true || User.IsInRole("Tourist"))
-            IsApproved ??= true;
+        if (User.IsInRole("Tourist")){
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+            USERID = intUserIdClaim;
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID+ " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
+            }
 
         //if the user is an agency check if he requested his own bookings
         var isAdmin = User.IsInRole("Admin");
         if (User.IsInRole("Agency"))
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-            USERID ??= intUserIdClaim;
+            USERID = intUserIdClaim;
         }
-        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? false, isAdmin, USERID,tripId);
-        var totalCount = bookings.Result.Count;
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? true, isAdmin, USERID,tripId);
+        var totalCount = bookings.Result.TotalCount;
 
         return Ok(new { TotalCount = totalCount, Bookings = bookings.Result });
     }

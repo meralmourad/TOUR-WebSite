@@ -17,7 +17,7 @@ public interface IBookingService
     Task<List<BookingDTO>> GetBookingsByAgencyId(int agencyId);
     Task<bool> ApproveBooking(int id,int Approved);
     Task<int> RateBooking(int id, int rating, string? comment = null);
-    Task<List<BookingDTO>> SearchBookingsByQuery(
+    Task<(IEnumerable<BookingDTO> Trips, int TotalCount)> SearchBookingsByQuery(
         int start,
         int len,
         bool isApproved,

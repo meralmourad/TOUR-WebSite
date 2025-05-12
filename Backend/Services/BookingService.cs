@@ -199,7 +199,7 @@ public class BookingService : IBookingService
         return true;
     }
 
-    public async Task<List<BookingDTO>> SearchBookingsByQuery(
+    public async Task<(IEnumerable<BookingDTO> Trips, int TotalCount)> SearchBookingsByQuery(
         int start,
         int len,
         bool isApproved,
@@ -221,11 +221,12 @@ public class BookingService : IBookingService
         {
             bookingsQuery = bookingsQuery.Where(b => b.TripId == tripId);
         }
+        var totalCount = await Task.Run(() => bookingsQuery.Count());
         // Materialize the query to avoid serialization issues
-        var bookings = bookingsQuery
+        var bookings = await Task.Run(() => bookingsQuery
             .Skip(start)
             .Take(len)
-            .ToList();
+            .ToList());
 
         // Map to DTOs
         var bookingDtos = bookings.Select(b => new BookingDTO
@@ -239,7 +240,6 @@ public class BookingService : IBookingService
             Comment = b.Comment,
             Rating = b.Rating
         }).ToList();
-
-        return bookingDtos;
+        return (bookingDtos, totalCount);
     }
 }
