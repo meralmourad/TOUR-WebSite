@@ -71,35 +71,36 @@ namespace Backend.Controllers
             }
         }
 
-        [HttpGet("trip/{tripId}")]
-        [Authorize(Roles = "Admin,Agency")]
-        public async Task<IActionResult> GetBookingsByTripId(int tripId)
-        {
-            try
-            {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                var role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-                if (role == "Agency")
-                {
-                    var bks = await _bookingService.GetBookingsByAgencyId(int.Parse(userId));
-                    return Ok(bks);
-                }
-                var bookings = await _bookingService.GetBookingsByTripId(tripId);
-                return Ok(bookings);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
-            }
-        }
+        // [HttpGet("trip/{tripId}")]
+        // [Authorize(Roles = "Admin,Agency")]
+        // public async Task<IActionResult> GetBookingsByTripId(int tripId)
+        // {
+        //     try
+        //     {
+        //         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        //         var role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+        //         if (role == "Agency")
+        //         {
+        //             var bks = await _bookingService.GetBookingsByAgencyId(int.Parse(userId));
+        //             return Ok(bks);
+        //         }
+        //         var bookings = await _bookingService.GetBookingsByTripId(tripId);
+        //         return Ok(bookings);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+        //     }
+        // }
         [HttpPost]
         [Authorize(Roles = "Admin,Agency,Tourist")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto bookingDTO)
         {
             try
             {
-
-                
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+                bookingDTO.TouristId = (int)intUserIdClaim;
                 var booking = await _bookingService.CreateBooking(bookingDTO);
                 return Ok(booking);
             }
@@ -115,14 +116,13 @@ namespace Backend.Controllers
             try
             {
                 // check if the agent is the one who created the booking and is not an admin
-                if (!User.IsInRole("Admin"))
-                {
-                    var booking = await _bookingService.GetBookingById(id);
-                    var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                    if (userId != booking.TouristId.ToString() && 
-                        !User.IsInRole("Admin") && !User.IsInRole("Agent"))
-                        return Forbid();
-                }
+
+                var booking = await _bookingService.GetBookingById(id);
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                
+                if (userId != booking.TouristId.ToString() && 
+                    !User.IsInRole("Admin") && !User.IsInRole("Agent"))
+                    return Forbid();
                 var result = await _bookingService.DeleteBooking(id);
                 if (!result)
                     return NotFound();
@@ -138,10 +138,21 @@ namespace Backend.Controllers
         {
             try
             {
-                var booking = await _bookingService.UpdateBooking(id, bookingDTO);
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var booking = await _bookingService.GetBookingById(id);
+                
                 if (booking == null)
+                    return NotFound(); // Return 404 if booking is not found
+                
+                if (userId != booking.TouristId.ToString() && !User.IsInRole("Admin") && !User.IsInRole("Agent"))
+                    return Forbid();
+                
+                bookingDTO.TouristId = int.Parse(userId);
+                bookingDTO.TripId = booking.TripId;
+                var bking = await _bookingService.UpdateBooking(id, bookingDTO);
+                if (bking == null)
                     return NotFound();
-                return Ok(booking);
+                return Ok(bking);
             }
             catch (Exception ex)
             {

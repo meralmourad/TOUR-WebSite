@@ -189,7 +189,6 @@ public class BookingService : IBookingService
         if (booking == null)
             return false;
 
-        booking.IsApproved = bookingDTO.IsApproved ?? booking.IsApproved;
         booking.PhoneNumber = bookingDTO.PhoneNumber ?? booking.PhoneNumber;
         booking.Comment = bookingDTO.Comment ?? booking.Comment;
         booking.Rating = bookingDTO.Rating ?? booking.Rating;
