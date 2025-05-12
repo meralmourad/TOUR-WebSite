@@ -38,7 +38,7 @@ public class TripController : ControllerBase
 
         foreach (var image in images)
         {
-            var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+            var fileName =  Path.GetExtension(image.FileName);
             var filePath = Path.Combine(uploadsFolder, fileName);
             try
             {
