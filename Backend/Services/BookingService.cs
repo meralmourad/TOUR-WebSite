@@ -53,6 +53,11 @@ public class BookingService : IBookingService
 
     public async Task<BookingDTO> CreateBooking(CreateBookingDto bookingDTO)
     {
+        var agenceId = _unitOfWork.Trip.Query()
+            .Where(t => t.Id == bookingDTO.TripId)
+            .Select(t => t.VendorId)
+            .FirstOrDefault();
+        bookingDTO.agenceId = agenceId;
         var user = _unitOfWork.User.GetByIdAsync(bookingDTO.TouristId).Result
              ?? throw new Exception("User not found");
         var trip = _unitOfWork.Trip.GetByIdAsync(bookingDTO.TripId).Result 

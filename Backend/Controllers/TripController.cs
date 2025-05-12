@@ -167,7 +167,7 @@ public class TripController : ControllerBase
     // admin can approve or reject trips
     [HttpPut("approve/{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> ApproveTrip(int id, [FromBody] bool isApproved)
+    public async Task<IActionResult> ApproveTrip(int id, [FromBody] int isApproved)
     {
         try
         {
