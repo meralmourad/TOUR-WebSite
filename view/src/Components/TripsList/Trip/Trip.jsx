@@ -77,7 +77,7 @@ const Trip = () => {
         try {
           await addBooking({
             touristId: user.id,
-            tripId: tripData.agenceId,
+            tripId: tripData.id,
             seatsNumber: seats,
             phoneNumber: phone
           })
