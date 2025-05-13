@@ -130,12 +130,16 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
             return Unauthorized();
         Console.WriteLine("User role: " + User.IsInRole("Tourist") + " " + User.IsInRole("Agency") + " " + User.IsInRole("Admin"));
         Console.WriteLine("UserId: " + USERID + " isapproved: " + IsApproved);
+            
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+        if (intUserIdClaim == null)
+            return Unauthorized();
+
+        int curid= (int)intUserIdClaim;
         if (User.IsInRole("Tourist"))
         {
             Console.WriteLine("User is tourist");
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-
             USERID = intUserIdClaim;
             Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID + " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
         }
@@ -144,19 +148,17 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         var isAdmin = User.IsInRole("Admin");
         if (User.IsInRole("Agency"))
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+             curid= (int)intUserIdClaim;
 
-            USERID = intUserIdClaim;
-            if (USERID == null || USERID != intUserIdClaim)
-            {
-                // Agencies can only view their own bookings
-                return Forbid();
-            }
+            // if (USERID == null || USERID != intUserIdClaim)
+            // {
+            //     // Agencies can only view their own bookings
+            //     return Forbid();
+            // }
         }
 
         // Ensure IsApproved is respected
-        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved, isAdmin, USERID, tripId);
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved, isAdmin,curid, USERID, tripId);
         var totalCount = bookings.Result.TotalCount;
 
         return Ok(new { TotalCount = totalCount, Bookings = bookings.Result.Trips });
