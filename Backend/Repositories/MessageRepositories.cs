@@ -16,8 +16,9 @@ public class MessageRepositories: GenericRepository<Message>, IMessageRepositori
     public async Task<IEnumerable<MessageDTO>> GetMessageByResiverAndSenderIDs(int senderId, int receiverId)
     {
         var messages =await _context.Messages
-            .Where(m => m.SenderId == senderId && m.ReceiverId == receiverId)
-            .Select(m => new MessageDTO
+        .Where(m => ((m.SenderId == senderId && m.ReceiverId == receiverId) || 
+           (m.SenderId == receiverId && m.ReceiverId == senderId)))
+                       .Select(m => new MessageDTO
             {
                 Id = m.Id,
                 SenderId = m.SenderId,
