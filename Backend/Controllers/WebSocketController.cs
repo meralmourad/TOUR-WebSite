@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims; // Add this directive
 using Backend.WebSockets;
 
 namespace Backend.Controllers;
@@ -13,11 +14,13 @@ public class WebSocketController : ControllerBase
 {
     private readonly WebSockets.WebSocketManager _webSocketManager;
     private readonly IConfiguration _configuration; // Inject configuration for JWT settings
+    private readonly JwtTokenService _jwtTokenService; // Inject JwtTokenService
 
-    public WebSocketController(WebSockets.WebSocketManager webSocketManager, IConfiguration configuration)
+    public WebSocketController(WebSockets.WebSocketManager webSocketManager, IConfiguration configuration, JwtTokenService jwtTokenService)
     {
         _webSocketManager = webSocketManager;
         _configuration = configuration;
+        _jwtTokenService = jwtTokenService;
     }
 
     [HttpGet("{userId}")]
@@ -40,6 +43,7 @@ public class WebSocketController : ControllerBase
         // Ensure the userId matches the token's userId
         if (validatedUserId != userId)
         {
+            Console.WriteLine($"UserId mismatch: Token userId {validatedUserId} does not match requested userId {userId}");
             HttpContext.Response.StatusCode = 403; // Forbidden
             return;
         }
@@ -62,31 +66,21 @@ public class WebSocketController : ControllerBase
     private bool ValidateToken(string token, out int userId)
     {
         userId = 0;
-        try
-        {
-            var jwtKey = _configuration["Jwt:Key"];
-            var jwtIssuer = _configuration["Jwt:Issuer"];
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(jwtKey);
-
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtIssuer,
-                ValidAudience = jwtIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out var validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            userId = int.Parse(jwtToken.Claims.First(x => x.Type == "nameid").Value); // Assuming "nameid" contains the userId
-            return true;
-        }
-        catch
+        if (!_jwtTokenService.TryValidateToken(token, out var principal))
         {
             return false;
         }
+
+        // Extract the userId claim
+        var userIdClaim = principal?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier || x.Type == "nameid");
+        if (userIdClaim == null)
+        {
+            Console.WriteLine("Token validation failed: 'nameid' claim is missing.");
+            return false;
+        }
+
+        userId = int.Parse(userIdClaim.Value);
+        Console.WriteLine($"Token validated successfully. UserId: {userId}");
+        return true;
     }
 }
