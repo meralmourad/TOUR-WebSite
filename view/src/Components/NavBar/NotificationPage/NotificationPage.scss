@@ -4,18 +4,18 @@
     right: 5%;
     transform: translateY(-50%);
     width: 350px;
+    height: 500px; /* Increased height */
     background-color: #fff;
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     font-family: 'Segoe UI', sans-serif;
-  }
   
   .notification-title {
     text-align: center;
     font-size: 24px;
     margin-bottom: 20px;
-    color: #7b0e15; // لون قريب من الموجود بالصورة
+    color: #7b0e15; 
   }
   
   .notification-list {
@@ -64,3 +64,4 @@
   .pagination-dots {
     cursor: pointer;
   }
+}
