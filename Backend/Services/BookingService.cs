@@ -42,7 +42,6 @@ public class BookingService : IBookingService
             
             var message = new { BookingId = booking.Id, TripId = booking.TripId, NumOfSeats = booking.SeatsNumber };
             var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
-            // await kafkaProducerService.ProduceAsync("booking-events", messageJson);
             
             return true;
         }

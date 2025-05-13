@@ -12,7 +12,7 @@ namespace Backend.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;
-        public BookingController(IBookingService bookingService, IKafkaProducerService kafkaProducerService)
+        public BookingController(IBookingService bookingService)
         {
             _bookingService = bookingService;
         }
