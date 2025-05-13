@@ -87,10 +87,10 @@ const UserProfile = ({ userprofile, myProfile }) => {
             </button>
 
             {Array.from({ length: numberOfpages }).map((_, index) => (
-            <>
+            <div key={index}>
               { Math.abs(currentPage - (index + 1)) <= 2 &&
                 <button
-                  key={index}
+                  
                   className={currentPage === index + 1 ? "active" : ""}
                   onClick={() => {
                     setCurrentPage(index + 1);
@@ -100,7 +100,7 @@ const UserProfile = ({ userprofile, myProfile }) => {
                   {index + 1}
                 </button>
               }
-            </>
+            </div>
             ))}
             <button
               disabled={currentPage === numberOfpages}

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { approveBooking, getBookingsByTripId } from "../../service/BookingService";
+import { approveBooking, searchBookings } from "../../service/BookingService";
 import "./BookingPending.scss";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -37,12 +37,12 @@ const BookingPending = () => {
                 }
                 // console.log(trip);
 
-                const list = await getBookingsByTripId(id);
-                const finalList = list.filter((booking) => {
+                const { bookings } = await searchBookings(null, 1000, id, user.id, 0);
+                const finalBookings = bookings.filter((booking) => {
                     return booking.isApproved === 0 && booking.tourist.name.toLowerCase().includes(searchTerm.toLowerCase());
                 });
-                // console.log(finalList);
-                setBookings(finalList);
+                // console.log(finalBookings);
+                setBookings(finalBookings);
             }
             catch (error) {
                 console.error("Error fetching bookings:", error);
