@@ -3,14 +3,18 @@ using Backend.Data;
 using Backend.DTOs;
 using Backend.IServices;
 using Backend.Models;
+using Backend.WebSockets;
 
 namespace Backend.Services;
 
 public class MessageService : IMessageService
 {
     private readonly IUnitOfWork _unitOfWork;
-    public MessageService(IUnitOfWork unitOfWork)
+    private readonly MyWebSocketManager _ws;
+
+    public MessageService(IUnitOfWork unitOfWork, MyWebSocketManager ws)
     {
+        _ws = ws;
         _unitOfWork = unitOfWork;
     }
 
@@ -48,6 +52,7 @@ public class MessageService : IMessageService
         var messages = await _unitOfWork.Message.GetMessageByResiverAndSenderIDs(senderId, receiverId);
         if (messages == null)
             return null;
+        
         return messages.Select(m => new MessageDTO
         {
             Id = m.Id,
@@ -74,6 +79,13 @@ public class MessageService : IMessageService
 
     public async Task<bool> SendMessageAsync(MessageDTO messageDto)
     {
+        var messageToSend = new
+        {
+            SenderId = messageDto.SenderId,
+            Content = messageDto.Content
+        };
+        var messageJson = System.Text.Json.JsonSerializer.Serialize(messageToSend);
+        await _ws.SendMessageToUserAsync(messageDto.ReceiverId, messageJson);
         var message = new Message
         {
             SenderId = messageDto.SenderId,
