@@ -198,17 +198,17 @@ public class BookingService : IBookingService
     public async Task<(IEnumerable<BookingDTO> Trips, int TotalCount)> SearchBookingsByQuery(
         int start,
         int len,
-        bool isApproved,
+        int isApproved,
         bool isAdmin,
         int? USERID,
         int? tripId)
     {
         // Filter bookings based on the provided parameters
         var bookingsQuery = _unitOfWork.BookingRepository.Query();
-
-        // Apply filters
-        int isApprovedInt = isApproved ? 1 : 0;
-        bookingsQuery = bookingsQuery.Where(b => b.IsApproved == isApprovedInt);
+        if(isApproved==2)
+            bookingsQuery = bookingsQuery.Where(b => b.IsApproved == 0 || b.IsApproved == 1);
+        else
+            bookingsQuery = bookingsQuery.Where(b => b.IsApproved == isApproved);
         if (USERID.HasValue)
         {
             bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == USERID.Value || b.TouristId == USERID.Value);

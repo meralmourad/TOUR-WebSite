@@ -121,7 +121,7 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     public IActionResult SearchBookings(
     [FromQuery] int start = 0,
     [FromQuery] int len = int.MaxValue,
-    [FromQuery] bool IsApproved=true,
+    [FromQuery] int IsApproved=1,
     [FromQuery] int tripId = 0,
     [FromQuery] int? USERID = null)
     {
@@ -135,6 +135,7 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
             Console.WriteLine("User is tourist");
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+
             USERID = intUserIdClaim;
             Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID + " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
         }
@@ -145,6 +146,8 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
+
+            USERID = intUserIdClaim;
             if (USERID == null || USERID != intUserIdClaim)
             {
                 // Agencies can only view their own bookings

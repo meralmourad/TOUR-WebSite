@@ -20,7 +20,7 @@ public interface IBookingService
     Task<(IEnumerable<BookingDTO> Trips, int TotalCount)> SearchBookingsByQuery(
         int start,
         int len,
-        bool isApproved,
+        int isApproved,
         bool isAdmin,
         int? agencyId,
         int? tripId);
