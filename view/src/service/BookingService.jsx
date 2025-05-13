@@ -141,7 +141,9 @@ export const searchBookings = async (start, len, tripId, USERID, IsApproved = 2)
     tripId = tripId ?? 0;
     USERID = USERID ?? 0;
     try {
-        const response = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${IsApproved}&USERID=${USERID}`, {
+        const url = `${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${IsApproved}&USERID=${USERID}`;
+        console.log(url);
+        const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
