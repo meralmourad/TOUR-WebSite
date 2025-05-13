@@ -141,30 +141,13 @@ export const searchBookings = async (start, len, tripId, USERID, IsApproved = 2)
     tripId = tripId ?? 0;
     USERID = USERID ?? 0;
     try {
-        let bookings = [];
-        let totalCount = 0;
-
-        if(IsApproved !== 0) {
-            const response = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${true}&USERID=${USERID}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            // console.log(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${true}&USERID=${USERID}`);
-            bookings = response.data.bookings.$values;
-            totalCount = response.data.totalCount;
-        }
-        if(IsApproved !== 1) {
-            const response = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${false}&USERID=${USERID}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            bookings = [...bookings, ...response.data.bookings.$values];
-            totalCount += response.data.totalCount;
-        }
-        // console.log(IsApproved);
-        // console.log(bookings);
+        const response = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${IsApproved}&USERID=${USERID}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const totalCount =  response.data.totalCount;
+        const bookings = response.data.bookings.$values;
         for(let i = 0; i < bookings.length; i++) {
             bookings[i].trip = await getTripById(bookings[i].tripId);
             bookings[i].tourist = await getUserById(bookings[i].touristId);
