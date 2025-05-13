@@ -5,8 +5,10 @@ import { SearchTrips } from "../../../service/TripsService";
 import { useNavigate } from "react-router-dom";
 import Rate from "../../Rate/Rate";
 import AddTrip from "./AddTrip/AddTrip";
+import { useSelector } from "react-redux";
 
 const AgencyProfile = ({ userprofile, myProfile }) => {
+  const { user } = useSelector((store) => store.info);
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
   const [highestTrip, setHighestTrip] = useState([]);
