@@ -14,7 +14,7 @@ public class JwtTokenService
         _configuration = configuration;
     }
 
-    public string GenerateToken(string userId, string role)
+       public string GenerateToken(string userId, string role)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
         var claims = new[]
@@ -48,18 +48,49 @@ public class JwtTokenService
             var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = false,
+                ValidateAudience = true, // Enable audience validation
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"], // Ensure Audience matches your app's settings
                 IssuerSigningKey = key
             }, out SecurityToken validatedToken);
 
             return principal;
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"Token validation failed: {ex.Message}");
             return null;
+        }
+    }
+
+    public bool TryValidateToken(string token, out ClaimsPrincipal? principal)
+    {
+        principal = null;
+        var jwtSettings = _configuration.GetSection("Jwt");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        try
+        {
+            principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Issuer"], // Match audience with issuer as in GenerateToken
+                IssuerSigningKey = key
+            }, out SecurityToken validatedToken);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Token validation failed: {ex.Message}");
+            return false;
         }
     }
 }

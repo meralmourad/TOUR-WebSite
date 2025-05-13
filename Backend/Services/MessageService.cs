@@ -53,6 +53,7 @@ public class MessageService : IMessageService
             Id = m.Id,
             SenderId = m.SenderId,
             ReceiverId = m.ReceiverId,
+            
             Content = m.Content,
         }).ToList();
     }
