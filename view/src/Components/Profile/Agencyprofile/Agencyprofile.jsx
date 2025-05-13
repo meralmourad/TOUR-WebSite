@@ -28,12 +28,14 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
     <div className="agency-profile">
     {showAddTrip ? <AddTrip setShowAddTrip ={setShowAddTrip} /> : 
     <>
-    <button
-      onClick={() => setShowAddTrip(!showAddTrip)}
-      className="add-trip-button"
-    >
-      +
-    </button>
+    {myProfile &&
+      <button
+        onClick={() => setShowAddTrip(!showAddTrip)}
+        className="add-trip-button"
+      >
+        +
+      </button>
+    }
       <div className="header">
         <div className="header-images">
           <img

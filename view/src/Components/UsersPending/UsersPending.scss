@@ -1,0 +1,159 @@
+// AgencyPending.scss
+
+@keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .Agency-small {
+    font-size: 1rem;
+  }
+  
+  .Agency-pending-container {
+    background-color: #e8e5dd;
+    padding: 2rem;
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+  
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #000;
+      text-align: center;
+    }
+  
+    .search-bar {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+  
+      input {
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: none;
+        width: 200px;
+        font-size: 1rem;
+        background-color: #f0f0eb;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        outline: none;
+      }
+  
+      i.fa-search {
+        margin-left: -30px;
+        color: #444;
+        cursor: pointer;
+      }
+    }
+    .Agency-list {
+      background: white;
+      padding: 2rem;
+      border-radius: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      transition: all 0.3s ease;
+
+      .Agency-item {
+        flex: 1 1 calc(33.333% - 1.5rem); // Adjusts to fit 3 items per row
+        max-width: 300px; // Optional: Limit the maximum width of each item
+        min-width: 250px; // Optional: Set a minimum width for better responsiveness
+      }
+    }
+    .Agency-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      border: 1px solid #000;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      width: 250px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+  
+      &:hover {
+        transform: scale(1.03);
+      }
+  
+      &:nth-child(1) { animation-delay: 0.1s; }
+      &:nth-child(2) { animation-delay: 0.2s; }
+      &:nth-child(3) { animation-delay: 0.3s; }
+      &:nth-child(4) { animation-delay: 0.4s; }
+      &:nth-child(5) { animation-delay: 0.5s; }
+      &:nth-child(6) { animation-delay: 0.6s; }
+  
+      .Agency-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-right: auto;
+        margin-left: 0.5rem;
+      }
+  
+      .reject-btn,
+      .accept-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+  
+      .reject-btn {
+        background-color: #f1594b;
+        color: white;
+  
+        &:hover {
+          background-color: #d6453a;
+        }
+  
+        &:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) inset;
+        }
+      }
+  
+      .accept-btn {
+        background-color: #7dd87d;
+        color: white;
+  
+        &:hover {
+          background-color: #62c462;
+        }
+  
+        &:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) inset;
+        }
+      }
+    }
+  
+    .pagination {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      color: #333;
+      text-align: center;
+  
+      span,
+      a {
+        margin: 0 0.3rem;
+        cursor: pointer;
+      }
+  
+      .current-page {
+        font-weight: bold;
+        text-decoration: underline;
+      }
+    }
+  }

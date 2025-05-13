@@ -11,6 +11,8 @@ import Trip from "./Components/TripsList/Trip/Trip";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
 import BookingPending from "./Components/BookingPending/BookingPending.jsx";
+import UsersPending from "./Components/UsersPending/UsersPending.jsx";
+import TripsPending from "./Components/TripsPending/TripsPending.jsx";
 // import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
           <Route path="/signup" element={<RegisterForm />} />
           <Route path="/Trip/:id" element={<Trip />} />
           <Route path="/BookingPending/:id" element={<BookingPending />} />
+          <Route path="/UsersPending" element={<UsersPending />} />
+          <Route path="/TripsPending" element={<TripsPending />} />
           <Route path="/userslist" element={<UsersList />} />
           <Route path="*" element={<h1> Page not found </h1>} />
         </Routes>

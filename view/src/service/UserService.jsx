@@ -57,15 +57,18 @@ export const updateUser = async (id, user) => {
 };
 
 export const SearchUsers = async (start, len, tourist, agency, admin, isApproved, q) => {
-    start = start || 0;
-    len = len || 2147483647;
-    tourist = tourist || false;
-    agency = agency || false;
-    admin = admin || false;
-    isApproved = isApproved || true;
+    start = start ?? 0;
+    len = len ?? 2147483647;
+    tourist = tourist ?? false;
+    agency = agency ?? false;
+    admin = admin ?? false;
+    isApproved = isApproved ?? true;
     q = q || "";
     try {
-        const response = await axios.get(`${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`, {
+        const url = `${API_URL}/Search/users?start=${start}&len=${len}&tourist=${tourist}&agency=${agency}&admin=${admin}&isApproved=${isApproved}&q=${q}`;
+        console.log(url);
+        
+        const response = await axios.get(url, {
             headers: {
             'Authorization': `Bearer ${token}`
             }
@@ -77,3 +80,20 @@ export const SearchUsers = async (start, len, tourist, agency, admin, isApproved
         throw error;
     }
 };
+
+export const approveAgency = async (agencyId, status) => {
+    try {
+        const response = await fetch(`${API_URL}/User/approve/${agencyId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(status),
+        });
+        return await response.json();
+    }
+    catch (error) {
+        throw error;
+    }
+}

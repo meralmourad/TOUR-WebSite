@@ -15,6 +15,7 @@ const UserProfile = ({ userprofile, myProfile }) => {
   const [start, setStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [bookings, setBookings] = useState([]);
+  const [myBookings, setMyBookings] = useState([]);
   const itemsPerPage = 3;
 
   const changehandle = (e) => {
@@ -25,6 +26,7 @@ const UserProfile = ({ userprofile, myProfile }) => {
     const fetching = async () => {
       try {
         const { bookings, totalCount } = await searchBookings(start, itemsPerPage, null, userprofile.id);
+        setMyBookings(totalCount)
         setBookings(bookings);
         // console.log(bookingsData);
       }
@@ -49,62 +51,67 @@ const UserProfile = ({ userprofile, myProfile }) => {
       }
   };
 
+  const numberOfpages = Math.ceil(myBookings / itemsPerPage);
+
   return (
     <div className="user-profile-container">
       <div className="left-section">
-        <div className="last-trips">Last Trips</div>
-
-        {
-          bookings.map((booking) => 
-            <div className={`trip ${booking.IsApproved === -1? "red": 
-                                    booking.IsApproved === 0? "yellow":
-                                    booking.endTime < new Date()? "blue":
-                                    "green"}`}
-                  key={booking.id}>
-              <div className="trip-text">
-                {booking.location} trip<br />
-                <span>{booking.trip.title}</span>
+          <div className="last-trips">{bookings?.length > 0? "Last Trips":"NO Trips Yet"}</div>
+          {
+            bookings.map((booking) => 
+              <div className={`trip ${booking.isApproved === -1? "red": 
+                                      booking.isApproved === 0? "yellow":
+                                      new Date(booking.trip.endDate) < new Date()? "blue":
+                                      "green"}`}
+                    key={booking.id}>
+                <div className="trip-text">
+                  {booking.trip.locations.$values[0]}<br />
+                  <span>{booking.trip.title}</span>
+                </div>
+                <div className="arrow-wrapper" onClick={() => navigate(`/Trip/${booking.tripId}`)}>
+                  <FaArrowRight className="arrow-icon" />
+                </div>
               </div>
-              <div className="arrow-wrapper" onClick={() => navigate(`/Trip/${booking.TripId}`)}>
-                <FaArrowRight className="arrow-icon" />
-              </div>
-            </div>
-          )
-        }
+            )
+          }
 
-        <div className="pagination">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-              setStart(start - itemsPerPage);
-            }}
-          >
-            ◀
-          </button>
-
-          {Array.from({ length: 4 }).map((_, index) => (
+          <div className="pagination">
             <button
-              key={index}
-              className={currentPage === index + 1 ? "active" : ""}
+              disabled={currentPage === 1}
               onClick={() => {
-                setCurrentPage(index + 1);
-                setStart(index * itemsPerPage);
+                setCurrentPage(currentPage - 1);
+                setStart(start - itemsPerPage);
               }}
             >
-              {index + 1}
+              ◀
             </button>
-          ))}
-          <button
-            disabled={currentPage === 4}
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              setStart(start + itemsPerPage);
-            }}
-          >
-            ▶
-          </button>
-        </div>
+
+            {Array.from({ length: numberOfpages }).map((_, index) => (
+            <>
+              { Math.abs(currentPage - (index + 1)) <= 2 &&
+                <button
+                  key={index}
+                  className={currentPage === index + 1 ? "active" : ""}
+                  onClick={() => {
+                    setCurrentPage(index + 1);
+                    setStart(index * itemsPerPage);
+                  }}
+                >
+                  {index + 1}
+                </button>
+              }
+            </>
+            ))}
+            <button
+              disabled={currentPage === numberOfpages}
+              onClick={() => {
+                setCurrentPage(currentPage + 1);
+                setStart(start + itemsPerPage);
+              }}
+            >
+              ▶
+            </button>
+          </div>
       </div>
 
       <div className="right-section">

@@ -108,7 +108,9 @@ const Filter = ({ id, setShowFilter, price, startDate, endDate, setPrice, setSta
               max="2026-01-01"
             />
           </div>
-          { (user.role === 'Admin' || id) &&
+          {console.log(user)
+          }
+          { (user?.role === 'Admin' || id) &&
             <div className="filter-group">
               <label>Approved</label>
               <input

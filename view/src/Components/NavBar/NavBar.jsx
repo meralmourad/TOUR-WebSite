@@ -33,9 +33,9 @@ const NavBar = ({ setShowChat }) => {
                 <div className="navbar-left">
                     {/* {console.log(id, user?.id)} */}
                     {(url.includes("/profile")) && id !== user?.id &&
-                            <Link onClick={() => setShowChat(true)} className="nav-link">
-                                <img src={'/Icons/chat icon.jpg'} alt="Chat" className="icon" />
-                            </Link>
+                        <Link onClick={() => setShowChat(true)} className="nav-link">
+                            <img src={'/Icons/chat icon.jpg'} alt="Chat" className="icon" />
+                        </Link>
                     }
                 </div>
 
@@ -43,11 +43,23 @@ const NavBar = ({ setShowChat }) => {
                     <ul className="navbar-links">
                         {
                             user.role === "Admin" &&
-                            <li className="nav-item">
-                                <Link to={`/userslist`} className="nav-link">
-                                    <img src={'/Icons/usersList.png'} alt="Profile" className="icon" />
-                                </Link>
-                            </li>
+                            <>
+                                <li className="nav-item">
+                                    <Link to={`/UsersPending`} className="nav-link">
+                                        <img src={'/Icons/pendingUsers.png'} alt="pending users" title='pending users' className="icon" />
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to={`/TripsPending`} className="nav-link">
+                                        <img src={'/Icons/TripsPending.png'} alt="pending trips" title='pending trips' className="icon" />
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to={`/userslist`} className="nav-link">
+                                        <img src={'/Icons/usersList.png'} alt="users list" title='users list' className="icon" />
+                                    </Link>
+                                </li>
+                            </>
                         }
                         <li className="nav-item">
                             <Link to={`/profile/${user.id}`} className="nav-link">

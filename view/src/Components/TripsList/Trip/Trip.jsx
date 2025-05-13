@@ -148,10 +148,12 @@ const Trip = () => {
             pending bookings
             <span className="arrow">→</span>
           </button> }
-          <button className="book-now-button" onClick={handleBooking}>
-            BOOK NOW!
-            <span className="arrow">→</span>
-          </button>
+          {user.role === 'Tourist' && 
+            <button className="book-now-button" onClick={handleBooking}>
+              BOOK NOW!
+              <span className="arrow">→</span>
+            </button>
+          }
         </div>
     }
     </>

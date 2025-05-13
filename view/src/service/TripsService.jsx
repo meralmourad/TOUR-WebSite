@@ -184,3 +184,21 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
         throw error;
     }
 }
+
+
+export const approveTrip = async (TripId, status) => {
+    try {
+        const response = await fetch(`${API_URL}/Trip/approve/${TripId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(status),
+        });
+        return await response.json();
+    }
+    catch (error) {
+        throw error;
+    }
+}

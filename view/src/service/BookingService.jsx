@@ -114,7 +114,7 @@ export const approveBooking = async (id, state = 1) => {
             },
             body: JSON.stringify(state),
         });
-        return response.data;
+        return await response.json();
     }
     catch (error) {
         throw error;
@@ -147,21 +147,22 @@ export const searchBookings = async (start, len, tripId, USERID) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        let { bookings, totalCount } = response.data;
+
+        let bookings = response.data.bookings.$values;
+        let totalCount = response.data.totalCount;
         const response2 = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${false}&USERID=${USERID}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        // bookings = [...bookings, ...response2.data.bookings];
+        bookings = [...bookings, ...response2.data.bookings.$values];
         totalCount += response2.data.totalCount;
         // console.log(bookings);
-        // console.log(response2.data.bookings);
         for(let i = 0; i < bookings.length; i++) {
             bookings[i].trip = await getTripById(bookings[i].tripId);
             bookings[i].tourist = await getUserById(bookings[i].touristId);
         }
-        return { bookings: [], totalCount };
+        return { bookings, totalCount };
     }
     catch (error) {
         throw error;
