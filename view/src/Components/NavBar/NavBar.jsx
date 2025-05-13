@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../Store/Slices/UserSlice';
+import Notification from '../NavBar/NotificationPage/NotificationPage'
 
 const NavBar = ({ setShowChat }) => {
     const { isLoggedIn, user } = useSelector((store) => store.info);
