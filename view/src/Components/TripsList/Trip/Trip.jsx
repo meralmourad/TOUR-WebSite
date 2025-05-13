@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Trip.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTripById } from "../../../service/TripsService";
@@ -34,19 +34,19 @@ const Trip = () => {
     };
 
     fetchTripData();
-  },[user, id]);
+  }, [user, id]);
 
   const handleBooking = async () => {
-      const result = await MySwal.fire({
-        title: "Booking Details",
-        html: `
+    const result = await MySwal.fire({
+      title: "Booking Details",
+      html: `
           <div class="custom-form">
             <div class="row">
-              <span>Name :</span><span>${ user.name }</span>
-              <span>Email :</span><span>${ user.email }</span>
+              <span>Name :</span><span>${user.name}</span>
+              <span>Email :</span><span>${user.email}</span>
             </div>
             <div class="row">
-              <span>Phone :</span><input id="swal-input-phone" class="swal2-input" value="${ user.phoneNumber }" />
+              <span>Phone :</span><input id="swal-input-phone" class="swal2-input" value="${user.phoneNumber}" />
             </div>
             <div class="row">
               <span>Payment :</span><span>Cash Only!</span>
@@ -54,73 +54,78 @@ const Trip = () => {
             </div>
           </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Discard",
-        focusConfirm: false,
-        preConfirm: () => {
-          const phone = document.getElementById("swal-input-phone").value;
-          const seats = document.getElementById("swal-input-seats").value;
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Discard",
+      focusConfirm: false,
+      preConfirm: () => {
+        const phone = document.getElementById("swal-input-phone").value;
+        const seats = document.getElementById("swal-input-seats").value;
 
-          if (!phone || !seats) {
-            Swal2.showValidationMessage("Please fill out all fields.");
-            return;
-          }
-
-          return { phone, seats };
-        },
-      });
-
-      if (result.isConfirmed) {
-        const { phone, seats } = result.value;
-
-        try {
-          await addBooking({
-            touristId: user.id,
-            tripId: tripData.id,
-            seatsNumber: seats,
-            phoneNumber: phone
-          })
-          MySwal.fire({
-            title: "Booking Confirmed!",
-            text: `Your booking for ${seats} seat(s) has been confirmed.`,
-            icon: "success",
-          });
-        }
-        catch (error) {
-          console.error("Error adding booking:", error);
-          MySwal.fire({
-            title: "Booking Failed!",
-            text: error.response.data.message,
-            icon: "error",
-          });
+        if (!phone || !seats) {
+          Swal2.showValidationMessage("Please fill out all fields.");
           return;
         }
 
-      }
-      else {
+        return { phone, seats };
+      },
+    });
+
+    if (result.isConfirmed) {
+      const { phone, seats } = result.value;
+
+      try {
+        await addBooking({
+          touristId: user.id,
+          tripId: tripData.id,
+          seatsNumber: seats,
+          phoneNumber: phone,
+        });
         MySwal.fire({
-          title: "Booking Discarded!",
-          text: "Booking Discarded!",
+          title: "Booking Confirmed!",
+          text: `Your booking for ${seats} seat(s) has been confirmed.`,
+          icon: "success",
+        });
+      } catch (error) {
+        console.error("Error adding booking:", error);
+        MySwal.fire({
+          title: "Booking Failed!",
+          text: error.response.data.message,
           icon: "error",
         });
+        return;
       }
+    } else {
+      MySwal.fire({
+        title: "Booking Discarded!",
+        text: "Booking Discarded!",
+        icon: "error",
+      });
+    }
   };
 
   return (
     <>
-      {tripData && 
+      {tripData && (
         <div className="trip-container">
           <div className="trip-header">
-            <img src={tripData.images.$values[0]? tripData.images.$values[0]: 'https://media-public.canva.com/MADQtrAClGY/2/screen.jpg'} alt="Trip" className="trip-image" />
+            <img
+              src={
+                tripData.images.$values[0]
+                  ? tripData.images.$values[0]
+                  : "https://media-public.canva.com/MADQtrAClGY/2/screen.jpg"
+              }
+              alt="Trip"
+              className="trip-image"
+            />
           </div>
 
           <div className="trip-details">
             <div className="trip-section">
               <h3>Available Sets:</h3>
               <p className="highlight">{tripData.availableSets}</p>
-              <div onClick={() => navigate('/profile/' + tripData.agence.id)}>
-                <h3 >Agency Name:</h3>
+              <div onClick={() => navigate("/profile/" + tripData.agence.id)}>
+                <h3>Agency Name:</h3>
                 <p>{tripData.agence.name}</p>
               </div>
             </div>
@@ -128,12 +133,16 @@ const Trip = () => {
             <div className="trip-section">
               <h3>Destinations</h3>
               <ul>
-                  {tripData.locations.$values.map((loc) => (
-                    <li key={loc}>{loc}</li>
-                  ))}
+                {tripData.locations.$values.map((loc) => (
+                  <li key={loc}>{loc}</li>
+                ))}
               </ul>
-              <p><strong>From:</strong> { tripData.startDate }</p>
-              <p><strong>To:</strong> { tripData.endDate }</p>
+              <p>
+                <strong>From:</strong> {tripData.startDate}
+              </p>
+              <p>
+                <strong>To:</strong> {tripData.endDate}
+              </p>
             </div>
 
             <div className="trip-section">
@@ -144,18 +153,24 @@ const Trip = () => {
             </div>
           </div>
           {/* {console.log(tripData)} */}
-          {tripData.status === 1 && (user.role === 'Admin' || user.id === tripData.agenceId) && <button className="pending-bookings-button" onClick={() => navigate(`/BookingPending/${tripData.id}`)}>
-            pending bookings
-            <span className="arrow">→</span>
-          </button> }
-          {user.role === 'Tourist' && 
+          {tripData.status === 1 &&
+            (user.role === "Admin" || user.id === tripData.agenceId) && (
+              <button
+                className="pending-bookings-button"
+                onClick={() => navigate(`/BookingPending/${tripData.id}`)}
+              >
+                pending bookings
+                <span className="arrow">→</span>
+              </button>
+            )}
+          {user.role === "Tourist" && (
             <button className="book-now-button" onClick={handleBooking}>
               BOOK NOW!
               <span className="arrow">→</span>
             </button>
-          }
+          )}
         </div>
-    }
+      )}
     </>
   );
 };
