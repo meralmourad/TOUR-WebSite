@@ -9,6 +9,7 @@ public class BookingDTO
     public required int TripId { get; set; }
     public required int IsApproved { get; set; }    
     public required int SeatsNumber { get; set; }
+    public  int AgenceId { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Comment { get; set; }
     public int? Rating { get; set; }
