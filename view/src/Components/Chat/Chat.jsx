@@ -1,31 +1,83 @@
-import { useState, useRef, useEffect } from 'react';
-import './Chat.scss';
-import { useSelector } from 'react-redux';
+import { useState, useRef, useEffect } from "react";
+import "./Chat.scss";
+import { useSelector } from "react-redux";
+import { getMessages, sendMessage } from "../../service/MessageService";
+
+const WS_URL = process.env.REACT_APP_WS_URL;
 
 const Chat = () => {
   const { senderId, receiverId } = useSelector((store) => store.chat);
+  const { token } = useSelector((store) => store.info);
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    
-  }, [senderId, receiverId])
+  const ws = useRef(null);
 
-  const handleSend = () => {
+  useEffect(() => {
+    // console.log(`${WS_URL}/${senderId}?token=${token}`);
+    ws.current = new WebSocket(`${WS_URL}/${senderId}?token=${token}`);
+
+    ws.current.onopen = () => {
+      console.log("WebSocket connected");
+      // ws.current.send(" ");
+    };
+
+    ws.current.onmessage = (event) => {
+      console.log("Received:", event.data);
+    };
+
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.current.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+
+    return () => {
+      ws.current.close();
+    };
+  }, [token, senderId]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await getMessages(senderId, receiverId);
+        setMessages(
+          response.map((message) => {
+            return {
+              text: message.content,
+              sender: message.senderId === senderId ? "sender" : "receiver"
+            };
+          })
+        );
+      } catch (error) {
+        console.error("error in fetch messages, ", error);
+      }
+    };
+    fetchMessages();
+  }, [senderId, receiverId]);
+
+  const handleSend = async () => {
     if (input.trim()) {
-      const newMessages = [
-        ...messages,
-        { text: input, sender: 'user' },
-        { text: 'hello, how can i help you ✅', sender: 'bot' },
-      ];
-      setMessages(newMessages);
-      setInput('');
+      try {
+        await sendMessage(senderId, receiverId, input);
+        setMessages([
+          ...messages,
+          { text: input, sender: "sender" }
+        ]);
+        setInput("");
+      }
+      catch (error) {
+        console.error(error);
+      }
+
     }
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -35,7 +87,7 @@ const Chat = () => {
           <div
             key={index}
             className={`chat-bubble ${
-              message.sender === 'user' ? 'user-bubble' : 'bot-bubble'
+              message.sender === "sender" ? "user-bubble" : "bot-bubble"
             }`}
           >
             {message.text}
@@ -50,7 +102,7 @@ const Chat = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
         <button className="send-button" onClick={handleSend}>
           ➤
