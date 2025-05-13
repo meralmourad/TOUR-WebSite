@@ -22,6 +22,7 @@ public interface IBookingService
         int len,
         int isApproved,
         bool isAdmin,
+        int curid,
         int? agencyId,
         int? tripId);
     // Task GetBookingsByTouristId(string? userId);

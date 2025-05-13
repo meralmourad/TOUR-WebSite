@@ -200,6 +200,7 @@ public class BookingService : IBookingService
         int len,
         int isApproved,
         bool isAdmin,
+        int curid,
         int? USERID,
         int? tripId)
     {
@@ -211,7 +212,10 @@ public class BookingService : IBookingService
             bookingsQuery = bookingsQuery.Where(b => b.IsApproved == isApproved);
         if (USERID.HasValue)
         {
-            bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == USERID.Value || b.TouristId == USERID.Value);
+            if(curid != USERID)
+                bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == curid && b.TouristId == USERID.Value);
+            else
+                bookingsQuery = bookingsQuery.Where(b => b.Trip.VendorId == USERID.Value || b.TouristId == USERID.Value);
         }
         if (tripId > 0)
         {
@@ -236,6 +240,7 @@ public class BookingService : IBookingService
             Id = b.Id,
             TouristId = b.TouristId,
             TripId = b.TripId,
+            AgenceId= b.TravelAgencyId,
             IsApproved = b.IsApproved,
             SeatsNumber = b.SeatsNumber,
             PhoneNumber = b.PhoneNumber,
