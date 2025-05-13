@@ -3,7 +3,7 @@ import "./UsersPending.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { approveAgency, SearchUsers } from "../../service/UserService";
+import { approveAgency, deleteUser, SearchUsers } from "../../service/UserService";
 
 const UsersPending = () => {
     const { user } = useSelector((store) => store.info);
@@ -78,7 +78,7 @@ const UsersPending = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
             try {
-                await approveAgency(agencyId, -1);
+                await deleteUser(agencyId);
                 setRender(!render);
                 Swal.fire("Rejected!", "The Agency has been rejected.", "success");
             } catch (error) {
