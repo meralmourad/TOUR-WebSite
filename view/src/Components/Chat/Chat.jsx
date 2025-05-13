@@ -19,12 +19,23 @@ const Chat = () => {
     ws.current = new WebSocket(`${WS_URL}/${senderId}?token=${token}`);
 
     ws.current.onopen = () => {
-      console.log("WebSocket connected");
+      // console.log("WebSocket connected");
       // ws.current.send(" ");
     };
 
     ws.current.onmessage = (event) => {
-      console.log("Received:", event.data);
+      // console.log("Received:", event.data);
+      const message = JSON.parse(event.data);
+
+      if (message.SenderId === receiverId) {
+        setMessages([
+          ...messages,
+          {
+            text: message.Content,
+            sender: "receiver",
+          },
+        ]);
+      }
     };
 
     ws.current.onerror = (error) => {
@@ -38,7 +49,7 @@ const Chat = () => {
     return () => {
       ws.current.close();
     };
-  }, [token, senderId]);
+  }, [token, senderId, messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -48,7 +59,7 @@ const Chat = () => {
           response.map((message) => {
             return {
               text: message.content,
-              sender: message.senderId === senderId ? "sender" : "receiver"
+              sender: message.senderId === senderId ? "sender" : "receiver",
             };
           })
         );
@@ -63,16 +74,11 @@ const Chat = () => {
     if (input.trim()) {
       try {
         await sendMessage(senderId, receiverId, input);
-        setMessages([
-          ...messages,
-          { text: input, sender: "sender" }
-        ]);
+        setMessages([...messages, { text: input, sender: "sender" }]);
         setInput("");
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
       }
-
     }
   };
 
