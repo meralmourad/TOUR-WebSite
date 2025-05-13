@@ -28,7 +28,7 @@ const UserProfile = ({ userprofile, myProfile }) => {
         const { bookings, totalCount } = await searchBookings(start, itemsPerPage, null, userprofile.id);
         setMyBookings(totalCount)
         setBookings(bookings);
-        console.log(bookings);
+        // console.log(bookings);
       }
       catch (error) {
         console.error("Error Fetching Data: ", error);

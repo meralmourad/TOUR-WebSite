@@ -5,9 +5,9 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../Store/Slices/UserSlice';
 import Notification from './NotificationPage/NotificationPage'
-import { use } from 'react';
+import { setChat } from '../../Store/Slices/ChatSlice';
 
-const NavBar = ({ setShowChat }) => {
+const NavBar = () => {
     const { isLoggedIn, user } = useSelector((store) => store.info);
     const [ showNotification, setShowNotification ] = useState(false);
     const dispatch = useDispatch();
@@ -37,7 +37,9 @@ const NavBar = ({ setShowChat }) => {
                 <div className="navbar-left">
                     {/* {console.log(id, user?.id)} */}
                     {(url.includes("/profile")) && id !== user?.id &&
-                        <Link onClick={() => setShowChat(true)} className="nav-link">
+                        <Link onClick={() =>
+                            dispatch(setChat({senderId: user?.id, receiverId: id}))}
+                            className="nav-link">
                             <img src={'/Icons/chat icon.jpg'} alt="Chat" className="icon" />
                         </Link>
                     }

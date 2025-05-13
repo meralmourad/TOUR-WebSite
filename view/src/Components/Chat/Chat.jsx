@@ -1,10 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './Chat.scss';
+import { useSelector } from 'react-redux';
 
 const Chat = () => {
+  const { senderId, receiverId } = useSelector((store) => store.chat);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    
+  }, [senderId, receiverId])
 
   const handleSend = () => {
     if (input.trim()) {
@@ -18,12 +24,8 @@ const Chat = () => {
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
