@@ -4,8 +4,9 @@ import { useParams } from "react-router-dom";
 import AgencyProfile from "./Agencyprofile/Agencyprofile";
 import UserProfile from "./UserProfile/UserProfile";
 import { getUserById } from "../../service/UserService";
+import Chat from "../Chat/Chat";
 
-function Profile() {
+function Profile({ setShowChat, showChat }) {
     const { id } = useParams();
     const [error, setError] = useState(null);
     const { user } = useSelector((store) => store.info);
@@ -37,12 +38,14 @@ function Profile() {
 
 
     if(userprofile) {
-        if(userprofile.role === "Agency") {
-            return <AgencyProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />;
-        }
-        else { // admin or user
-            return <UserProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />;
-        }
+        return <>
+                {showChat && <Chat senderId={user.id} receiverId={id}/>}
+                { userprofile.role === "Agency"?
+                    <AgencyProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />
+                : // admin or user
+                    <UserProfile userprofile={userprofile} myProfile={userprofile.id === user.id} />
+                }
+        </>
     } 
 
 

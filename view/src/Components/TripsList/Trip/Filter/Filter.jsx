@@ -1,11 +1,14 @@
 import React from "react";
 import "./Filter.scss";
 import swal from "sweetalert";
+import { useSelector } from "react-redux";
 
-const Filter = ({ setShowFilter, price, startDate, endDate, setPrice, setStartDate, setEndDate }) => {
+const Filter = ({ id, setShowFilter, price, startDate, endDate, setPrice, setStartDate, setEndDate, isApproved, setIsApproved }) => {
+  const { user } = useSelector((store) => store.info);
   const [pricce, setPricce] = React.useState(price || 1500);
   const [fromDate, setFromDate] = React.useState(startDate || "");
   const [toDate, setToDate] = React.useState(endDate || "");
+  const [isApprovedFilter, setIsApprovedFilter] = React.useState(isApproved);
 
   const getGradient = (value, max) => {
     const percentage = (value / max) * 100;
@@ -31,7 +34,7 @@ const Filter = ({ setShowFilter, price, startDate, endDate, setPrice, setStartDa
     setStartDate(fromDate);
     setEndDate(toDate);
     setShowFilter(false);
-
+    setIsApproved(isApprovedFilter);
   };
 
   return (
@@ -105,6 +108,19 @@ const Filter = ({ setShowFilter, price, startDate, endDate, setPrice, setStartDa
               max="2026-01-01"
             />
           </div>
+          {console.log(user)
+          }
+          { (user?.role === 'Admin' || id) &&
+            <div className="filter-group">
+              <label>Approved</label>
+              <input
+                type="checkbox"
+                className="custom-checkbox-filter"
+                checked={isApprovedFilter}
+                onChange={(e) => setIsApprovedFilter(e.target.checked)}
+              />
+            </div>
+          }
 
           <div className="buttons">
             <button

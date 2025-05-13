@@ -1,45 +1,42 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import "./UserProfile.scss";
 import { FaArrowRight, FaUser } from "react-icons/fa";
 import { updateUser } from "../../../service/UserService";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../Store/Slices/UserSlice";
+import { useNavigate } from "react-router-dom";
+import { searchBookings } from "../../../service/BookingService";
 
 const UserProfile = ({ userprofile, myProfile }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [user, setUser1] = useState(userprofile);
   const [start, setStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [bookings, setBookings] = useState([]);
+  const [myBookings, setMyBookings] = useState([]);
   const itemsPerPage = 3;
 
   const changehandle = (e) => {
     setUser1({ ...user, [e.target.name]: e.target.value });
   };
 
-  // useEffect(() => {
-  //   const fetchUserTrips = async () => {
-  //     try {
-  //       const response = await axios.get(`${API_URL}/User/${userprofile.id}/start?=${start}len=${itemsPerPage}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       if(response.data.$values.length === 0) {
-  //         setCurrentPage(1);
-  //         setStart(0);
-  //         swal("Sorry!", "No trips found", "error");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user profile:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetching = async () => {
+      try {
+        const { bookings, totalCount } = await searchBookings(start, itemsPerPage, null, userprofile.id);
+        setMyBookings(totalCount)
+        setBookings(bookings);
+        // console.log(bookingsData);
+      }
+      catch (error) {
+        console.error("Error Fetching Data: ", error);
+      }
+    };
 
-  //   fetchUserTrips();
-  // }, start , currentPage);
-  
-  
-  // api for fetching how many pages found ??
+    fetching();
+  }, [user, userprofile, start]);
 
   const updateUserForm = async () => {
       const { token } = JSON.parse(localStorage.getItem("Token"));
@@ -54,74 +51,67 @@ const UserProfile = ({ userprofile, myProfile }) => {
       }
   };
 
+  const numberOfpages = Math.ceil(myBookings / itemsPerPage);
+
   return (
     <div className="user-profile-container">
       <div className="left-section">
-        <div className="last-trips">Last Trips</div>
+          <div className="last-trips">{bookings?.length > 0? "Last Trips":"NO Trips Yet"}</div>
+          {
+            bookings.map((booking) => 
+              <div className={`trip ${booking.isApproved === -1? "red": 
+                                      booking.isApproved === 0? "yellow":
+                                      new Date(booking.trip.endDate) < new Date()? "blue":
+                                      "green"}`}
+                    key={booking.id}>
+                <div className="trip-text">
+                  {booking.trip.locations.$values[0]}<br />
+                  <span>{booking.trip.title}</span>
+                </div>
+                <div className="arrow-wrapper" onClick={() => navigate(`/Trip/${booking.tripId}`)}>
+                  <FaArrowRight className="arrow-icon" />
+                </div>
+              </div>
+            )
+          }
 
-        <div className="trip green">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
-
-        <div className="trip red">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
-
-        <div className="trip blue">
-          <div className="trip-text">
-            Egypt trip<br />
-            <span>world Agency</span>
-          </div>
-          <div className="arrow-wrapper">
-            <FaArrowRight className="arrow-icon" />
-          </div>
-        </div>
-
-        <div className="pagination">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-              setStart(start - itemsPerPage);
-            }}
-          >
-            ◀
-          </button>
-
-          {Array.from({ length: 4 }).map((_, index) => (
+          <div className="pagination">
             <button
-              key={index}
-              className={currentPage === index + 1 ? "active" : ""}
+              disabled={currentPage === 1}
               onClick={() => {
-                setCurrentPage(index + 1);
-                setStart(index * itemsPerPage);
+                setCurrentPage(currentPage - 1);
+                setStart(start - itemsPerPage);
               }}
             >
-              {index + 1}
+              ◀
             </button>
-          ))}
-          <button
-            disabled={currentPage === 4}
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              setStart(start + itemsPerPage);
-            }}
-          >
-            ▶
-          </button>
-        </div>
+
+            {Array.from({ length: numberOfpages }).map((_, index) => (
+            <>
+              { Math.abs(currentPage - (index + 1)) <= 2 &&
+                <button
+                  key={index}
+                  className={currentPage === index + 1 ? "active" : ""}
+                  onClick={() => {
+                    setCurrentPage(index + 1);
+                    setStart(index * itemsPerPage);
+                  }}
+                >
+                  {index + 1}
+                </button>
+              }
+            </>
+            ))}
+            <button
+              disabled={currentPage === numberOfpages}
+              onClick={() => {
+                setCurrentPage(currentPage + 1);
+                setStart(start + itemsPerPage);
+              }}
+            >
+              ▶
+            </button>
+          </div>
       </div>
 
       <div className="right-section">

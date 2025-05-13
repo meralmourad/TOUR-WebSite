@@ -165,7 +165,7 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
     agencyId = agencyId ?? 0;
     // console.log("agencyId", agencyId);
     try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating${sortBy}`, {
+        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating=${sortBy}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -181,6 +181,24 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
         }
         return { trips, totalCount };
     } catch (error) {
+        throw error;
+    }
+}
+
+
+export const approveTrip = async (TripId, status) => {
+    try {
+        const response = await fetch(`${API_URL}/Trip/approve/${TripId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(status),
+        });
+        return await response.json();
+    }
+    catch (error) {
         throw error;
     }
 }

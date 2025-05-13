@@ -114,7 +114,7 @@ export const approveBooking = async (id, state = 1) => {
             },
             body: JSON.stringify(state),
         });
-        return response.data;
+        return await response.json();
     }
     catch (error) {
         throw error;
@@ -129,6 +129,40 @@ export const rateTrip = async (bookingId, rating) => {
             }
         });
         return response.data;
+    }
+    catch (error) {
+        throw error;
+    }
+};
+
+export const searchBookings = async (start, len, tripId, USERID) => {
+    start = start ?? 0;
+    len = len ?? 3;
+    // IsApproved = IsApproved ?? true;
+    tripId = tripId ?? 0;
+    USERID = USERID ?? 0;
+    try {
+        const response = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${true}&USERID=${USERID}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        let bookings = response.data.bookings.$values;
+        let totalCount = response.data.totalCount;
+        const response2 = await axios.get(`${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${false}&USERID=${USERID}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        bookings = [...bookings, ...response2.data.bookings.$values];
+        totalCount += response2.data.totalCount;
+        // console.log(bookings);
+        for(let i = 0; i < bookings.length; i++) {
+            bookings[i].trip = await getTripById(bookings[i].tripId);
+            bookings[i].tourist = await getUserById(bookings[i].touristId);
+        }
+        return { bookings, totalCount };
     }
     catch (error) {
         throw error;
