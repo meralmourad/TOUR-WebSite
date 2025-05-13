@@ -7,6 +7,7 @@ using Backend.DTOs.TripDTOs;
 using Backend.IServices;
 using Backend.Mappers;
 using Backend.Models;
+using Backend.WebSockets;
 
 namespace Backend.Services;
 
@@ -14,11 +15,13 @@ public class TripService : ITripService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly TripMapper _tripMapper;
+    private readonly MyWebSocketManager _ws; // Use the correct WebSocketManager
     private static int imageIndex = 1; // Global image index
 
-    public TripService(IUnitOfWork unitOfWork)
+    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws)
     {
         _unitOfWork = unitOfWork;
+        _ws = ws; // Assign the WebSocketManager instance
         _tripMapper = new TripMapper(unitOfWork);
     }
 
@@ -176,7 +179,7 @@ public class TripService : ITripService
     {
         // 1. Build the base query and filter as much as possible in the DB
         var tripsQuery = _unitOfWork.Trip.Query();
-
+// Example usage in a service or controller
         int Approved = isApproved ? 1 : 0;
             if (isAdmin)
                 tripsQuery = tripsQuery.Where(t => t.Status == Approved);
@@ -338,6 +341,7 @@ public class TripService : ITripService
     public async Task<bool> ApproveTripAsync(int id, int isApproved)
     {
         try {
+            await _ws.SendMessageToUserAsync(1, "i'm here ");
             var trip = await _unitOfWork.Trip.GetByIdAsync(id);
             if (trip == null)
                 return false;

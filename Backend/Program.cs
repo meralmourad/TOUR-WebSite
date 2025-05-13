@@ -48,11 +48,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
             RoleClaimType = ClaimTypes.Role // This line is important for role-based auth
         };
+
     });
 
 builder.Services.AddAuthorization();
@@ -73,7 +74,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<Backend.WebSockets.WebSocketManager>(); // Explicitly register the correct WebSocketManager
+builder.Services.AddSingleton<MyWebSocketManager>(); // Explicitly register the correct WebSocketManager
 
 builder.Logging.AddConsole();
 

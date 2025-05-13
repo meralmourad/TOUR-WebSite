@@ -16,9 +16,9 @@ namespace Backend.Services;
 public class Notificationservices
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly WebSockets.WebSocketManager _webSocketManager; // Use the correct WebSocketManager
+    private readonly MyWebSocketManager _webSocketManager; // Use the correct WebSocketManager
 
-    public Notificationservices(IUnitOfWork unitOfWork, WebSockets.WebSocketManager webSocketManager)
+    public Notificationservices(IUnitOfWork unitOfWork, MyWebSocketManager webSocketManager)
     {
         _unitOfWork = unitOfWork;
         _webSocketManager = webSocketManager; // Initialize the correct WebSocketManager

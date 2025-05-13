@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims; // Add this directive
 using Backend.WebSockets;
+using System.Threading.Tasks.Dataflow;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Controllers;
 
@@ -12,15 +14,15 @@ namespace Backend.Controllers;
 [Route("ws")]
 public class WebSocketController : ControllerBase
 {
-    private readonly WebSockets.WebSocketManager _webSocketManager;
-    private readonly IConfiguration _configuration; // Inject configuration for JWT settings
-    private readonly JwtTokenService _jwtTokenService; // Inject JwtTokenService
+    private readonly MyWebSocketManager _webSocketManager;
+    private readonly JwtTokenService _jwtTokenService;
+    private readonly ILogger<WebSocketController> _logger;
 
-    public WebSocketController(WebSockets.WebSocketManager webSocketManager, IConfiguration configuration, JwtTokenService jwtTokenService)
+    public WebSocketController(MyWebSocketManager webSocketManager, JwtTokenService jwtTokenService, ILogger<WebSocketController> logger)
     {
         _webSocketManager = webSocketManager;
-        _configuration = configuration;
         _jwtTokenService = jwtTokenService;
+        _logger = logger;
     }
 
     [HttpGet("{userId}")]
@@ -34,16 +36,20 @@ public class WebSocketController : ControllerBase
 
         // Extract the token from the query string
         var token = HttpContext.Request.Query["token"].ToString();
-        if (string.IsNullOrEmpty(token) || !ValidateToken(token, out var validatedUserId))
+        _logger.LogInformation($"Received token: {token}");
+
+        var principal = _jwtTokenService.ValidateToken(token);
+        if (principal == null)
         {
             HttpContext.Response.StatusCode = 401; // Unauthorized
             return;
         }
 
         // Ensure the userId matches the token's userId
-        if (validatedUserId != userId)
+        var userIdClaim = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || int.Parse(userIdClaim) != userId)
         {
-            Console.WriteLine($"UserId mismatch: Token userId {validatedUserId} does not match requested userId {userId}");
+            _logger.LogWarning($"UserId mismatch: Token userId {userIdClaim} does not match requested userId {userId}");
             HttpContext.Response.StatusCode = 403; // Forbidden
             return;
         }
@@ -61,26 +67,5 @@ public class WebSocketController : ControllerBase
                 await _webSocketManager.RemoveSocketAsync(userId);
             }
         }
-    }
-
-    private bool ValidateToken(string token, out int userId)
-    {
-        userId = 0;
-        if (!_jwtTokenService.TryValidateToken(token, out var principal))
-        {
-            return false;
-        }
-
-        // Extract the userId claim
-        var userIdClaim = principal?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier || x.Type == "nameid");
-        if (userIdClaim == null)
-        {
-            Console.WriteLine("Token validation failed: 'nameid' claim is missing.");
-            return false;
-        }
-
-        userId = int.Parse(userIdClaim.Value);
-        Console.WriteLine($"Token validated successfully. UserId: {userId}");
-        return true;
     }
 }

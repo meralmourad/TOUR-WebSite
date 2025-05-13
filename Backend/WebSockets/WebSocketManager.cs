@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Backend.WebSockets;
 
-public class WebSocketManager
+public class MyWebSocketManager
 {
     private readonly ConcurrentDictionary<int, WebSocket> _userSockets = new();
 

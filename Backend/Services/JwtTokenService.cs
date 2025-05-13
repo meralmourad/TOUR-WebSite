@@ -14,7 +14,7 @@ public class JwtTokenService
         _configuration = configuration;
     }
 
-       public string GenerateToken(string userId, string role)
+    public string GenerateToken(string userId, string role)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
         var claims = new[]
@@ -22,39 +22,43 @@ public class JwtTokenService
             new Claim(ClaimTypes.NameIdentifier, userId),
             new Claim(ClaimTypes.Role, role)
         };
-
+        Console.WriteLine(claims.ToString());
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],
-            audience: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
             claims: claims,
-            expires: DateTime.MaxValue, // Set to a far future date to make it effectively not expire
+            expires: DateTime.MaxValue,
             signingCredentials: creds
         );
-        Console.WriteLine("Token generated: " + token+ " Role: " + role);
+        Console.WriteLine("Token generated: " + token + " Role: " + role);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public ClaimsPrincipal? ValidateToken(string token)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
-
+        var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
         var tokenHandler = new JwtSecurityTokenHandler();
+
         try
         {
             var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = true, // Enable audience validation
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"], // Ensure Audience matches your app's settings
-                IssuerSigningKey = key
+                ValidateAudience = true,
+                ValidAudience = jwtSettings["Audience"],
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuerSigningKey = true
             }, out SecurityToken validatedToken);
+            Console.WriteLine("\n\n\n\n\n\n\n");
+            Console.WriteLine("Token validated: " + token);
+            principal.Claims.ToList().ForEach(c => Console.WriteLine($"Claim Type: {c.Type}, Value: {c.Value}"));
+            Console.WriteLine("\n\n\n\n\n\n\n");
 
             return principal;
         }
@@ -62,35 +66,6 @@ public class JwtTokenService
         {
             Console.WriteLine($"Token validation failed: {ex.Message}");
             return null;
-        }
-    }
-
-    public bool TryValidateToken(string token, out ClaimsPrincipal? principal)
-    {
-        principal = null;
-        var jwtSettings = _configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        try
-        {
-            principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Issuer"], // Match audience with issuer as in GenerateToken
-                IssuerSigningKey = key
-            }, out SecurityToken validatedToken);
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Token validation failed: {ex.Message}");
-            return false;
         }
     }
 }

@@ -121,30 +121,39 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     public IActionResult SearchBookings(
     [FromQuery] int start = 0,
     [FromQuery] int len = int.MaxValue,
-    [FromQuery] bool? IsApproved = true,
+    [FromQuery] bool IsApproved=true,
     [FromQuery] int tripId = 0,
     [FromQuery] int? USERID = null)
     {
-        //if the user is not authenticated, set IsApproved to true
-        if(!User.Identity?.IsAuthenticated ?? true)
+        //if the user is not authenticated, return Unauthorized
+        if (!User.Identity?.IsAuthenticated ?? true)
             return Unauthorized();
-
-        if (User.IsInRole("Tourist")){
+        Console.WriteLine("User role: " + User.IsInRole("Tourist") + " " + User.IsInRole("Agency") + " " + User.IsInRole("Admin"));
+        Console.WriteLine("UserId: " + USERID + " isapproved: " + IsApproved);
+        if (User.IsInRole("Tourist"))
+        {
+            Console.WriteLine("User is tourist");
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
             USERID = intUserIdClaim;
-            Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID+ " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
-            }
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID + " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
+        }
 
-        //if the user is an agency check if he requested his own bookings
+        //if the user is an agency, check if they requested their own bookings
         var isAdmin = User.IsInRole("Admin");
         if (User.IsInRole("Agency"))
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
-            USERID = intUserIdClaim;
+            if (USERID == null || USERID != intUserIdClaim)
+            {
+                // Agencies can only view their own bookings
+                return Forbid();
+            }
         }
-        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved ?? true, isAdmin, USERID,tripId);
+
+        // Ensure IsApproved is respected
+        var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved, isAdmin, USERID, tripId);
         var totalCount = bookings.Result.TotalCount;
 
         return Ok(new { TotalCount = totalCount, Bookings = bookings.Result.Trips });
