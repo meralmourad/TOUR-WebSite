@@ -1,11 +1,15 @@
 import './NavBar.scss';
 import { Link, useNavigate } from 'react-router-dom';
+import  {useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../Store/Slices/UserSlice';
+import Notification from './NotificationPage/NotificationPage'
+import { use } from 'react';
 
 const NavBar = ({ setShowChat }) => {
     const { isLoggedIn, user } = useSelector((store) => store.info);
+    const [ showNotification, setShowNotification ] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -72,9 +76,11 @@ const NavBar = ({ setShowChat }) => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="#notification" className="nav-link">
-                                <img src={'/Icons/Notification.jpg'} alt="Notification" className="icon" />
-                            </Link>
+                            <span onClick={() => setShowNotification(!showNotification)} className="nav-link">
+                            <img src={'/Icons/Notification.jpg'} alt="Notification" className="icon" />
+                            </span>
+                            { showNotification && <Notification />} 
+                            
                         </li>
                         <li className="nav-item">
                             <Link onClick={logout} className="nav-link">
