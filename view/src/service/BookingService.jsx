@@ -135,13 +135,19 @@ export const rateTrip = async (bookingId, rating) => {
     }
 };
 
-export const searchBookings = async (start, len, tripId, USERID, IsApproved = 2) => { // 1 = approved, 0 = rejected, 2 = all
+export const searchBookings = async (start, len, tripId, USERID, IsApproved = 2) => {
+    /*
+        IsApproved: -1 = rejected
+        IsApproved: 0 = pending
+        IsApproved: 1 = approved
+        IsApproved: 2 = 0 + 1
+    */
     start = start ?? 0;
     len = len ?? 3;
     tripId = tripId ?? 0;
     USERID = USERID ?? 0;
     try {
-        const url = `${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${IsApproved}&USERID=${USERID}`;
+        const url = `${API_URL}/Search/bookings?start=${start}&len=${len}&IsApproved=${IsApproved}&USERID=${USERID}&tripId=${tripId}`;
         // console.log(url);
         const response = await axios.get(url, {
             headers: {

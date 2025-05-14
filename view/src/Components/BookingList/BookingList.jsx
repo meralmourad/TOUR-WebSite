@@ -13,14 +13,9 @@ const BookingList = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [numOfBooking, setNumOfBooking] = useState(0);
   const [bookings, setBookings] = useState([]);
+  const [rejected, setRejected] = useState(false);
 
   const numberOfPages = Math.ceil(numOfBooking / numberOfUsersPerPage);
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
 
   useEffect(() => {
     const start = (pageNumber - 1) * numberOfUsersPerPage;
@@ -28,7 +23,7 @@ const BookingList = () => {
     const fetchUsers = async () => {
       try {
         if(!user) return;
-        const { bookings, totalCount } = await searchBookings(start, numberOfUsersPerPage, id, user?.id, 2);
+        const { bookings, totalCount } = await searchBookings(start, numberOfUsersPerPage, id, user?.id, rejected? -1: 2);
         
         setNumOfBooking(totalCount);
         setBookings(bookings);
@@ -37,7 +32,7 @@ const BookingList = () => {
       }
     };
     fetchUsers();
-  }, [pageNumber, searchTerm, user?.id, id]);
+  }, [pageNumber, user?.id, id, rejected, user, bookings]);
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
@@ -62,28 +57,23 @@ const BookingList = () => {
       <h2 className="users-list-title">List of All Booking</h2>
       <div className="users-list-header">
         <div className="search-bar">
-          <span role="img" aria-label="search" style={{ marginRight: "10px" }}>
-            <img
+          <span role="img" aria-label="search" style={{ marginRight: "10px", fontFamily: "sans-serif" }}>
+            {/* <img
               src="/Icons/search.jpg"
               alt=""
               style={{
                 width: "20px",
-                height: "20px",
+                height: "20px"
               }}
-            ></img>
-          </span>
-          <input
-            type="text"
-            style={{
-              border: "none",
-              outline: "none",
-              backgroundColor: "transparent",
-              fontSize: "16px",
-            }}
-            placeholder="Search"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
+            ></img> */}
+            rejected
+            </span>
+            <input
+                type="checkbox"
+                className="custom-checkbox-filter"
+                value={rejected}
+                onChange={() => setRejected(!rejected)}
+            />
         </div>
       </div>
       <div className="users-list-container">
@@ -93,22 +83,30 @@ const BookingList = () => {
         )}
         <div className="users-list">
           {bookings.map((booking) => (
-            <>{console.log(booking)}</>
-            // <div key={booking.id} className="user-card" onClick={() => navigate(`/profile/${booking.id}`)}>
-            //   <div className="user-image">
-            //     <h5 style={{ margin: 0, fontSize: "16px" }}>{booking.name}</h5>
-            //     <p
-            //       style={{
-            //         margin: 0,
-            //         fontSize: "12px",
-            //         color: "#801c29",
-            //         fontWeight: "bold",
-            //       }}
-            //     >
-            //       {booking.role}
-            //     </p>
-            //   </div>
-            // </div>
+              <div key={booking.id}
+              className={`user-card`}
+              style={{backgroundColor: `${booking.isApproved === -1? "#f2a59c":
+                booking.isApproved === 0? "#fdf5cd":
+                new Date(booking.trip.endDate) > new Date()? "#91bceb":
+                "#a7e8a1"}`}}
+                >
+                <>{console.log(booking)}</>
+              <div className="user-image">
+                <h5 style={{ margin: 0, fontSize: "16px" }} onClick={() => navigate(`/profile/${booking.tourist.id}`)}>
+                    {booking.tourist.name}</h5>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "12px",
+                    color: "#801c29",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => navigate(`/Trip/${booking.trip.id}`)}
+                >
+                  {booking.trip.title}
+                </p>
+              </div>
+            </div>
           ))}
           <br />
         </div>
