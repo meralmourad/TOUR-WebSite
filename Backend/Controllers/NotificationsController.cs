@@ -48,7 +48,7 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> SendNotification([FromBody] NotificationDto notificationDto, [FromQuery] List<int> receiverIds)
         {
-            var result = await _notificationServices.SendNotificationAsync(notificationDto, receiverIds);
+            var result = await _notificationServices.SendNotificationAsync(notificationDto, receiverIds,true);
             if (!result)
                 return BadRequest();
             return Ok();

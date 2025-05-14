@@ -54,7 +54,7 @@ public class BookingService : IBookingService
                 var notification2 = new Notification
                 {
                     SenderId = booking.TravelAgencyId,
-                    Content = messageJson2,
+                    Content = "Your booking has been approved from trip",
                 };
                 await _unitOfWork.Notification.AddAsync(notification2);
                 await _unitOfWork.CompleteAsync();
@@ -79,7 +79,7 @@ public class BookingService : IBookingService
             var notification = new Notification
             {
                 SenderId = booking.TravelAgencyId,
-                Content = messageJson,
+                Content = "Your booking has been approved from trip" + booking.TripId,
             };
             await _unitOfWork.Notification.AddAsync(notification);
             await _unitOfWork.CompleteAsync();    

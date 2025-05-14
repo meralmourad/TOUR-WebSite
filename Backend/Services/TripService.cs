@@ -132,7 +132,7 @@ public class TripService : ITripService
                 SenderId = tripDto.AgenceId,
                 Context = agencyName + " has created a Trip.",
             };
-            await _notificationServices.SendNotificationAsync(dbnotif, new List<int> { 1 });
+            await _notificationServices.SendNotificationAsync(dbnotif, new List<int> { 1 },false);
             await _unitOfWork.CompleteAsync();
 
             return (true, "Trip created successfully.");

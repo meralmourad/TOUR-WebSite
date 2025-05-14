@@ -230,9 +230,9 @@ public class UserService : IUserService
         {
             SenderId = 1,
             ReceiverId = user.Id,
-            Context = messageJson,
+            Context = "Your account has been approved.",
         };
-        await _notificationservices.SendNotificationAsync(notification,new List<int> { user.Id });
+        await _notificationservices.SendNotificationAsync(notification,new List<int> { user.Id },false);
         await _unitOfWork.CompleteAsync();
         return true;
     }

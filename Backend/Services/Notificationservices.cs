@@ -164,7 +164,7 @@ public class Notificationservices
         Console.WriteLine("[DEBUG] Notifications sent successfully.");
         return true;
     }
-    public async Task<bool> SendNotificationAsync(NotificationDto notificationDto, List<int> receiverIds)
+    public async Task<bool> SendNotificationAsync(NotificationDto notificationDto, List<int> receiverIds,bool ?sent)
     {
         Console.WriteLine($"\n\n\n\n\n\n\n[DEBUG] Sending notification. SenderId: {notificationDto.SenderId}, ReceiverIds: {string.Join(", ", receiverIds)}");
 
@@ -187,14 +187,15 @@ public class Notificationservices
             await _unitOfWork.userNotification.AddAsync(userNotification);
 
             // Broadcast notification via WebSocket
-            // var message = System.Text.Json.JsonSerializer.Serialize(new
-            // {
-            //     SenderId = notification.SenderId,
-            //     Content = notification.Content,
-            //     ReceiverId = receiverId
-            // });
-            // await _webSocketManager.SendMessageToUserAsync(receiverId, message);
-        }
+           if((bool)sent)
+           { var message = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                SenderId = notification.SenderId,
+                Content = notification.Content,
+                ReceiverId = receiverId
+            });
+            await _webSocketManager.SendMessageToUserAsync(receiverId, message);
+}        }
 
         await _unitOfWork.CompleteAsync();
         return true;
