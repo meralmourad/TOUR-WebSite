@@ -3,13 +3,56 @@
   background: linear-gradient(to bottom right, #e5e3dc, #e5e3dc);
   width: 100%;
   min-height: 100vh;
-  /* إلغاء overflow:hidden */
   overflow: visible;
   animation: fadeIn 1s ease;
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  .notification-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #7b0e15; 
+  }
+  
+  .notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 400px;
+    margin: 0 auto;
+    align-items: center; /* Center items horizontally */
+  }
+  
+  .notification-item {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content inside the item */
+    border: 1px solid #7b0e15;
+    border-radius: 30px;
+    padding: 10px 5px;
+    position: relative;
+    background-color: #fff;
+    width: 100%; /* Adjust width to fit within the list */
+    max-width: 300px; /* Optional: Limit the width of each item */
+  }
+  
+  .notification-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #7b0e15;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .notification-text {
+    color: #333;
+    font-size: 14px;
+    margin: 0;
   }
 
   .trip-header {
