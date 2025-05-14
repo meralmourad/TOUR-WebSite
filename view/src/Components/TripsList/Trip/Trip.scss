@@ -52,6 +52,18 @@
       right: 15px;
     }
   }
+  .trip-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+
+    .arrow-button {
+      margin: 0;
+    }
+  }
 
   .trip-details {
     display: flex;
@@ -120,6 +132,32 @@
       }
     }
   }
+
+.edit_butt{
+  background: linear-gradient(to right, #8de463, #76c25a);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 14px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 30px auto;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: fixed;
+    bottom: 20px;
+
+    .arrow {
+      margin-left: 12px;
+      font-size: 22px;
+    }
+
+    &:hover {
+      background: linear-gradient(to right, #6ec850, #5ea742);
+      transform: scale(1.05);
+    }
+}
 
   .book-now-button {
     background: linear-gradient(to right, #8de463, #76c25a);
