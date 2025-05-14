@@ -47,7 +47,7 @@ function App() {
           <Route path="/Profile/:id" element={<Profile />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<RegisterForm />} />
-          <Route path="/Report" element={<Report />} />
+          <Route path="/Report/:id" element={<Report />} />
           <Route path="/Trip/:id" element={<Trip />} />
           <Route path="/EditTrip/:id" element={<EditTrip />} />
           <Route path="/BookingPending/:id" element={<BookingPending />} />
