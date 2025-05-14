@@ -15,6 +15,7 @@ import UsersPending from "./Components/UsersPending/UsersPending.jsx";
 import TripsPending from "./Components/TripsPending/TripsPending.jsx";
 import Chat from "./Components/Chat/Chat.jsx";
 import { clearChat } from "./Store/Slices/ChatSlice.js";
+import BookingList from "./Components/BookingList/BookingList.jsx";
 // import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/UsersPending" element={<UsersPending />} />
           <Route path="/TripsPending" element={<TripsPending />} />
           <Route path="/userslist" element={<UsersList />} />
+          <Route path="/BookingList/:id" element={<BookingList />} />
           <Route path="*" element={<h1> Page not found </h1>} />
         </Routes>
       </div>
