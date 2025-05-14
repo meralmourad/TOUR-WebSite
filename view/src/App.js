@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { fetchUser } from "./Store/Slices/UserSlice.js";
 import TripsList from "./Components/TripsList/TripsList.jsx";
 import Trip from "./Components/TripsList/Trip/Trip";
+import EditTrip from "./Components/TripsList/Trip/EditTrip/EditTrip.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
 import BookingPending from "./Components/BookingPending/BookingPending.jsx";
@@ -46,6 +47,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<RegisterForm />} />
           <Route path="/Trip/:id" element={<Trip />} />
+          <Route path="/EditTrip/:id" element={<EditTrip />} />
           <Route path="/BookingPending/:id" element={<BookingPending />} />
           <Route path="/UsersPending" element={<UsersPending />} />
           <Route path="/TripsPending" element={<TripsPending />} />
