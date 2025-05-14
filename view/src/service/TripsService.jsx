@@ -93,6 +93,8 @@ export const getTripById = async (id) => {
 
 export const updateTrip = async (trip) => {
     try {
+
+        console.log("fady2" , trip) ;
         const response = await axios.put(`${API_URL}/Trip/${trip.id}`, trip, {
             headers: {
                 'Authorization': `Bearer ${token}`

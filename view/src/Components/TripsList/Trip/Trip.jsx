@@ -171,13 +171,22 @@ const Trip = () => {
 
           {tripData.status === 1 &&
             (user.role === "Admin" || user.id === tripData.agenceId) && (
-              <button
-                className="pending-bookings-button"
-                onClick={() => navigate(`/BookingPending/${tripData.id}`)}
-              >
-                pending bookings
-                <span className="arrow">→</span>
-              </button>
+              <div className="trip-buttons">
+                <button
+                  className="edit_butt"
+                    onClick={() => navigate(`/EditTrip/${tripData.id}`)}
+                >
+                    Edit Trip
+                    <span className="arrow">→</span>
+                  </button>
+                <button
+                  className="pending-bookings-button"
+                  onClick={() => navigate(`/BookingPending/${tripData.id}`)}
+                >
+                  pending bookings
+                  <span className="arrow">→</span>
+                </button>
+              </div>
             )}
           {user.role === "Tourist" && (
             <button className="book-now-button" onClick={handleBooking}>

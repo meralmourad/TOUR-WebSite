@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { fetchUser } from "./Store/Slices/UserSlice.js";
 import TripsList from "./Components/TripsList/TripsList.jsx";
 import Trip from "./Components/TripsList/Trip/Trip";
+import EditTrip from "./Components/TripsList/Trip/EditTrip/EditTrip.jsx";
 import WelcomePage from "./Components/WelcomePage/WelcomePage";
 import Profile from "./Components/Profile/Profile.jsx";
 import BookingPending from "./Components/BookingPending/BookingPending.jsx";
@@ -15,6 +16,7 @@ import UsersPending from "./Components/UsersPending/UsersPending.jsx";
 import TripsPending from "./Components/TripsPending/TripsPending.jsx";
 import Chat from "./Components/Chat/Chat.jsx";
 import { clearChat } from "./Store/Slices/ChatSlice.js";
+import BookingList from "./Components/BookingList/BookingList.jsx";
 import Report from "./Components/Report/Report.jsx";
 // import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
@@ -47,10 +49,12 @@ function App() {
           <Route path="/signup" element={<RegisterForm />} />
           <Route path="/Report" element={<Report />} />
           <Route path="/Trip/:id" element={<Trip />} />
+          <Route path="/EditTrip/:id" element={<EditTrip />} />
           <Route path="/BookingPending/:id" element={<BookingPending />} />
           <Route path="/UsersPending" element={<UsersPending />} />
           <Route path="/TripsPending" element={<TripsPending />} />
           <Route path="/userslist" element={<UsersList />} />
+          <Route path="/BookingList/:id" element={<BookingList />} />
           <Route path="*" element={<h1> Page not found </h1>} />
         </Routes>
       </div>
