@@ -3,7 +3,8 @@
   background: linear-gradient(to bottom right, #e5e3dc, #e5e3dc);
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  /* إلغاء overflow:hidden */
+  overflow: visible;
   animation: fadeIn 1s ease;
 
   @keyframes fadeIn {
@@ -37,6 +38,7 @@
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
+      z-index: 20;  // تأكد من إضافة هذا
 
       &:hover {
         background-color: rgba(255, 255, 255, 0.9);
@@ -188,7 +190,8 @@
       transform: scale(1.05);
     }
   }
-    .pending-bookings-button {
+
+  .pending-bookings-button {
     background: linear-gradient(to right, #63b5e4, #5a92c2);
     border: none;
     color: #fff;
@@ -328,4 +331,3 @@
     margin-bottom: 20px;
   }
 }
-
