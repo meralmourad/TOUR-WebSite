@@ -15,16 +15,15 @@ public class Trip
     public string Description { get; set; } = string.Empty;
             /*-------*/
     public double Rating { get; set; } = 0;
-    public int Status { get; set; } = 0; // 0: pending, 1: approved, 2: rejected 3: canceled 4:finished 5: on going 6:hidden
+    public int Status { get; set; } = 0; 
     public int AvailableSets { get; set; } = 0;
     
-    // relationships
         public List<Booking>? Bookings { get; set; }
         public List<Report>? Reports { get; set; }
         public List<Images>? Image { get; set; } 
         public List<TripPlace>? TripPlaces { get; set; }
         public List<TripCategory>? TripCategories { get; set; }
-        public List<Category>? Categories { get; set; } // Add navigation property for Categories
+        public List<Category>? Categories { get; set; }
 }
 /*
 

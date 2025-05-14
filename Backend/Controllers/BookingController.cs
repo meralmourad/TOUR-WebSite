@@ -23,7 +23,6 @@ namespace Backend.Controllers
         {
             try
             {
-                //if user is an admin return all bookings
                 if (User.IsInRole("Admin"))
                 {
                     var bk = await _bookingService.GetAllBookings();
@@ -115,7 +114,6 @@ namespace Backend.Controllers
         {
             try
             {
-                // check if the agent is the one who created the booking and is not an admin
 
                 var booking = await _bookingService.GetBookingById(id);
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -142,8 +140,8 @@ namespace Backend.Controllers
                 var booking = await _bookingService.GetBookingById(id);
                 
                 if (booking == null)
-                    return NotFound(); // Return 404 if booking is not found
-                
+                    return NotFound();
+                    
                 if (userId != booking.TouristId.ToString() && !User.IsInRole("Admin") && !User.IsInRole("Agent"))
                     return Forbid();
                 
@@ -178,7 +176,7 @@ namespace Backend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
             }
         }
-     //rate
+    
         [HttpPut("rate/{id}")]
         public async Task<IActionResult> RateBooking(int id, [FromBody] int rating)
         {

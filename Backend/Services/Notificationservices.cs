@@ -9,19 +9,19 @@ using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
-using Backend.WebSockets; // Ensure this namespace is included
+using Backend.WebSockets; 
 
 namespace Backend.Services;
 
 public class Notificationservices
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly MyWebSocketManager _webSocketManager; // Use the correct WebSocketManager
+    private readonly MyWebSocketManager _webSocketManager; 
 
     public Notificationservices(IUnitOfWork unitOfWork, MyWebSocketManager webSocketManager)
     {
         _unitOfWork = unitOfWork;
-        _webSocketManager = webSocketManager; // Initialize the correct WebSocketManager
+        _webSocketManager = webSocketManager; 
     }
 
     public async Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync()
@@ -94,13 +94,10 @@ public class Notificationservices
 
         }).ToList();
     }
-    //send notification to trip members
     public async Task<bool> SendNotificationToTripMembersAsync(NotificationDto notificationDto, int tripId)
     {
-        // Log the input parameters
         Console.WriteLine($"[DEBUG] Sending notification to trip members. TripId: {tripId}, SenderId: {notificationDto.SenderId}");
 
-        // Retrieve the trip
         var trip = await _unitOfWork.Trip.GetByIdAsync(tripId);
         if (trip == null)
         {
@@ -109,7 +106,6 @@ public class Notificationservices
         }
         Console.WriteLine($"[DEBUG] Trip found: {trip.Id}");
 
-        // Retrieve bookings for the trip
         var bookings = _unitOfWork.BookingRepository.Query()
             // .Include(b => b.Tourist)
             .Where(b => b.TripId == tripId)
@@ -122,7 +118,6 @@ public class Notificationservices
         }
         Console.WriteLine($"[DEBUG] Bookings found: {bookings.Count}");
 
-        // Create a new notification
         var notification = new Notification
         {
             SenderId = notificationDto.SenderId,
@@ -131,7 +126,6 @@ public class Notificationservices
         await _unitOfWork.Notification.AddAsync(notification);
         Console.WriteLine($"[DEBUG] Notification created with ID: {notification.Id}");
 
-        // Create user notifications for each tourist in the trip
         foreach (var booking in bookings)
         {
             if (booking.TouristId == 0)
@@ -159,7 +153,6 @@ public class Notificationservices
             Console.WriteLine($"[DEBUG] UserNotification created for TouristId: {booking.TouristId}");
         }
 
-        // Save changes
         await _unitOfWork.CompleteAsync();
         Console.WriteLine("[DEBUG] Notifications sent successfully.");
         return true;

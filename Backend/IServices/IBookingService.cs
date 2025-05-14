@@ -25,5 +25,5 @@ public interface IBookingService
         int curid,
         int? agencyId,
         int? tripId);
-    // Task GetBookingsByTouristId(string? userId);
+    
 }

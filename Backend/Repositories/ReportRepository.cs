@@ -12,5 +12,4 @@ public class ReportRepository : GenericRepository<Report>, IReportRepository
     {
         _context = context;
     }
-    // Add any specific methods for Report if needed
 }

@@ -30,7 +30,6 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        /*relationships*/
 
         modelBuilder.Entity<TripCategory>()
             .HasKey(tc => new { tc.tripId, tc.categoryId });
@@ -63,7 +62,6 @@ public class AppDbContext : DbContext
             .WithMany(t => t.Image)
             .HasForeignKey(i => i.tripId);
 
-        // User-messages relationships
         modelBuilder.Entity<Message>()
             .HasOne(m => m.Sender)
             .WithMany(u => u.SentMessages)
@@ -166,7 +164,6 @@ public class AppDbContext : DbContext
             new Place { Id = 12, Name = "Bali", Country = "Indonesia", Description = "A tropical paradise with stunning beaches." }
         );
 
-        // Seed default data for User
         modelBuilder.Entity<User>().HasData(
             new User { Id = 1, Name = "Admin", Email = "admin@example.com", Password = "admin123", Role = "Admin", PhoneNumber = "1234567890", Address = "Admin Address" ,IsApproved= true},
             new User { Id = 2, Name = "Global Adventures", Email = "agency1@example.com", Password = "agency123", Role = "Agency", PhoneNumber = "5551234567", Address = "123 Adventure Lane" ,IsApproved= true},
@@ -294,7 +291,7 @@ public class AppDbContext : DbContext
                 TripId = 1,
                 TouristId = 2,
                 TravelAgencyId = 3,
-                IsApproved = 1, // 1: confirmed
+                IsApproved = 1, 
                 SeatsNumber = 2
             },
             new Booking
@@ -344,7 +341,6 @@ public class AppDbContext : DbContext
             }
         );
 
-        // Seed default data for Images
         modelBuilder.Entity<Images>().HasData(
             new Images { Id = 1, tripId = 1, ImageUrl = "https://example.com/paris1.jpg" },
             new Images { Id = 2, tripId = 1, ImageUrl = "https://example.com/paris2.jpg" },
@@ -354,25 +350,21 @@ public class AppDbContext : DbContext
             new Images { Id = 6, tripId = 6, ImageUrl = "https://example.com/capetown1.jpg" }
         );
 
-        // Seed default data for Messages
         modelBuilder.Entity<Message>().HasData(
             new Message { Id = 1, Content = "Welcome to the platform!", SenderId = 1, ReceiverId = 2 },
             new Message { Id = 2, Content = "Thank you!", SenderId = 2, ReceiverId = 1 }
         );
 
-        // Seed default data for Notifications
         modelBuilder.Entity<Notification>().HasData(
             new Notification { Id = 1, Title = "Trip Approved", Content = "Your trip to Paris has been approved.", SenderId = 1 },
             new Notification { Id = 2, Title = "Booking Confirmed", Content = "Your booking for Maldives is confirmed.", SenderId = 3 }
         );
 
-        // Seed default data for UserNotifications
         modelBuilder.Entity<UserNotification>().HasData(
             new UserNotification { ReceiverId = 2, NotificationId = 1, IsRead = false },
             new UserNotification { ReceiverId = 11, NotificationId = 2, IsRead = true }
         );
 
-        // Seed default data for Reports
         modelBuilder.Entity<Report>().HasData(
             new Report { Id = 1, TripId = 1, SenderId = 2, AgencyId = 3, Content = "Great trip!", IsRead = false },
             new Report { Id = 2, TripId = 2, SenderId = 11, AgencyId = 3, Content = "Had some issues.", IsRead = true }

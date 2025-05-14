@@ -12,5 +12,4 @@ public class NotificationRepository : GenericRepository<Notification>, INotifica
     {
         _context = context;
     }
-    // Add any specific methods for Notification if needed
 }

@@ -140,7 +140,6 @@ public class ReportServices
             Content = r.Content
         }).ToList();
     }
-    // Get all reports for a specific trip
     
 }
 

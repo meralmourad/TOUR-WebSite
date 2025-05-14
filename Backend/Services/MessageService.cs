@@ -12,9 +12,12 @@ public class MessageService : IMessageService
     private readonly IUnitOfWork _unitOfWork;
     private readonly MyWebSocketManager _ws;
     private readonly notificationSocket _nws;
+    private readonly Notificationservices _notificationService;
 
-    public MessageService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket)
+    public MessageService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket,
+        Notificationservices notificationService)
     {
+        _notificationService = notificationService;
         _nws = notificationSocket;
         _ws = ws;
         _unitOfWork = unitOfWork;
@@ -108,7 +111,16 @@ public class MessageService : IMessageService
             ReceiverId = messageDto.ReceiverId,
             Content = messageDto.Content,
         };
+        var notifi = new NotificationDto
+        {
+            Context = messageDto.Content,
+            SenderId = messageDto.SenderId,
+            ReceiverId = messageDto.ReceiverId 
+        };
+        await _notificationService.SendNotificationAsync(notifi, new List<int> {messageDto.ReceiverId},true);
         await _unitOfWork.Message.AddAsync(message);
+        // insert into the database
+
         await _unitOfWork.CompleteAsync();
         return true;
     }

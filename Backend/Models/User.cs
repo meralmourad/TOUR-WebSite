@@ -11,7 +11,6 @@ public class User
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? Address { get; set; }
     
-    // Navigation properties
     public List<Message>? ReceivedMessages { get; set; }
     public List<Message>? SentMessages { get; set; }
     public List<Report>? Reports { get; set; }

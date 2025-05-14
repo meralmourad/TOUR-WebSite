@@ -125,7 +125,6 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     [FromQuery] int tripId = 0,
     [FromQuery] int? USERID = -1)
     {
-        //if the user is not authenticated, return Unauthorized
         if (!User.Identity?.IsAuthenticated ?? true)
             return Unauthorized();
         Console.WriteLine("User role: " + User.IsInRole("Tourist") + " " + User.IsInRole("Agency") + " " + User.IsInRole("Admin"));
@@ -143,7 +142,6 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
             Console.WriteLine("\n\n\n\n\n\n\n\n\n\nUserId: " + USERID + " isapproved: " + IsApproved + "\n\n\n\n\n\n\n\n");
         }
 
-        //if the user is an agency, check if they requested their own bookings
         var isAdmin = User.IsInRole("Admin");
 
         if (User.IsInRole("Agency"))
@@ -161,7 +159,6 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
         
         Console.WriteLine("\n\n\n\n\n\n\n\nUserId: " + curid + " userid" + USERID + " isapproved: " + IsApproved);
 
-        // Ensure IsApproved is respected
         var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved, isAdmin,curid, USERID, tripId);
         var totalCount = bookings.Result.TotalCount;
 

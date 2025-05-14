@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder; // Ensure this namespace is included
+using Microsoft.AspNetCore.Builder; 
 using Backend.Data;
 using Backend.IServices;
 using Backend.Repositories.Interfaces;
@@ -10,25 +10,25 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Backend.Models;
-using Backend.WebSockets; // Ensure this namespace is included
+using Backend.WebSockets; 
 
 var builder = WebApplication.CreateBuilder(args);
-//jwt services
+
 builder.Services.AddScoped<JwtTokenService>();
 
-// Add services to the container.
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-        options.JsonSerializerOptions.WriteIndented = true; // Optional: For better readability of JSON
+        options.JsonSerializerOptions.WriteIndented = true; 
     });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000") // Your frontend port
+            policy.WithOrigins("http://localhost:3000")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add JWT Authentication
+
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -51,14 +51,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            RoleClaimType = ClaimTypes.Role // This line is important for role-based auth
+            RoleClaimType = ClaimTypes.Role 
         };
 
     });
 
 builder.Services.AddAuthorization();
 
-// services and middlewares
+
 builder.Services.AddScoped<UserNotificationRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -75,17 +75,15 @@ builder.Services.AddScoped<ReportServices>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<MyWebSocketManager>(); // Explicitly register the correct WebSocketManager
-builder.Services.AddSingleton<notificationSocket>(); // Explicitly register the correct WebSocketManager
+builder.Services.AddSingleton<MyWebSocketManager>(); 
+builder.Services.AddSingleton<notificationSocket>(); 
 
 builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-// Enable WebSocket support
 app.UseWebSockets();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -94,14 +92,13 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowFrontend");
-app.UseAuthentication(); // Add this before UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapStaticAssets();

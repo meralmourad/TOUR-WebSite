@@ -17,7 +17,6 @@ namespace Backend.Controllers
         {
             _userService = userService;
         }
-        // GET: api/user
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers()
@@ -30,11 +29,9 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int? id)
         {
-            // Get the user ID from the token
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null) return Unauthorized("User not found in token.");
 
-            // If id is null, use the ID from the token
             if (id == null) id = int.Parse(userIdClaim);
 
             var result = await _userService.GetUserByIdAsync((int)id);
@@ -42,10 +39,8 @@ namespace Backend.Controllers
 
             var retuser = result.User;
             if (retuser == null) return NotFound("User not found.");
-            // Allow access if the user is the same as in the token or has the "Agency" role
             if (id.ToString() == userIdClaim || retuser?.Role == "Agency")
             {
-                // return userDTO
                 var user = new UserDTO
                 {
                     Id = retuser.Id,
@@ -58,7 +53,6 @@ namespace Backend.Controllers
                 return Ok(user);
             }
 
-            // Check if the user has the "Admin" or "Agency" role
             var roleClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (roleClaim != "Admin" && roleClaim != "Agency")
             {
@@ -89,7 +83,6 @@ namespace Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userUpdateDto,int id)
         {
-            // Check if the user reqested to update is the same as the one in the token
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null) return Unauthorized("User not found in token.");
 
@@ -97,7 +90,6 @@ namespace Backend.Controllers
             if (!result.Success) return BadRequest(result.Message);
             return Ok(result.Success);
         }
-        // approve user
         [HttpPut("approve/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveUser(int id)

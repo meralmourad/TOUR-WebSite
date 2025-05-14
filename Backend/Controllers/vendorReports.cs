@@ -23,34 +23,28 @@ namespace Backend.Controllers
         {
             try
             {
-                // Path to Python script - adjust as needed
                 string pythonScriptPath = Path.Combine(_environment.ContentRootPath, "Scripts", "generate_report.py");
                 
-                // Ensure the script directory exists
                 string scriptDirectory = Path.GetDirectoryName(pythonScriptPath);
                 if (!Directory.Exists(scriptDirectory))
                 {
                     Directory.CreateDirectory(scriptDirectory);
                 }
 
-                // Check if script exists
                 if (!System.IO.File.Exists(pythonScriptPath))
                 {
                     return StatusCode(500, $"Python script not found at: {pythonScriptPath}");
                 }
 
-                // Expected PDF output path
                 string pdfFileName = $"trip_report_agency_{agencyId}.pdf";
                 string outputPath = Path.Combine(_environment.ContentRootPath, "Reports", pdfFileName);
                 
-                // Ensure the output directory exists
                 string outputDirectory = Path.GetDirectoryName(outputPath);
                 if (!Directory.Exists(outputDirectory))
                 {
                     Directory.CreateDirectory(outputDirectory);
                 }
 
-                // Run the Python script as a process
                 using (var process = new Process())
                 {
                     process.StartInfo = new ProcessStartInfo
@@ -66,7 +60,6 @@ namespace Backend.Controllers
 
                     process.Start();
                     
-                    // Capture any output/errors
                     string output = await process.StandardOutput.ReadToEndAsync();
                     string error = await process.StandardError.ReadToEndAsync();
                     
@@ -78,13 +71,11 @@ namespace Backend.Controllers
                     }
                 }
 
-                // Check if PDF was generated
                 if (!System.IO.File.Exists(outputPath))
                 {
                     return NotFound($"Report file was not generated at path: {outputPath}");
                 }
 
-                // Return the PDF file
                 var fileBytes = await System.IO.File.ReadAllBytesAsync(outputPath);
                 return File(fileBytes, "application/pdf", pdfFileName);
             }

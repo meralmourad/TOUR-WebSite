@@ -102,13 +102,11 @@ public class BookingService : IBookingService
              ?? throw new Exception("User not found");
         var trip = _unitOfWork.Trip.GetByIdAsync(bookingDTO.TripId).Result 
             ?? throw new Exception("Trip not found");
-        //check if the user has already booked the trip
         var isBooked = GetBookingsByTouristIdAndTripId(bookingDTO.TouristId, bookingDTO.TripId).Result.Any();
         if (isBooked)
         {
             throw new Exception("You have already booked this trip");
         }
-        // check if the trip has enough available seats
         if (trip.AvailableSets < bookingDTO.SeatsNumber)
             throw new Exception("Not enough available seats");
 
@@ -117,14 +115,13 @@ public class BookingService : IBookingService
         {
             TouristId = bookingDTO.TouristId,
             SeatsNumber = bookingDTO.SeatsNumber,
-            TravelAgencyId = bookingDTO.agenceId ?? 0, // Default to 0 if null
+            TravelAgencyId = bookingDTO.agenceId ?? 0, 
             TripId = bookingDTO.TripId,
             IsApproved = 0,
-            PhoneNumber = bookingDTO.PhoneNumber ?? string.Empty // Default to empty string if null
+            PhoneNumber = bookingDTO.PhoneNumber ?? string.Empty 
         };
         await _unitOfWork.BookingRepository.AddAsync(booking);
         await _unitOfWork.CompleteAsync();
-        // Booking dto
     
         var bookingDto = new BookingDTO
         {
@@ -205,7 +202,6 @@ public class BookingService : IBookingService
         _unitOfWork.BookingRepository.Update(booking);
 
 
-        // calc the average rating of the trip
         var trip = _unitOfWork.Trip.GetByIdAsync(booking.TripId).Result;
         if (trip == null)
             return Task.FromResult(0);
@@ -244,7 +240,6 @@ public class BookingService : IBookingService
         int? USERID,
         int? tripId)
     {
-        // Filter bookings based on the provided parameters
         var bookingsQuery = _unitOfWork.BookingRepository.Query();
         if(isApproved==2)
             bookingsQuery = bookingsQuery.Where(b => b.IsApproved == 0 || b.IsApproved == 1);
@@ -268,13 +263,11 @@ public class BookingService : IBookingService
             .Take(len)
             .ToList());
 
-        // Ensure bookings are not null or empty
         if (bookings == null || !bookings.Any())
         {
             return (Enumerable.Empty<BookingDTO>(), totalCount);
         }
 
-        // Map to DTOs
         var bookingDtos = bookings.Select(b => new BookingDTO
         {
             Id = b.Id,

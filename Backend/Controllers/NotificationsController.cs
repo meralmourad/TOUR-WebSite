@@ -53,7 +53,6 @@ namespace Backend.Controllers
                 return BadRequest();
             return Ok();
         }
-        //service to send notification to trip tourist
         [HttpPost("trip/{tripId}")]
         public async Task<IActionResult> SendNotificationToTripTourist(int tripId, [FromBody] NotificationDto notificationDto)
         {

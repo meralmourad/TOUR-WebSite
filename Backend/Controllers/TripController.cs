@@ -104,13 +104,11 @@ public class TripController : ControllerBase
     {
         try
         {
-            // Check if the user is authorized to update the trip (e.g., only Admin can update trips or the agency)
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null) return Unauthorized("User not found in token.");
             var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (userRole != "Admin")
             {
-                // agency can update their own trips
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
@@ -131,13 +129,11 @@ public class TripController : ControllerBase
     {
         try
         {
-            // Check if the user is authorized to delete the trip (e.g., only Admin can delete trips or the agency)
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null) return Unauthorized("User not found in token.");
             var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (userRole != "Admin")
             {
-                // agency can delete their own trips
                 var trip = await _tripService.GetTripByIdAsync(id);
                 if (trip == null || trip.AgenceId != int.Parse(userIdClaim))
                 {
@@ -153,7 +149,6 @@ public class TripController : ControllerBase
         }
     }
 
-    // //get all trips by agency id
     // [HttpGet("agency/{id}")]
     // [Authorize(Roles = "Admin,Agency")]
     // public async Task<IActionResult> GetTripsByAgencyId(int id)

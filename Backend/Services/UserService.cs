@@ -146,10 +146,8 @@ public class UserService : IUserService
         else if (!tourist && !agency && !admin)
             query = query.Where(u => u.Role == "Tourist");
 
-        // Get the total count of users in the database
         int totalCount = query.Count();
 
-        // Pagination
         var users = query
             .Skip(start)
             .Take(len)
@@ -197,7 +195,6 @@ public class UserService : IUserService
 
     private bool VerifyPassword(string input, string stored)
     {
-        //disaple password hashing ------------------here---------------------------------------------
         return true;
         var parts = stored.Split('.');
         if (parts.Length != 2) return false;
