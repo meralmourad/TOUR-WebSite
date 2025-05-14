@@ -155,7 +155,6 @@ const EditTrip = () => {
             onChange={handleInputChange}
           />
         </div>
-                {/* {console.log("eheee" , TripData)} */}
         <div className="form-group">
           <label>Description:</label>
           <textarea

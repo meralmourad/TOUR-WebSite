@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import "./Trip.scss";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTripById } from "../../../service/TripsService";
+import ReactDOMServer from "react-dom/server";
+import { getTripById, updateTrip } from "../../../service/TripsService";
 import { useSelector } from "react-redux";
 import Swal2 from "sweetalert2";
+import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { addBooking } from "../../../service/BookingService";
+import Rate from "../../Rate/Rate";
 
 const MySwal = withReactContent(Swal2);
 
@@ -14,31 +17,48 @@ const Trip = () => {
   const id = useParams()?.id;
   const navigate = useNavigate();
   const [tripData, setTripData] = useState(null);
-  const [imageIndex, setImageIndex] = useState(0); 
-  const [txt , settxt] = useState("") ;
+  const [imageIndex, setImageIndex] = useState(0);
+  const [txt, settxt] = useState("");
+  const [rate, setRate] = useState(0);
+  const [confirm, setConfirm] = useState(false);
+  const [report, setReport] = useState("");
 
   useEffect(() => {
     if (tripData) {
       const now = new Date();
-      const enddate = new Date(tripData.endDate) ;
+      const enddate = new Date(tripData.endDate);
       const startdate = new Date(tripData.startDate);
-      if (startdate < now && enddate < now ) {
+      if (startdate < now && enddate < now) {
         settxt("This trip has already ended.");
-      }
-      else if (startdate < now && enddate > now ){
+      } else if (startdate < now && enddate > now) {
         settxt("This trip has already started.");
-      }      
-      else {
+      } else {
         settxt("This trip is upcoming. Book your spot now!");
       }
     }
   }, [tripData]);
+
+  useEffect(() => {
+    if (confirm) {
+      const sendRate = async () => {
+        try {
+          const update = await updateTrip({
+            ...tripData,
+            rating: rate,
+          });
+        } catch (error) {
+          console.log("error in updating rate", error);
+        }
+      };
+      sendRate();
+    };
+  }, [confirm]);
+
   useEffect(() => {
     const fetchTripData = async () => {
       try {
         const trip = await getTripById(id);
         setTripData(trip);
-
       } catch (error) {
         console.error("Error fetching trip data:", error);
       }
@@ -157,7 +177,7 @@ const Trip = () => {
           <div className="notification-item">
             <span className="notification-dot"></span>
             <p className="notification-text">{txt}</p>
-        </div>
+          </div>
 
           <div className="trip-details">
             <div className="trip-section">
@@ -197,11 +217,11 @@ const Trip = () => {
               <div className="trip-buttons">
                 <button
                   className="edit_butt"
-                    onClick={() => navigate(`/EditTrip/${tripData.id}`)}
+                  onClick={() => navigate(`/EditTrip/${tripData.id}`)}
                 >
-                    Edit Trip
-                    <span className="arrow">→</span>
-                  </button>
+                  Edit Trip
+                  <span className="arrow">→</span>
+                </button>
                 <button
                   className="pending-bookings-button"
                   onClick={() => navigate(`/BookingPending/${tripData.id}`)}
@@ -211,11 +231,75 @@ const Trip = () => {
                 </button>
               </div>
             )}
+
           {user.role === "Tourist" && (
-            <button className="book-now-button" onClick={handleBooking}>
-              BOOK NOW!
-              <span className="arrow">→</span>
-            </button>
+            <>
+              {txt === "This trip is upcoming. Book your spot now!" && (
+                <button className="book-now-button" onClick={handleBooking}>
+                  BOOK NOW!
+                  <span className="arrow">→</span>
+                </button>
+              )}
+              {txt === "This trip has already ended." && (
+                <>
+                  <button
+                    className="book-now-button"
+                    onClick={() =>
+                      MySwal.fire({
+                        title: "RATE NOW!",
+                        html: (
+                          <div style={{ textAlign: "center" }}>
+                            <Rate SendRate={setRate} />
+                          </div>
+                        ),
+                        showCancelButton: true,
+                        confirmButtonText: "Send",
+                        cancelButtonText: "Report!",
+                        showCloseButton: true,
+                        customClass: {
+                          popup: "rounded-popup",
+                          confirmButton: "custom-confirm",
+                          cancelButton: "custom-cancel",
+                        },
+                        preConfirm: () => {
+                          return rate;
+                        },
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          setConfirm(true);
+                            MySwal.fire({
+                            title: "Thank You!",
+                            text: "Your rating has been submitted successfully.",
+                            icon: "success",
+                            });
+                          } else if (
+                            result.dismiss === Swal.DismissReason.cancel
+                          ) {
+                            MySwal.fire({
+                            title: "Report Issue",
+                            input: "textarea",
+                            inputPlaceholder: "Write your report here...",
+                            showCancelButton: true,
+                            confirmButtonText: "Submit",
+                            cancelButtonText: "Cancel",
+                            }).then((reportResult) => {
+                            if (reportResult.isConfirmed) {
+                              MySwal.fire({
+                              title: "Reported!",
+                              text: "Your report has been submitted.",
+                              icon: "info",
+                              });
+                            }
+                            });
+                          }
+                      })
+                    }
+                  >
+                    RATE NOW!
+                  </button>
+                </>
+              )}
+            </>
           )}
         </div>
       )}
