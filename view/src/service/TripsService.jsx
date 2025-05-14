@@ -167,7 +167,9 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
     agencyId = agencyId ?? 0;
     // console.log("agencyId", agencyId);
     try {
-        const response = await axios.get(`${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating=${sortBy}`, {
+        const url = `${API_URL}/Search/trips?start=${start}&len=${len}&destination=${destination}&startDate=${startDate}&endDate=${endDate}&price=${price}&isApproved=${isApproved}&q=${searchTerm}&agencyId=${agencyId}&sortByRating=${sortBy}`;
+        // console.log("url", url);
+        const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -175,8 +177,10 @@ export const SearchTrips = async (start, len, destination, startDate, endDate, p
         const trips = response.data.trips.$values;
         const totalCount = response.data.totalCount;
         for (let i = 0; i < trips.length; i++) {
-            const agence = await getUserById(trips[i].agenceId);
-            trips[i].agence = agence;
+            if(token) {
+                const agence = await getUserById(trips[i].agenceId);
+                trips[i].agence = agence;
+            }
             for(let j = 0; j < trips[i].images.$values.length; j++){
                 trips[i].images.$values[j] = `${API_PHOTO}${trips[i].images.$values[j]}`;
             }

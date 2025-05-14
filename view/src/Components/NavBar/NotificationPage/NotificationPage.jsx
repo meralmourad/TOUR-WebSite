@@ -1,15 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./NotificationPage.scss";
+import { getNotifications } from "../../../service/NotificationsService";
+import { useDispatch, useSelector } from "react-redux";
+import { setChat } from "../../../Store/Slices/ChatSlice";
+import { useNavigate } from 'react-router-dom';
+
+const WS_URL = process.env.REACT_APP_WS_URL;
 
 const NotificationPage = () => {
+  const { user, token } = useSelector((store) => store.info);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const numberOfUsersPerPage = 8;
 
-  const [numOfUsers, setNumOfUsers] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [notifications, setNotifications] = useState([]);
 
-  const numberOfPages = Math.ceil(numOfUsers / numberOfUsersPerPage);
+  const numberOfPages = 4;
 
-  // api fetching messages websocket
+  useEffect(() => {
+    ws.current = new WebSocket(`${WS_URL}/notification/${user.id}?token=${token}`);
+    ws.current.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+    ws.current.onmessage = (event) => {
+      console.log("notifications", notifications);
+      const newNotification = JSON.parse(event.data);
+      console.log("Received:", newNotification);
+      const newArr = [{ ...newNotification, context: newNotification.content }, ...notifications];
+      console.log("newArr", newArr);
+      
+      if(newArr.length > numberOfUsersPerPage) {
+        newArr.pop();
+      }
+      setNotifications(newArr);
+    }
+    ws.current.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+        console.log("WebSocket connection closed");
+      }
+    }
+  }
+  , [notifications, token, user.id]);  
+
+  useEffect(() => {
+    const start = (pageNumber - 1) * numberOfUsersPerPage;
+    const fetchData = async () => {
+      try {
+        const { allNotifications } = await getNotifications(user.id, start, numberOfUsersPerPage);
+        allNotifications.reverse();
+        setNotifications(allNotifications);
+        // console.log("allNotifications", allNotifications);
+        // console.log("totalCount", totalCount);
+        
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [user, pageNumber]);
+
+  const ws = useRef(null);
+
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
@@ -31,24 +91,26 @@ const NotificationPage = () => {
   return (
     <div className="notification-container">
       <h2 className="notification-title">Notifications</h2>
-      <div className="notification-list">
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">You have a new message.</p>
+
+
+      {notifications.map((notification) => (
+        <div key={notification} className="notification-list">
+          <div className="notification-item" onClick={() => {
+            if(notification?.senderId) {
+              dispatch(setChat({receiverId: notification.senderId, senderId: user.id}));
+            }
+            else {
+              navigate('Trip/' + notification.TripId);
+            }
+          }}>
+            <span className="notification-dot"></span>
+            <p className="notification-text">{ notification.context }</p>
+          </div>
+          {/* <br /> */}
         </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Your booking has been confirmed.</p>
-        </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Your payment was successful.</p>
-        </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Reminder: Your trip is tomorrow.</p>
-        </div>
-      </div>
+      ))}
+
+
       <div className="pagination">
         <button onClick={() => setPageNumber(Math.max(1, pageNumber - 1))}>
           &laquo;
