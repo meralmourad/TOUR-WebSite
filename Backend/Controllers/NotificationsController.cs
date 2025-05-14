@@ -35,12 +35,14 @@ namespace Backend.Controllers
         }
 
         [HttpGet("receiver/{receiverId}")]
-        public async Task<IActionResult> GetNotificationsByReceiverId(int receiverId)
+        public async Task<IActionResult> GetNotificationsByReceiverId(int receiverId, [FromQuery] int start = 0, [FromQuery] int len = 10)
         {
             var notifications = await _notificationServices.GetNotificationsByReceiverIdAsync(receiverId);
+
             if (notifications == null)
                 return NotFound();
-            return Ok(notifications);
+            var not = notifications.Skip(start).Take(len).ToList();
+            return Ok(not);
         }
 
         [HttpPost]
