@@ -15,6 +15,7 @@ import UsersPending from "./Components/UsersPending/UsersPending.jsx";
 import TripsPending from "./Components/TripsPending/TripsPending.jsx";
 import Chat from "./Components/Chat/Chat.jsx";
 import { clearChat } from "./Store/Slices/ChatSlice.js";
+import Report from "./Components/Report/Report.jsx";
 // import AddTrip from "./Components/AddTrip/AddTrip.jsx";
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/Profile/:id" element={<Profile />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<RegisterForm />} />
+          <Route path="/Report" element={<Report />} />
           <Route path="/Trip/:id" element={<Trip />} />
           <Route path="/BookingPending/:id" element={<BookingPending />} />
           <Route path="/UsersPending" element={<UsersPending />} />
