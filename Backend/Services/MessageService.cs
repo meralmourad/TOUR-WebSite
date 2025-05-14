@@ -11,9 +11,11 @@ public class MessageService : IMessageService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly MyWebSocketManager _ws;
+    private readonly notificationSocket _nws;
 
-    public MessageService(IUnitOfWork unitOfWork, MyWebSocketManager ws)
+    public MessageService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket)
     {
+        _nws = notificationSocket;
         _ws = ws;
         _unitOfWork = unitOfWork;
     }
@@ -79,6 +81,10 @@ public class MessageService : IMessageService
 
     public async Task<bool> SendMessageAsync(MessageDTO messageDto)
     {
+        
+        var user = await _unitOfWork.User.GetByIdAsync(messageDto.SenderId);
+        if (user == null)
+            return false;
         var messageToSend = new
         {
             SenderId = messageDto.SenderId,
@@ -86,6 +92,16 @@ public class MessageService : IMessageService
         };
         var messageJson = System.Text.Json.JsonSerializer.Serialize(messageToSend);
         await _ws.SendMessageToUserAsync(messageDto.ReceiverId, messageJson);
+        var userName = user.Name;
+        var messageToSend2 = new
+        {
+            senderId = messageDto.SenderId,
+            content = "You have a new message from " + userName,
+        };
+        
+        var messageJson2 = System.Text.Json.JsonSerializer.Serialize(messageToSend2);
+        await _nws.SendMessageToUserAsync(messageDto.ReceiverId, messageJson2);
+        
         var message = new Message
         {
             SenderId = messageDto.SenderId,

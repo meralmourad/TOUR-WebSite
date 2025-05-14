@@ -15,13 +15,18 @@ public class TripService : ITripService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly TripMapper _tripMapper;
+    private readonly Notificationservices _notificationServices;
+    private readonly notificationSocket _nws; // Use the correct notificationSocket
     private readonly MyWebSocketManager _ws; // Use the correct WebSocketManager
     private static int imageIndex = 1; // Global image index
 
-    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws)
+    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket,
+        Notificationservices notificationServices)
     {
+        _notificationServices = notificationServices;
         _unitOfWork = unitOfWork;
-        _ws = ws; // Assign the WebSocketManager instance
+        _nws = notificationSocket;
+        _ws = ws;
         _tripMapper = new TripMapper(unitOfWork);
     }
 
@@ -37,6 +42,30 @@ public class TripService : ITripService
         {
             // Validate input
             ValidateCreateTripDto(tripDto);
+
+            if (_notificationServices == null)
+            {
+                Console.WriteLine("Error: Notification services (_notificationServices) is null."); // Replace with a logging framework
+                return (false, "Notification service is unavailable.");
+            }
+
+            if (tripDto.LocationIds == null || !tripDto.LocationIds.Any())
+            {
+                Console.WriteLine("Error: Location IDs are null or empty."); // Replace with a logging framework
+                return (false, "At least one location is required.");
+            }
+
+            if (tripDto.CategoryIds == null || !tripDto.CategoryIds.Any())
+            {
+                Console.WriteLine("Error: Category IDs are null or empty."); // Replace with a logging framework
+                return (false, "At least one category is required.");
+            }
+
+            if (tripDto.Images == null || !tripDto.Images.Any())
+            {
+                Console.WriteLine("Error: Images are null or empty."); // Replace with a logging framework
+                return (false, "At least one image is required.");
+            }
 
             // Create the trip
             var trip = new Trip
@@ -58,15 +87,52 @@ public class TripService : ITripService
             Console.WriteLine("-----------------------------------Trip created with ID: " + trip.Id); // Replace with a logging framework
 
             // Add locations
-            AddTripLocations(trip.Id, tripDto.LocationIds);
+            await AddTripLocations(trip.Id, tripDto.LocationIds);
 
             // Add categories
-            AddTripCategories(trip.Id, tripDto.CategoryIds);
+            await AddTripCategories(trip.Id, tripDto.CategoryIds);
 
             // Add images
-            AddTripImages(trip.Id, tripDto.Images);
+            await AddTripImages(trip.Id, tripDto.Images);
 
             // Save all changes
+            await _unitOfWork.CompleteAsync();
+
+            var agency = await _unitOfWork.User.GetByIdAsync(tripDto.AgenceId);
+            if (agency == null)
+            {
+                Console.WriteLine("Error: Agency not found."); // Replace with a logging framework
+                return (false, "Agency not found.");
+            }
+            var agencyName = agency.Name;
+            if (string.IsNullOrEmpty(agencyName))
+            {
+                Console.WriteLine("Error: Agency name is null or empty."); // Replace with a logging framework
+                return (false, "Agency name is invalid.");
+            }
+            Console.WriteLine("Agency Name: " + agencyName); // Replace with a logging framework
+
+            if (_nws == null)
+            {
+                Console.WriteLine("Error: Notification socket (_nws) is null."); // Replace with a logging framework
+                return (false, "Notification service is unavailable.");
+            }
+
+            var nofi = new {
+                content = agencyName + " has created Trip.",
+                TripId = trip.Id,
+            };
+            var nofiJson = System.Text.Json.JsonSerializer.Serialize(nofi);
+            Console.WriteLine("Notification JSON: " + nofiJson); // Replace with a logging framework
+            await _nws.SendMessageToUserAsync(1, nofiJson);
+
+            var dbnotif = new NotificationDto
+            {
+                ReceiverId = 1,
+                SenderId = tripDto.AgenceId,
+                Context = agencyName + " has created a Trip.",
+            };
+            await _notificationServices.SendNotificationAsync(dbnotif, new List<int> { 1 });
             await _unitOfWork.CompleteAsync();
 
             return (true, "Trip created successfully.");
@@ -87,7 +153,7 @@ public class TripService : ITripService
         ThrowIfErrorFound(tripDto.LocationIds == null || !tripDto.LocationIds.Any(), "At least one location is required.");
     }
 
-    private void AddTripLocations(int tripId, IEnumerable<int> locationIds)
+    private async Task AddTripLocations(int tripId, IEnumerable<int> locationIds)
     {
         var tripPlaces = locationIds.Select(location => new TripPlace
         {
@@ -97,11 +163,11 @@ public class TripService : ITripService
 
         foreach (var tripPlace in tripPlaces)
         {
-            _unitOfWork.TripPlace.AddAsync(tripPlace);
+            await _unitOfWork.TripPlace.AddAsync(tripPlace);
         }
     }
 
-    private void AddTripCategories(int tripId, IEnumerable<int> categoryIds)
+    private async Task AddTripCategories(int tripId, IEnumerable<int> categoryIds)
     {
         var tripCategories = categoryIds.Select(category => new TripCategory
         {
@@ -111,11 +177,11 @@ public class TripService : ITripService
 
         foreach (var tripCategory in tripCategories)
         {
-            _unitOfWork.tripCategory.AddAsync(tripCategory);
+           await _unitOfWork.tripCategory.AddAsync(tripCategory);
         }
     }
 
-    private void AddTripImages(int tripId, IEnumerable<string> images)
+    private async Task AddTripImages(int tripId, IEnumerable<string> images)
     {
         foreach (var imageUrl in images)
         {
@@ -125,7 +191,7 @@ public class TripService : ITripService
                 ImageUrl = imageUrl,
                 tripId = tripId
             };
-            _unitOfWork.image.AddAsync(image);
+            await _unitOfWork.image.AddAsync(image);
         }
     }
 
@@ -162,6 +228,7 @@ public class TripService : ITripService
         curTrip.Title = tripDto.Title ?? curTrip.Title;
         curTrip.Price = tripDto.Price ?? curTrip.Price;
         curTrip.StartDate = tripDto.StartDate ?? curTrip.StartDate;
+        curTrip.EndDate = tripDto.EndDate ?? curTrip.EndDate;
         curTrip.Description = tripDto.Description ?? curTrip.Description;
         curTrip.Rating = tripDto.Rating ?? curTrip.Rating;
         curTrip.AvailableSets = tripDto.AvailableSets ?? curTrip.AvailableSets;

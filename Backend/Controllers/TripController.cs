@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Backend.DTOs.TripDTOs;
 using Backend.IServices;
+using Backend.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,10 +13,12 @@ namespace Backend.Controllers{
 public class TripController : ControllerBase
 {
     private readonly ITripService _tripService;
+        private readonly notificationSocket _nsw;
     private readonly ILogger<TripController> _logger;
 
-    public TripController(ITripService tripService, ILogger<TripController> logger)
+    public TripController(ITripService tripService, ILogger<TripController> logger, notificationSocket nsw)
     {
+        _nsw = nsw;
         _tripService = tripService;
         _logger = logger;
     }

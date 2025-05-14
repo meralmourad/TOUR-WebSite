@@ -37,7 +37,7 @@ const BookingPending = () => {
                 }
                 // console.log(trip);
 
-                const { bookings } = await searchBookings(null, 1000, id, user.id, 0);
+                const { bookings } = await searchBookings(null, 1000, id, trip.agenceId, 0);
                 const finalBookings = bookings.filter((booking) => {
                     return booking.isApproved === 0 && booking.tourist.name.toLowerCase().includes(searchTerm.toLowerCase());
                 });

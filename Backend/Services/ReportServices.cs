@@ -124,5 +124,23 @@ public class ReportServices
         _unitOfWork.Report.Update(report);
         return await _unitOfWork.CompleteAsync() > 0;
     }
+    // Get all reports for a specific user
+    public async Task<IEnumerable<ReportDto>> GetReportsByUserIdAsync(int userId)
+    {
+        var reports = await _unitOfWork.Report.Query()
+            .Where(r => r.SenderId == userId)
+            .ToListAsync();
+        if (reports == null)
+            return null;
+
+        return reports.Select(r => new ReportDto
+        {
+            SenderId = r.SenderId,
+            TripId = r.TripId,
+            Content = r.Content
+        }).ToList();
+    }
+    // Get all reports for a specific trip
+    
 }
 

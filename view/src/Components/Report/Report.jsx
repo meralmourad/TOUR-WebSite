@@ -1,25 +1,35 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import './Report.scss';
+import swal from "sweetalert";
+import { useNavigate, useParams } from 'react-router-dom';
+import { getReportsByTripId } from '../../service/ReportService';
 
 const Report = () => {
-    const reports = [
-        "Relax and unwind in the tropical paradise of Maldives.",
-        "Explore the beauty of Sydney.",
-        "Explore the beauty of Paris with this amazing adventure package.",
-        "Discover the ancient history of Rome.",
-        "Experience the vibrant culture of Tokyo.",
-        "Enjoy the breathtaking landscapes of New Zealand.",
-        "Take a journey through the majestic mountains of Switzerland.",
-        "Immerse yourself in the rich traditions of India.",
-        "Witness the stunning Northern Lights in Iceland.",
-        "Relax on the pristine beaches of the Bahamas."
-    ];
+    const id = useParams().id;
+    const [reports, setReports] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchReport = async () => {
+            try {
+                const reports = await getReportsByTripId(id);
+                setReports(reports);
+                // console.log(reports);
+            } catch (error) {
+                console.error('Error fetching report:', error);
+                swal("Opps!", error.response.data, "error");
+                navigate(`/Trip/${id}`);
+            }
+        };
+
+        fetchReport();
+    }, [id, reports, navigate]);
 
     return (
         <div className="report-container">
-            {reports.map((report, index) => (
-                <div key={index} className="report-card">
-                    <p>{report}</p>
+            {reports.map((report) => (
+                <div key={reports} className="report-card">
+                    <p>{report.content}</p>
                 </div>
             ))}
         </div>

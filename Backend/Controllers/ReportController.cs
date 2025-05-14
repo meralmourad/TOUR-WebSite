@@ -71,5 +71,23 @@ namespace Backend.Controllers
             else
                 return NotFound("Report not found.");
         }
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetReportsByUserId(int userId)
+        {
+            var reports = await _reportService.GetReportsByUserIdAsync(userId);
+            if (reports == null || !reports.Any())
+                return NotFound("No reports found for this user.");
+
+            return Ok(reports);
+        }
+        [HttpGet("trip/{tripId}")]
+        public async Task<IActionResult> GetReportsByTripId(int tripId)
+        {
+            var reports = await _reportService.GetReportsByTripIdAsync(tripId);
+            if (reports == null || !reports.Any())
+                return NotFound("No reports found for this trip.");
+
+            return Ok(reports);
+        }
     }
 }
