@@ -23,7 +23,7 @@ const Report = () => {
         };
 
         fetchReport();
-    }, [id, reports, navigate]);
+    }, [id]);
 
     return (
         <div className="report-container">
