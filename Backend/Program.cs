@@ -69,6 +69,7 @@ builder.Services.AddScoped<UserNotification>();
 builder.Services.AddScoped<Notificationservices>();
 // builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<ReportServices>();
 // builder.Services.AddScoped<IReportService, ReportService>();
 // builder.Services.AddScoped<TripPl>();
 builder.Services.AddEndpointsApiExplorer();

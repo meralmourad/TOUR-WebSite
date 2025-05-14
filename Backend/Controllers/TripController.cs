@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Backend.DTOs;
 using Backend.DTOs.TripDTOs;
 using Backend.IServices;
 using Backend.WebSockets;
@@ -64,18 +63,6 @@ public class TripController : ControllerBase
         try
         {
             var result = await _tripService.CreateTripAsync(tripDto);
-            if (result.Success)
-            {
-                // Notify the admin about the new trip
-                var notification = new 
-                {
-                    Context = $"A new trip has been created by agency {tripDto.AgenceId}.",
-                    ReceiverId =  1 
-                };
-
-                var notificationJson = System.Text.Json.JsonSerializer.Serialize(notification);
-                await _nsw.SendMessageToUserAsync(1, notificationJson);
-            }
             return result.Success ? Ok(result) : BadRequest(result);
         }
         catch (Exception ex)

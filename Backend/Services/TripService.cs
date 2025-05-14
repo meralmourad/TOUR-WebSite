@@ -61,13 +61,13 @@ public class TripService : ITripService
             Console.WriteLine("-----------------------------------Trip created with ID: " + trip.Id); // Replace with a logging framework
 
             // Add locations
-            AddTripLocations(trip.Id, tripDto.LocationIds);
+            await AddTripLocations(trip.Id, tripDto.LocationIds);
 
             // Add categories
-            AddTripCategories(trip.Id, tripDto.CategoryIds);
+            await AddTripCategories(trip.Id, tripDto.CategoryIds);
 
             // Add images
-            AddTripImages(trip.Id, tripDto.Images);
+            await AddTripImages(trip.Id, tripDto.Images);
 
             // Save all changes
             await _unitOfWork.CompleteAsync();
@@ -77,12 +77,13 @@ public class TripService : ITripService
             TripId: 0,
             */
             var agencyName = (await _unitOfWork.User.GetByIdAsync(tripDto.AgenceId)).Name;
-            
+            Console.WriteLine("Agency Name: " + agencyName); // Replace with a logging framework
             var nofi = new {
                 content = agencyName + " has created Trip.",
                 TripId = trip.Id,
             };
             var nofiJson = System.Text.Json.JsonSerializer.Serialize(nofi);
+            Console.WriteLine("Notification JSON: " + nofiJson); // Replace with a logging framework
             await _nws.SendMessageToUserAsync(1, nofiJson);
             
             var dbnotif = new NotificationDto
@@ -110,7 +111,7 @@ public class TripService : ITripService
         ThrowIfErrorFound(tripDto.LocationIds == null || !tripDto.LocationIds.Any(), "At least one location is required.");
     }
 
-    private void AddTripLocations(int tripId, IEnumerable<int> locationIds)
+    private async Task AddTripLocations(int tripId, IEnumerable<int> locationIds)
     {
         var tripPlaces = locationIds.Select(location => new TripPlace
         {
@@ -120,11 +121,11 @@ public class TripService : ITripService
 
         foreach (var tripPlace in tripPlaces)
         {
-            _unitOfWork.TripPlace.AddAsync(tripPlace);
+            await _unitOfWork.TripPlace.AddAsync(tripPlace);
         }
     }
 
-    private void AddTripCategories(int tripId, IEnumerable<int> categoryIds)
+    private async Task AddTripCategories(int tripId, IEnumerable<int> categoryIds)
     {
         var tripCategories = categoryIds.Select(category => new TripCategory
         {
@@ -134,11 +135,11 @@ public class TripService : ITripService
 
         foreach (var tripCategory in tripCategories)
         {
-            _unitOfWork.tripCategory.AddAsync(tripCategory);
+           await _unitOfWork.tripCategory.AddAsync(tripCategory);
         }
     }
 
-    private void AddTripImages(int tripId, IEnumerable<string> images)
+    private async Task AddTripImages(int tripId, IEnumerable<string> images)
     {
         foreach (var imageUrl in images)
         {
@@ -148,7 +149,7 @@ public class TripService : ITripService
                 ImageUrl = imageUrl,
                 tripId = tripId
             };
-            _unitOfWork.image.AddAsync(image);
+            await _unitOfWork.image.AddAsync(image);
         }
     }
 
