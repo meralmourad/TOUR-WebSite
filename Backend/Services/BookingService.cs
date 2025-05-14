@@ -14,8 +14,10 @@ public class BookingService : IBookingService
     private readonly IUnitOfWork _unitOfWork;
     private readonly notificationSocket _nws;
     private readonly Notificationservices _notificationService;
-    public BookingService(IUnitOfWork unitOfWork)
+    public BookingService(IUnitOfWork unitOfWork, notificationSocket nws, Notificationservices notificationService)
     {
+        _nws = nws;
+        _notificationService = notificationService;
         _unitOfWork = unitOfWork;
     }
 
@@ -27,7 +29,7 @@ public class BookingService : IBookingService
 
             if (booking == null){ return false;}
                 Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
-            
+
             if (booking.IsApproved == approved) return true;
                 Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
             
