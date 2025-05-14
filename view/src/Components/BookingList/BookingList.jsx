@@ -105,7 +105,7 @@ const BookingList = () => {
                 new Date(booking.trip.endDate) > new Date()? "#91bceb":
                 "#a7e8a1"}`}}
                 >
-                <>{console.log(booking)}</>
+                {/* <>{console.log(booking)}</> */}
               <div className="user-image">
                 <h5 style={{ margin: 0, fontSize: "16px" }} onClick={() => navigate(`/profile/${booking.tourist.id}`)}>
                     {booking.tourist.name}</h5>

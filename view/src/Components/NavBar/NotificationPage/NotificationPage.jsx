@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NotificationPage.scss";
+import { getNotifications } from "../../../service/NotificationsService";
+import { useSelector } from "react-redux";
 
 const NotificationPage = () => {
+    const { user } = useSelector((store) => store.info);
   const numberOfUsersPerPage = 8;
 
   const [numOfUsers, setNumOfUsers] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [notifications, setNotifications] = useState([]);
 
   const numberOfPages = Math.ceil(numOfUsers / numberOfUsersPerPage);
 
-  // api fetching messages websocket
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allNotifications = await getNotifications(user.id);
+        setNotifications(allNotifications);
+        console.log("allNotifications", allNotifications);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
@@ -31,24 +49,18 @@ const NotificationPage = () => {
   return (
     <div className="notification-container">
       <h2 className="notification-title">Notifications</h2>
+
+
+
       <div className="notification-list">
         <div className="notification-item">
           <span className="notification-dot"></span>
           <p className="notification-text">You have a new message.</p>
         </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Your booking has been confirmed.</p>
-        </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Your payment was successful.</p>
-        </div>
-        <div className="notification-item">
-          <span className="notification-dot"></span>
-          <p className="notification-text">Reminder: Your trip is tomorrow.</p>
-        </div>
       </div>
+
+
+
       <div className="pagination">
         <button onClick={() => setPageNumber(Math.max(1, pageNumber - 1))}>
           &laquo;

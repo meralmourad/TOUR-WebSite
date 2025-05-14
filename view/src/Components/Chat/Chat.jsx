@@ -19,7 +19,7 @@ const Chat = () => {
     ws.current = new WebSocket(`${WS_URL}/chat/${senderId}?token=${token}`);
 
     ws.current.onopen = () => {
-      // console.log("WebSocket connected");
+      console.log("WebSocket connected");
       // ws.current.send(" ");
     };
 
