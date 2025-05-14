@@ -30,7 +30,7 @@ export const getNotifications = async (id) => {
 */
 export const addNotification = async (notification) => {
   try {
-    const response = await axios.post(`${API_URL}/Notifications`, notification, {
+    const response = await axios.post(`${API_URL}/Notifications?receiverIds=${notification.receiverIds}`, notification, {
       headers: {
         Authorization: `Bearer ${token}`
       }
