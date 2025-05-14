@@ -185,6 +185,7 @@ public class TripService : ITripService
         curTrip.Title = tripDto.Title ?? curTrip.Title;
         curTrip.Price = tripDto.Price ?? curTrip.Price;
         curTrip.StartDate = tripDto.StartDate ?? curTrip.StartDate;
+        curTrip.EndDate = tripDto.EndDate ?? curTrip.EndDate;
         curTrip.Description = tripDto.Description ?? curTrip.Description;
         curTrip.Rating = tripDto.Rating ?? curTrip.Rating;
         curTrip.AvailableSets = tripDto.AvailableSets ?? curTrip.AvailableSets;

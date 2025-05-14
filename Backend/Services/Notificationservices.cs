@@ -199,4 +199,27 @@ public class Notificationservices
         await _unitOfWork.CompleteAsync();
         return true;
     }
+
+    public async Task AddNotificationAsync(int senderId, int receiverId, string title, string content)
+    {
+        var notification = new Notification
+        {
+            Title = title,
+            Content = content,
+            SenderId = senderId
+        };
+
+        await _unitOfWork.Notification.AddAsync(notification);
+        await _unitOfWork.CompleteAsync();
+
+        var userNotification = new UserNotification
+        {
+            ReceiverId = receiverId,
+            NotificationId = notification.Id,
+            IsRead = false
+        };
+
+        await _unitOfWork.userNotification.AddAsync(userNotification);
+        await _unitOfWork.CompleteAsync();
+    }
 }
