@@ -4,7 +4,7 @@ import { getUserById } from "./UserService";
 const API_URL = process.env.REACT_APP_API_URL;
 const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
-export const getReportsByTripId = async (tripId) => {
+ const getReportsByTripId = async (tripId) => {
   try {
     const response = await axios.get(`${API_URL}/Report/trip/${tripId}`, {
       headers: {
@@ -21,7 +21,7 @@ export const getReportsByTripId = async (tripId) => {
   }
 };
 
-export const sendReport = async (report) => {
+ const sendReport = async (report) => {
   try {
     const response = await axios.post(`${API_URL}/Report`, report, {
       headers: {
@@ -33,3 +33,8 @@ export const sendReport = async (report) => {
     throw error;
   }
 };
+
+export {
+    getReportsByTripId ,
+    sendReport
+}

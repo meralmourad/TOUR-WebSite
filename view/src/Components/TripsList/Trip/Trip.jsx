@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactDOMServer from "react-dom/server";
 import { getTripById, updateTrip } from "../../../service/TripsService";
 import {rateTrip , searchBookings } from '../../../service/BookingService'
-import sendReport from '../../../service/ReportService'
+import {sendReport} from '../../../service/ReportService'
 import { useSelector } from "react-redux";
 import Swal2 from "sweetalert2";
 import Swal from "sweetalert2";
@@ -43,28 +43,28 @@ const Trip = () => {
 
 
   useEffect(() => {
+    const getbooking = async () => {
+      try {
+        const bookid = await searchBookings(0, 1, tripData.id, user.id);
+        setBookedId(bookid.id); 
+      } catch (error) {
+        console.log("bookingId", error);
+      }
+    };
+    getbooking();
+    
     if (confirm) {
-
-      const getbooking = async ()=>{
-        try{
-          const bookid = await searchBookings( 0 , 1 , tripData.id , user.id ) ;
-          setBookedId(bookid.id); 
-        }
-        catch(error){
-          console.log("bookingId" , error);
-        }
-      };
-      getbooking();
-      const sendRate = async () => {
+    const sendRate = async () => {
         try {
-          const rating = await rateTrip( BookedId , rate );
+          const rating = await rateTrip(BookedId, rate);
         } catch (error) {
           console.log("error in updating rate", error);
         }
       };
       sendRate();
-    };
+    }
   }, [confirm]);
+  
 
 
   useEffect(()=>{
@@ -213,6 +213,13 @@ const Trip = () => {
           <div className="notification-item">
             <span className="notification-dot"></span>
             <p className="notification-text">{txt}</p>
+            {txt === "This trip has already ended." && user.role!=='Tourist' && 
+            
+            <button className="button"
+            
+            onClick={()=>navigate(`/Report/${id}`)}
+            
+            > VIEW REPORTS </button>}
           </div>
 
           <div className="trip-details">
