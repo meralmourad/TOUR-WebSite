@@ -163,6 +163,8 @@ namespace Backend.Controllers
         [Authorize(Roles = "Admin,Agency")]
         public async Task<IActionResult> ApproveBooking(int id,[FromBody]int Approved)
         {
+                Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
+
             try
             {
                 var booking = await _bookingService.ApproveBooking(id, Approved);

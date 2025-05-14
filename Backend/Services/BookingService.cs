@@ -4,6 +4,7 @@ using Backend.DTOs.BookingDTOs;
 using Backend.IServices;
 using Backend.Mappers;
 using Backend.Models;
+using Backend.WebSockets;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -11,6 +12,8 @@ namespace Backend.Services;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly notificationSocket _nws;
+    private readonly Notificationservices _notificationService;
     public BookingService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
@@ -20,9 +23,13 @@ public class BookingService : IBookingService
     {
         try {
             var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
-            if (booking == null) return false;
+                Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
+
+            if (booking == null){ return false;}
+                Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
             
             if (booking.IsApproved == approved) return true;
+                Console.WriteLine("\n\n\n\n\n\n in: \n\n\n\n\n\n");    
             
             booking.IsApproved = approved;
             _unitOfWork.BookingRepository.Update(booking);
@@ -30,19 +37,50 @@ public class BookingService : IBookingService
             if (approved == 1) {
                 var trip = await _unitOfWork.Trip.GetByIdAsync(booking.TripId);
                 if (trip == null) return false;
-                
                 if (trip.AvailableSets < booking.SeatsNumber)
                     throw new InvalidOperationException("Not enough available seats");
-                    
+                
                 trip.AvailableSets -= booking.SeatsNumber;
+                _unitOfWork.Trip.Update(trip);
+                
+                var message2 = new {
+                    content="Your booking has been approved from trip" + booking.TripId,
+                    TripId= booking.TripId
+                };
+                var messageJson2 = System.Text.Json.JsonSerializer.Serialize(message2);
+                await _nws.SendMessageToUserAsync(booking.TouristId, messageJson2);
+                var notification2 = new Notification
+                {
+                    SenderId = booking.TravelAgencyId,
+                    Content = messageJson2,
+                };
+                await _unitOfWork.Notification.AddAsync(notification2);
+                await _unitOfWork.CompleteAsync();
+                
+            }else if(approved == 0) {
+                var trip = await _unitOfWork.Trip.GetByIdAsync(booking.TripId);
+                if (trip == null) return false;
+                
+                trip.AvailableSets += booking.SeatsNumber;
                 _unitOfWork.Trip.Update(trip);
             }
             
             await _unitOfWork.CompleteAsync();
             
-            var message = new { BookingId = booking.Id, TripId = booking.TripId, NumOfSeats = booking.SeatsNumber };
+            var message = new {
+                content="Your booking has been approved from trip" + booking.TripId,
+                TripId= 0
+             };
             var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
-            
+            await _nws.SendMessageToUserAsync(booking.TouristId, messageJson);
+
+            var notification = new Notification
+            {
+                SenderId = booking.TravelAgencyId,
+                Content = messageJson,
+            };
+            await _unitOfWork.Notification.AddAsync(notification);
+            await _unitOfWork.CompleteAsync();    
             return true;
         }
         catch (Exception ex) {
