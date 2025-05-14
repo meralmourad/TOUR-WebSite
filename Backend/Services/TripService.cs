@@ -20,11 +20,13 @@ public class TripService : ITripService
     private readonly MyWebSocketManager _ws; // Use the correct WebSocketManager
     private static int imageIndex = 1; // Global image index
 
-    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket)
+    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket,
+        Notificationservices notificationServices)
     {
+        _notificationServices = notificationServices;
         _unitOfWork = unitOfWork;
         _nws = notificationSocket;
-        _ws = ws; // Assign the WebSocketManager instance
+        _ws = ws;
         _tripMapper = new TripMapper(unitOfWork);
     }
 
@@ -40,6 +42,30 @@ public class TripService : ITripService
         {
             // Validate input
             ValidateCreateTripDto(tripDto);
+
+            if (_notificationServices == null)
+            {
+                Console.WriteLine("Error: Notification services (_notificationServices) is null."); // Replace with a logging framework
+                return (false, "Notification service is unavailable.");
+            }
+
+            if (tripDto.LocationIds == null || !tripDto.LocationIds.Any())
+            {
+                Console.WriteLine("Error: Location IDs are null or empty."); // Replace with a logging framework
+                return (false, "At least one location is required.");
+            }
+
+            if (tripDto.CategoryIds == null || !tripDto.CategoryIds.Any())
+            {
+                Console.WriteLine("Error: Category IDs are null or empty."); // Replace with a logging framework
+                return (false, "At least one category is required.");
+            }
+
+            if (tripDto.Images == null || !tripDto.Images.Any())
+            {
+                Console.WriteLine("Error: Images are null or empty."); // Replace with a logging framework
+                return (false, "At least one image is required.");
+            }
 
             // Create the trip
             var trip = new Trip
@@ -72,12 +98,26 @@ public class TripService : ITripService
             // Save all changes
             await _unitOfWork.CompleteAsync();
 
-            /*
-            content: "",
-            TripId: 0,
-            */
-            var agencyName = (await _unitOfWork.User.GetByIdAsync(tripDto.AgenceId)).Name;
+            var agency = await _unitOfWork.User.GetByIdAsync(tripDto.AgenceId);
+            if (agency == null)
+            {
+                Console.WriteLine("Error: Agency not found."); // Replace with a logging framework
+                return (false, "Agency not found.");
+            }
+            var agencyName = agency.Name;
+            if (string.IsNullOrEmpty(agencyName))
+            {
+                Console.WriteLine("Error: Agency name is null or empty."); // Replace with a logging framework
+                return (false, "Agency name is invalid.");
+            }
             Console.WriteLine("Agency Name: " + agencyName); // Replace with a logging framework
+
+            if (_nws == null)
+            {
+                Console.WriteLine("Error: Notification socket (_nws) is null."); // Replace with a logging framework
+                return (false, "Notification service is unavailable.");
+            }
+
             var nofi = new {
                 content = agencyName + " has created Trip.",
                 TripId = trip.Id,
@@ -85,14 +125,16 @@ public class TripService : ITripService
             var nofiJson = System.Text.Json.JsonSerializer.Serialize(nofi);
             Console.WriteLine("Notification JSON: " + nofiJson); // Replace with a logging framework
             await _nws.SendMessageToUserAsync(1, nofiJson);
-            
+
             var dbnotif = new NotificationDto
             {
-                ReceiverId=1,
+                ReceiverId = 1,
                 SenderId = tripDto.AgenceId,
                 Context = agencyName + " has created a Trip.",
             };
             await _notificationServices.SendNotificationAsync(dbnotif, new List<int> { 1 });
+            await _unitOfWork.CompleteAsync();
+
             return (true, "Trip created successfully.");
         }
         catch (Exception ex)
