@@ -1,1 +1,59 @@
 @import url(../../assets/_Colors.scss);
+
+
+
+.report-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.report-card {
+  background: linear-gradient(135deg, #ffffff, #fdfbfb);
+  border-radius: 25px;
+  padding: 1.8rem 2.2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.35s ease;
+  animation: slideFade 0.6s ease forwards;
+  transform: translateY(10px);
+  opacity: 0;
+
+  // Optional delay effect (nice staggered entrance)
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+  &:nth-child(7) { animation-delay: 0.7s; }
+  &:nth-child(8) { animation-delay: 0.8s; }
+  &:nth-child(9) { animation-delay: 0.9s; }
+  &:nth-child(10) { animation-delay: 1s; }
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #fdfbfb, #eaeaea);
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+  }
+}
+
+// Animation for entrance
+@keyframes slideFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
