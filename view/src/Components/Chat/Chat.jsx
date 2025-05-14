@@ -16,7 +16,7 @@ const Chat = () => {
 
   useEffect(() => {
     // console.log(`${WS_URL}/${senderId}?token=${token}`);
-    ws.current = new WebSocket(`${WS_URL}/${senderId}?token=${token}`);
+    ws.current = new WebSocket(`${WS_URL}/chat/${senderId}?token=${token}`);
 
     ws.current.onopen = () => {
       // console.log("WebSocket connected");
