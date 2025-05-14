@@ -13,20 +13,53 @@ const NotificationPage = () => {
   const navigate = useNavigate();
   const numberOfUsersPerPage = 8;
 
-  const [numOfUsers, setNumOfUsers] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [notifications, setNotifications] = useState([]);
 
-  const numberOfPages = Math.ceil(numOfUsers / numberOfUsersPerPage);
+  const numberOfPages = 4;
 
-  
+  useEffect(() => {
+    ws.current = new WebSocket(`${WS_URL}/notification/${user.id}?token=${token}`);
+    ws.current.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+    ws.current.onmessage = (event) => {
+      console.log("notifications", notifications);
+      const newNotification = JSON.parse(event.data);
+      console.log("Received:", newNotification);
+      const newArr = [{ ...newNotification, context: newNotification.content }, ...notifications];
+      console.log("newArr", newArr);
+      
+      if(newArr.length > numberOfUsersPerPage) {
+        newArr.pop();
+      }
+      setNotifications(newArr);
+    }
+    ws.current.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+        console.log("WebSocket connection closed");
+      }
+    }
+  }
+  , [notifications, token, user.id]);  
+
   useEffect(() => {
     const start = (pageNumber - 1) * numberOfUsersPerPage;
     const fetchData = async () => {
       try {
-        const { allNotifications, totalCount } = await getNotifications(user.id);
+        const { allNotifications } = await getNotifications(user.id, start, numberOfUsersPerPage);
         allNotifications.reverse();
         setNotifications(allNotifications);
+        // console.log("allNotifications", allNotifications);
+        // console.log("totalCount", totalCount);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -37,33 +70,6 @@ const NotificationPage = () => {
 
   const ws = useRef(null);
 
-  // useEffect(() => {
-  //   ws.current = new WebSocket(`${WS_URL}/notification/${user.id}?token=${token}`);
-  //   ws.current.onopen = () => {
-  //     console.log("WebSocket connection opened");
-  //   };
-  //   ws.current.onmessage = (event) => {
-  //     const newNotification = JSON.parse(event.data);
-  //     const newArr = [newNotification, ...notifications];
-  //     if(newArr.length > numberOfUsersPerPage) {
-  //       newArr.pop();
-  //     }
-  //     setNotifications(newArr);
-  //   }
-  //   ws.current.onclose = () => {
-  //     console.log("WebSocket connection closed");
-  //   };
-  //   ws.current.onerror = (error) => {
-  //     console.error("WebSocket error:", error);
-  //   };
-  //   return () => {
-  //     if (ws.current) {
-  //       ws.current.close();
-  //       console.log("WebSocket connection closed");
-  //     }
-  //   }
-  // }
-  // , []);
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
@@ -88,7 +94,7 @@ const NotificationPage = () => {
 
 
       {notifications.map((notification) => (
-        <div key={notification.id} className="notification-list">
+        <div key={notification} className="notification-list">
           <div className="notification-item" onClick={() => {
             if(notification?.senderId) {
               dispatch(setChat({receiverId: notification.senderId, senderId: user.id}));

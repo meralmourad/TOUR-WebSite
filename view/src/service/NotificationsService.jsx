@@ -3,15 +3,15 @@ import axios from 'axios';
 const API_URL = process.env.REACT_APP_API_URL;
 const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
-export const getNotifications = async (id) => {
+export const getNotifications = async (id, start, len) => {
   try {
-    const response = await axios.get(`${API_URL}/Notifications/receiver/${id}`, {
+    const response = await axios.get(`${API_URL}/Notifications/receiver/${id}?start=${start}&len=${len}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
-    return response.data.$values;
+    return {allNotifications: response.data.$values };
   } catch (error) {
     throw error;
   }
