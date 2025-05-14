@@ -14,13 +14,31 @@ const Trip = () => {
   const id = useParams()?.id;
   const navigate = useNavigate();
   const [tripData, setTripData] = useState(null);
-  const [imageIndex, setImageIndex] = useState(0); // ⬅️ لحفظ رقم الصورة الحالية
+  const [imageIndex, setImageIndex] = useState(0); 
+  const [txt , settxt] = useState("") ;
 
+  useEffect(() => {
+    if (tripData) {
+      const now = new Date();
+      const enddate = new Date(tripData.endDate) ;
+      const startdate = new Date(tripData.startDate);
+      if (startdate < now && enddate < now ) {
+        settxt("This trip has already ended.");
+      }
+      else if (startdate < now && enddate > now ){
+        settxt("This trip has already started.");
+      }      
+      else {
+        settxt("This trip is upcoming. Book your spot now!");
+      }
+    }
+  }, [tripData]);
   useEffect(() => {
     const fetchTripData = async () => {
       try {
         const trip = await getTripById(id);
         setTripData(trip);
+
       } catch (error) {
         console.error("Error fetching trip data:", error);
       }
@@ -75,8 +93,8 @@ const Trip = () => {
           phoneNumber: phone,
         });
         MySwal.fire({
-          title: "Booking Confirmed!",
-          text: `Your booking for ${seats} seat(s) has been confirmed.`,
+          title: "Booking Requested successfully!",
+          text: `We will confirm you when Your booking of ${seats} seats approved!.`,
           icon: "success",
         });
       } catch (error) {
@@ -135,6 +153,11 @@ const Trip = () => {
               </>
             )}
           </div>
+
+          <div className="notification-item">
+            <span className="notification-dot"></span>
+            <p className="notification-text">{txt}</p>
+        </div>
 
           <div className="trip-details">
             <div className="trip-section">

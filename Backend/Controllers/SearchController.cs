@@ -146,9 +146,10 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
 
         //if the user is an agency, check if they requested their own bookings
         var isAdmin = User.IsInRole("Admin");
+
         if (User.IsInRole("Agency"))
         {
-             curid= (int)intUserIdClaim;
+            curid= (int)intUserIdClaim;
 
             // if (USERID == null || USERID != intUserIdClaim)
             // {
@@ -156,6 +157,10 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
             //     return Forbid();
             // }
         }
+        if(isAdmin)
+            curid =(int)USERID;
+        
+        Console.WriteLine("\n\n\n\n\n\n\n\nUserId: " + curid + " userid" + USERID + " isapproved: " + IsApproved);
 
         // Ensure IsApproved is respected
         var bookings = _bookingService.SearchBookingsByQuery(start, len, IsApproved, isAdmin,curid, USERID, tripId);
