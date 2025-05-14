@@ -3,6 +3,8 @@ import "./BookingList.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { searchBookings } from "../../service/BookingService";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { getTripById } from "../../service/TripsService";
 
 const numberOfUsersPerPage = 9;
 
@@ -22,8 +24,21 @@ const BookingList = () => {
 
     const fetchUsers = async () => {
       try {
-        if(!user) return;
-        const { bookings, totalCount } = await searchBookings(start, numberOfUsersPerPage, id, user?.id, rejected? -1: 2);
+          const trip = await getTripById(id);
+          // console.log(user);
+
+          if(!user || !trip) return;
+
+          if(user.role !== 'Admin' && trip.agenceId !== user.id) {
+              Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "You are not allowed to access this page!"
+              });
+              navigate("/home");
+              return;
+          }
+        const { bookings, totalCount } = await searchBookings(start, numberOfUsersPerPage, id, trip.agenceId, rejected? -1: 2);
         
         setNumOfBooking(totalCount);
         setBookings(bookings);
@@ -32,7 +47,7 @@ const BookingList = () => {
       }
     };
     fetchUsers();
-  }, [pageNumber, user?.id, id, rejected, user, bookings]);
+  }, [pageNumber, user?.id, id, rejected, user]);
 
   if (numberOfPages !== 0 && (pageNumber > numberOfPages || pageNumber < 1)) {
     setPageNumber(1);
