@@ -6,6 +6,7 @@ using Backend.DTOs;
 using Backend.DTOs.UserDTOs;
 using Backend.IServices;
 using Backend.Models;
+using Backend.WebSockets;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Backend.Services;
@@ -13,9 +14,13 @@ namespace Backend.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
+    public notificationSocket _nws;
+    public Notificationservices _notificationservices;
 
-    public UserService(IUnitOfWork unitOfWork)
+    public UserService(IUnitOfWork unitOfWork, notificationSocket nws, Notificationservices notificationservices)
     {
+        _nws = nws;
+        _notificationservices = notificationservices;
         _unitOfWork = unitOfWork;
     }
 
@@ -207,15 +212,29 @@ public class UserService : IUserService
         return hashed == parts[1];
     }
 
-    public Task<bool> ApproveUserAsync(int id)
+    public async Task<bool> ApproveUserAsync(int id)
     {
         var user = _unitOfWork.User.GetByIdAsync(id).Result;
-        if (user == null) return Task.FromResult(false);
+        if (user == null) return false;
 
         user.IsApproved = true;
         _unitOfWork.User.Update(user);
-        _unitOfWork.CompleteAsync();
-        return Task.FromResult(true);
+
+        var message = new {
+            content = "Your account has been approved."
+        };
+        var messageJson = System.Text.Json.JsonSerializer.Serialize(message);
+        _nws.SendMessageToUserAsync(user.Id, messageJson);
+
+        var notification = new NotificationDto
+        {
+            SenderId = 1,
+            ReceiverId = user.Id,
+            Context = messageJson,
+        };
+        await _notificationservices.SendNotificationAsync(notification,new List<int> { user.Id });
+        await _unitOfWork.CompleteAsync();
+        return true;
     }
 
 
