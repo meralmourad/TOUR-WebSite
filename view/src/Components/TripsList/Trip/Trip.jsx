@@ -4,15 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getTripById } from "../../../service/TripsService";
 import { useSelector } from "react-redux";
 import Swal2 from "sweetalert2";
-// import Swal from "sweetalert";
 import withReactContent from "sweetalert2-react-content";
 import { addBooking } from "../../../service/BookingService";
-
-// const images = [
-//   "https://ultimahoracol.com/sites/default/files/2024-12/PORTADAS%20ESCRITORIO%20-%202024-12-19T122111.264.jpg",
-//   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCVuJDmSjVmO1RzJaVuLlix7evJoVWOhL4ghYK0mlJad4o_w2nu8H3UOUF&s=10",
-//   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ45rDg-QQbP8l4fp0IT1B1zDLU8BdxV_LIFToRuNG9KEPsc52B4B9rlcX4&s=10",
-// ];
 
 const MySwal = withReactContent(Swal2);
 
@@ -21,12 +14,12 @@ const Trip = () => {
   const id = useParams()?.id;
   const navigate = useNavigate();
   const [tripData, setTripData] = useState(null);
+  const [imageIndex, setImageIndex] = useState(0); // ⬅️ لحفظ رقم الصورة الحالية
 
   useEffect(() => {
     const fetchTripData = async () => {
       try {
         const trip = await getTripById(id);
-        // console.log(trip);
         setTripData(trip);
       } catch (error) {
         console.error("Error fetching trip data:", error);
@@ -104,6 +97,20 @@ const Trip = () => {
     }
   };
 
+  const handlePrev = () => {
+    if (!tripData) return;
+    setImageIndex((prev) =>
+      prev === 0 ? tripData.images.$values.length - 1 : prev - 1
+    );
+  };
+
+  const handleNext = () => {
+    if (!tripData) return;
+    setImageIndex((prev) =>
+      prev === tripData.images.$values.length - 1 ? 0 : prev + 1
+    );
+  };
+
   return (
     <>
       {tripData && (
@@ -111,13 +118,22 @@ const Trip = () => {
           <div className="trip-header">
             <img
               src={
-                tripData.images.$values[0]
-                  ? tripData.images.$values[0]
-                  : "https://media-public.canva.com/MADQtrAClGY/2/screen.jpg"
+                tripData.images.$values[imageIndex] ||
+                "https://media-public.canva.com/MADQtrAClGY/2/screen.jpg"
               }
               alt="Trip"
               className="trip-image"
             />
+            {tripData.images.$values.length > 1 && (
+              <>
+                <button className="arrow-button left" onClick={handlePrev}>
+                  &#8592;
+                </button>
+                <button className="arrow-button right" onClick={handleNext}>
+                  &#8594;
+                </button>
+              </>
+            )}
           </div>
 
           <div className="trip-details">
@@ -152,7 +168,7 @@ const Trip = () => {
               <p>{tripData.description}</p>
             </div>
           </div>
-          {/* {console.log(tripData)} */}
+
           {tripData.status === 1 &&
             (user.role === "Admin" || user.id === tripData.agenceId) && (
               <button
