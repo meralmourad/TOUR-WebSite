@@ -75,6 +75,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<MyWebSocketManager>(); // Explicitly register the correct WebSocketManager
+builder.Services.AddSingleton<notificationSocket>(); // Explicitly register the correct WebSocketManager
 
 builder.Logging.AddConsole();
 

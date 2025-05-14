@@ -15,12 +15,15 @@ public class TripService : ITripService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly TripMapper _tripMapper;
+    private readonly Notificationservices _notificationServices;
+    private readonly notificationSocket _nws; // Use the correct notificationSocket
     private readonly MyWebSocketManager _ws; // Use the correct WebSocketManager
     private static int imageIndex = 1; // Global image index
 
-    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws)
+    public TripService(IUnitOfWork unitOfWork, MyWebSocketManager ws, notificationSocket notificationSocket)
     {
         _unitOfWork = unitOfWork;
+        _nws = notificationSocket;
         _ws = ws; // Assign the WebSocketManager instance
         _tripMapper = new TripMapper(unitOfWork);
     }
@@ -69,6 +72,26 @@ public class TripService : ITripService
             // Save all changes
             await _unitOfWork.CompleteAsync();
 
+            /*
+            content: "",
+            TripId: 0,
+            */
+            var agencyName = (await _unitOfWork.User.GetByIdAsync(tripDto.AgenceId)).Name;
+            
+            var nofi = new {
+                content = agencyName + " has created Trip.",
+                TripId = trip.Id,
+            };
+            var nofiJson = System.Text.Json.JsonSerializer.Serialize(nofi);
+            await _nws.SendMessageToUserAsync(1, nofiJson);
+            
+            var dbnotif = new NotificationDto
+            {
+                ReceiverId=1,
+                SenderId = tripDto.AgenceId,
+                Context = agencyName + " has created a Trip.",
+            };
+            await _notificationServices.SendNotificationAsync(dbnotif, new List<int> { 1 });
             return (true, "Trip created successfully.");
         }
         catch (Exception ex)

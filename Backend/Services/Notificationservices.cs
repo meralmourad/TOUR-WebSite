@@ -166,6 +166,8 @@ public class Notificationservices
     }
     public async Task<bool> SendNotificationAsync(NotificationDto notificationDto, List<int> receiverIds)
     {
+        Console.WriteLine($"\n\n\n\n\n\n\n[DEBUG] Sending notification. SenderId: {notificationDto.SenderId}, ReceiverIds: {string.Join(", ", receiverIds)}");
+
         var notification = new Notification
         {
             SenderId = notificationDto.SenderId,
@@ -180,20 +182,19 @@ public class Notificationservices
             {
                 ReceiverId = receiverId,
                 Notification = notification,
+                NotificationId = notification.Id,
             };
             await _unitOfWork.userNotification.AddAsync(userNotification);
 
             // Broadcast notification via WebSocket
             var message = System.Text.Json.JsonSerializer.Serialize(new
             {
-                NotificationId = notification.Id,
                 SenderId = notification.SenderId,
                 Content = notification.Content,
                 ReceiverId = receiverId
             });
             await _webSocketManager.SendMessageToUserAsync(receiverId, message);
         }
-
 
         await _unitOfWork.CompleteAsync();
         return true;

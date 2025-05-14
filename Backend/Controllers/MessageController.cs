@@ -10,6 +10,7 @@ namespace Backend.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IMessageService _messageService;
+        
 
         public MessageController(IMessageService messageService)
         {
