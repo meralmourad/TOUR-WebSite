@@ -123,14 +123,13 @@ return Ok(new { Users = result.Users, TotalCount = result.TotalCount });
     [FromQuery] int len = int.MaxValue,
     [FromQuery] int IsApproved=1,
     [FromQuery] int tripId = 0,
-    [FromQuery] int? USERID = null)
+    [FromQuery] int? USERID = -1)
     {
         //if the user is not authenticated, return Unauthorized
         if (!User.Identity?.IsAuthenticated ?? true)
             return Unauthorized();
         Console.WriteLine("User role: " + User.IsInRole("Tourist") + " " + User.IsInRole("Agency") + " " + User.IsInRole("Admin"));
         Console.WriteLine("UserId: " + USERID + " isapproved: " + IsApproved);
-            
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var intUserIdClaim = int.TryParse(userIdClaim, out var userId) ? userId : (int?)null;
         if (intUserIdClaim == null)

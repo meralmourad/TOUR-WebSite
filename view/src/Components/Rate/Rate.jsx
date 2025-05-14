@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Rate.scss";
 
-const StarRating = ({ outOf = 5, onChange, children }) => {
+const StarRating = ({onChange, children , SendRate }) => {
+  const outOf = 5 ;
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [flag, setFlag] = useState(false);
@@ -17,6 +18,13 @@ const StarRating = ({ outOf = 5, onChange, children }) => {
       handleClick(children) 
     }
   }, [children]);
+
+
+  useEffect(() => {
+    if (SendRate) {
+      SendRate(rating);
+    }
+  }, [rating]);
 
   return (
     <div className="star-rating">
