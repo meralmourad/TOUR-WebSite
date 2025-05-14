@@ -187,13 +187,13 @@ public class Notificationservices
             await _unitOfWork.userNotification.AddAsync(userNotification);
 
             // Broadcast notification via WebSocket
-            var message = System.Text.Json.JsonSerializer.Serialize(new
-            {
-                SenderId = notification.SenderId,
-                Content = notification.Content,
-                ReceiverId = receiverId
-            });
-            await _webSocketManager.SendMessageToUserAsync(receiverId, message);
+            // var message = System.Text.Json.JsonSerializer.Serialize(new
+            // {
+            //     SenderId = notification.SenderId,
+            //     Content = notification.Content,
+            //     ReceiverId = receiverId
+            // });
+            // await _webSocketManager.SendMessageToUserAsync(receiverId, message);
         }
 
         await _unitOfWork.CompleteAsync();
