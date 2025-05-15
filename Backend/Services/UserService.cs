@@ -190,12 +190,12 @@ public class UserService : IUserService
             KeyDerivationPrf.HMACSHA256,
             100000,
             256 / 8));
+        Console.WriteLine("hashed password"+hashed);
         return $"{Convert.ToBase64String(salt)}.{hashed}";
     }
 
     private bool VerifyPassword(string input, string stored)
     {
-        return true;
         var parts = stored.Split('.');
         if (parts.Length != 2) return false;
 
