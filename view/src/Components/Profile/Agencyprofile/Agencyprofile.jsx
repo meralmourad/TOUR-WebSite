@@ -5,12 +5,17 @@ import { SearchTrips } from "../../../service/TripsService";
 import { useNavigate } from "react-router-dom";
 import Rate from "../../Rate/Rate";
 import AddTrip from "./AddTrip/AddTrip";
+import axios from 'axios';
+const API_URL = process.env.REACT_APP_API_URL;
+const token = JSON.parse(localStorage.getItem("Token"))?.token;
 
 const AgencyProfile = ({ userprofile, myProfile }) => {
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
   const [highestTrip, setHighestTrip] = useState([]);
   const[showAddTrip, setShowAddTrip] = useState(false);
+  const [button, setbutton] = useState(false);
+  
   // console.log(highestTrip);
   
   useEffect(() => {
@@ -22,6 +27,33 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
 
     fetchHighestRatedTrips();
   }, [userprofile]);
+  useEffect(() => {
+    const downloadFile = async () => {
+      try {
+        if (button) {
+          const response = await axios.get(`${API_URL}/vendorReports/trip-report/${userprofile.id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            responseType: 'blob' // Ensure the response is treated as a file
+          });
+
+          // Create a URL for the file and trigger the download
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'trip-report.pdf'); // Set the file name
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    downloadFile();
+  }, [button]);
 
   return ( 
   <>
@@ -52,6 +84,7 @@ const AgencyProfile = ({ userprofile, myProfile }) => {
             </h1>
           </div>
         </div>
+        <button onClick={()=>setbutton(true) } className="bouns" >HERE BOUNS </button>
       </div>
       <div className="content">
 

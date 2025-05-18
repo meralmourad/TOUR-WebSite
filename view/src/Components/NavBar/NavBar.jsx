@@ -95,7 +95,7 @@ const NavBar = () => {
                 {!isLoggedIn &&
                     <ul className="navbar-links">
                         <li className="nav-item">
-                            <Link to="/" className="nav-link">
+                            <Link to="/home" className="nav-link">
                                 <img src={'/Icons/HomeIcon.jpg'} alt="Home" className="icon" />
                             </Link>
                         </li>

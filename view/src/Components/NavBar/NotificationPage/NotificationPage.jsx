@@ -49,7 +49,7 @@ const NotificationPage = () => {
     }
   }
   , [notifications, token, user.id]);  
-
+  console.log(notifications)
   useEffect(() => {
     const start = (pageNumber - 1) * numberOfUsersPerPage;
     const fetchData = async () => {

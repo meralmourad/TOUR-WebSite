@@ -232,7 +232,7 @@ const Trip = () => {
               </div>
             </div>
 
-            <div className="trip-section">
+            <div className="trip-section" onClick={() => navigate("/BookingList/" + id)}>
               <h3>Destinations</h3>
               <ul>
                 {tripData.locations.$values.map((loc) => (
