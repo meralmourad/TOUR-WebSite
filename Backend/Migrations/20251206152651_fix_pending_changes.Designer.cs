@@ -4,6 +4,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251206152651_fix_pending_changes")]
+    partial class fix_pending_changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,7 +362,7 @@ namespace Backend.Migrations
                             IsApproved = true,
                             Name = "Admin",
                             Password = "smtKBr3mpfyS3yyQ4JknDg==.Pq1TmWes1vw7N479T1LLFRj9xbUIYkNu0BppQ6TcVR4=",
-                            PhoneNumber = "YLgEVv1t5DW2tKP2lbffi925XbktKqBOAhsWeRjniTgzlg9PW++7bIAY4pU1pXK3REut1qMFVdXmhGfscSzc0ApTl6cWo10aXhgZJrKI0ZI=",
+                            PhoneNumber = "MzzAjWYVBBKvv8izM6/TJfnwCGq0w0Zy9zwP/z4ulHlT+uGC55LAzZa9K/SPFpaMQ0rlSNkDAaLCRMyGLZC/Oc3d5Pz9VZ4sERF+Qoi0YHg=",
                             Role = "Admin"
                         });
                 });

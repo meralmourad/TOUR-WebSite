@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Linq;
 using System.Security.Claims;
 using Backend.Models;
 using Backend.WebSockets; 
@@ -81,6 +82,26 @@ builder.Services.AddSingleton<notificationSocket>();
 builder.Logging.AddConsole();
 
 var app = builder.Build();
+
+// One-time helper: if set, re-save existing users so the ValueConverter
+// for `User.PhoneNumber` runs and encrypts stored phone numbers.
+if (Environment.GetEnvironmentVariable("ENCRYPT_EXISTING_USERS") == "true")
+{
+    using var scope = app.Services.CreateScope();
+    var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // Load all users and mark PhoneNumber as modified to trigger conversion
+    var users = ctx.Users.ToList();
+    foreach (var u in users)
+    {
+        if (u.PhoneNumber != null)
+        {
+            // reassign to mark modified
+            u.PhoneNumber = u.PhoneNumber;
+            ctx.Entry(u).Property(x => x.PhoneNumber).IsModified = true;
+        }
+    }
+    ctx.SaveChanges();
+}
 
 app.UseWebSockets();
 

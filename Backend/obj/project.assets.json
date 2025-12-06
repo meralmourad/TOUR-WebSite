@@ -3600,11 +3600,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\project\\Collage project\\IA_PROJECT\\TOUR-WebSite\\Backend\\Backend.csproj",
+      "projectUniqueName": "D:\\project\\TOUR-WebSite\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "D:\\project\\Collage project\\IA_PROJECT\\TOUR-WebSite\\Backend\\Backend.csproj",
+      "projectPath": "D:\\project\\TOUR-WebSite\\Backend\\Backend.csproj",
       "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
-      "outputPath": "D:\\project\\Collage project\\IA_PROJECT\\TOUR-WebSite\\Backend\\obj\\",
+      "outputPath": "D:\\project\\TOUR-WebSite\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
