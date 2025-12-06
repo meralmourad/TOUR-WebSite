@@ -37,6 +37,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Memory cache for in-memory rate limiting
+builder.Services.AddMemoryCache();
+
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
@@ -104,6 +107,9 @@ if (Environment.GetEnvironmentVariable("ENCRYPT_EXISTING_USERS") == "true")
 }
 
 app.UseWebSockets();
+
+// Rate limiting middleware: place before swagger/static so it catches swagger.json and static file requests
+app.UseMiddleware<Backend.Middleware.RateLimitingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
