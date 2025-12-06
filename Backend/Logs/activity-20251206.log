@@ -1,0 +1,96 @@
+[2025-12-06 19:17:48.609] [INF] Now listening on: http://localhost:5129
+[2025-12-06 19:17:48.627] [INF] Application started. Press Ctrl+C to shut down.
+[2025-12-06 19:17:48.628] [INF] Hosting environment: Development
+[2025-12-06 19:17:48.629] [INF] Content root path: D:\project\TOUR-WebSite\Backend
+[2025-12-06 19:17:56.250] [INF] [7289ec4e] Incoming GET request to /swagger/v1/swagger.json from 0.0.0.1
+[2025-12-06 19:17:56.390] [INF] [7289ec4e] GET /swagger/v1/swagger.json responded 200 in 143ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:17:56.399] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 153.7504 ms
+[2025-12-06 19:18:03.284] [INF] [228baf2f] Incoming OPTIONS request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:03.286] [INF] [9eb32772] Incoming OPTIONS request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:03.291] [WRN] Failed to determine the https port for redirect.
+[2025-12-06 19:18:03.333] [INF] [228baf2f] OPTIONS /api/User/1 responded 204 in 48ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:03.334] [INF] [9eb32772] OPTIONS /api/User/1 responded 204 in 47ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:03.335] [INF] HTTP OPTIONS /api/User/1 responded 204 in 51.0058 ms
+[2025-12-06 19:18:03.338] [INF] HTTP OPTIONS /api/User/1 responded 204 in 51.6502 ms
+[2025-12-06 19:18:03.341] [INF] [dc387f88] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:04.682] [INF] [dc387f88] GET /api/User/1 responded 200 in 1341ms | User: 1 (Admin) | IP: 0.0.0.1
+[2025-12-06 19:18:04.684] [INF] HTTP GET /api/User/1 responded 200 in 1343.4911 ms
+[2025-12-06 19:18:04.685] [INF] [653109da] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:04.695] [INF] [f199450e] Incoming OPTIONS request to /api/User/19 from 0.0.0.1
+[2025-12-06 19:18:04.697] [WRN] [f199450e] OPTIONS /api/User/19 responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:04.699] [INF] HTTP OPTIONS /api/User/19 responded 429 in 3.3593 ms
+[2025-12-06 19:18:04.740] [INF] [653109da] GET /api/User/1 responded 200 in 55ms | User: 1 (Admin) | IP: 0.0.0.1
+[2025-12-06 19:18:04.742] [INF] HTTP GET /api/User/1 responded 200 in 57.3121 ms
+[2025-12-06 19:18:04.749] [INF] [9c97cd98] Incoming OPTIONS request to /api/User/19 from 0.0.0.1
+[2025-12-06 19:18:04.750] [WRN] [9c97cd98] OPTIONS /api/User/19 responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:04.752] [INF] HTTP OPTIONS /api/User/19 responded 429 in 2.7826 ms
+[2025-12-06 19:18:42.749] [INF] [985548f7] Incoming OPTIONS request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:42.749] [INF] [0e268b43] Incoming OPTIONS request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:42.751] [INF] [985548f7] OPTIONS /api/User/1 responded 204 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:42.752] [INF] [0e268b43] OPTIONS /api/User/1 responded 204 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:42.754] [INF] HTTP OPTIONS /api/User/1 responded 204 in 4.8868 ms
+[2025-12-06 19:18:42.756] [INF] HTTP OPTIONS /api/User/1 responded 204 in 6.9256 ms
+[2025-12-06 19:18:42.758] [INF] [3b3cbb47] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:42.784] [INF] [3b3cbb47] GET /api/User/1 responded 200 in 26ms | User: 1 (Admin) | IP: 0.0.0.1
+[2025-12-06 19:18:42.787] [INF] HTTP GET /api/User/1 responded 200 in 29.0199 ms
+[2025-12-06 19:18:42.788] [INF] [401e4b01] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:42.794] [INF] [401e4b01] GET /api/User/1 responded 200 in 5ms | User: 1 (Admin) | IP: 0.0.0.1
+[2025-12-06 19:18:42.796] [INF] [2728f118] Incoming OPTIONS request to /api/User/19 from 0.0.0.1
+[2025-12-06 19:18:42.797] [INF] HTTP GET /api/User/1 responded 200 in 8.8948 ms
+[2025-12-06 19:18:42.798] [INF] [2728f118] OPTIONS /api/User/19 responded 204 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:42.802] [INF] HTTP OPTIONS /api/User/19 responded 204 in 5.6792 ms
+[2025-12-06 19:18:42.805] [INF] [9922286f] Incoming GET request to /api/User/19 from 0.0.0.1
+[2025-12-06 19:18:42.806] [WRN] [9922286f] GET /api/User/19 responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:42.808] [INF] HTTP GET /api/User/19 responded 429 in 3.4628 ms
+[2025-12-06 19:18:42.808] [INF] [dda15f37] Incoming GET request to /api/User/19 from 0.0.0.1
+[2025-12-06 19:18:42.812] [WRN] [dda15f37] GET /api/User/19 responded 429 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:42.814] [INF] HTTP GET /api/User/19 responded 429 in 5.4010 ms
+[2025-12-06 19:18:43.419] [INF] [4111e897] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:43.422] [WRN] [4111e897] GET /api/User/1 responded 429 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:43.424] [INF] HTTP GET /api/User/1 responded 429 in 4.2716 ms
+[2025-12-06 19:18:43.424] [INF] [4c57ead7] Incoming GET request to /api/User/1 from 0.0.0.1
+[2025-12-06 19:18:43.426] [WRN] [4c57ead7] GET /api/User/1 responded 429 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:18:43.429] [INF] HTTP GET /api/User/1 responded 429 in 4.4383 ms
+[2025-12-06 19:19:11.434] [INF] [d9e4f2d1] Incoming OPTIONS request to /api/Auth/login from 0.0.0.1
+[2025-12-06 19:19:11.436] [WRN] [d9e4f2d1] OPTIONS /api/Auth/login responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:11.438] [INF] HTTP OPTIONS /api/Auth/login responded 429 in 4.2891 ms
+[2025-12-06 19:19:12.462] [INF] [d0a37b33] Incoming OPTIONS request to /api/Auth/login from 0.0.0.1
+[2025-12-06 19:19:12.463] [WRN] [d0a37b33] OPTIONS /api/Auth/login responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:12.465] [INF] HTTP OPTIONS /api/Auth/login responded 429 in 3.2276 ms
+[2025-12-06 19:19:23.677] [INF] [730d5351] Incoming OPTIONS request to /api/Auth/login from 0.0.0.1
+[2025-12-06 19:19:23.679] [INF] [730d5351] OPTIONS /api/Auth/login responded 204 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:23.681] [INF] HTTP OPTIONS /api/Auth/login responded 204 in 4.2644 ms
+[2025-12-06 19:19:23.684] [INF] [1381bcbe] Incoming POST request to /api/Auth/login from 0.0.0.1
+[2025-12-06 19:19:23.792] [INF] [1381bcbe] POST /api/Auth/login responded 200 in 107ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:23.794] [INF] [1381bcbe] AUTH: User login successful
+[2025-12-06 19:19:23.795] [INF] HTTP POST /api/Auth/login responded 200 in 110.7022 ms
+[2025-12-06 19:19:23.811] [INF] [f7dc091d] Incoming OPTIONS request to /api/Search/trips?start=0&len=10&destination=&startDate=&endDate=&price=2147483647&isApproved=true&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:23.812] [INF] [4d30ab26] Incoming OPTIONS request to /api/Search/trips?start=0&len=10&destination=&startDate=&endDate=&price=2147483647&isApproved=true&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:23.813] [INF] [f7dc091d] OPTIONS /api/Search/trips responded 204 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:23.815] [INF] [4d30ab26] OPTIONS /api/Search/trips responded 204 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:23.816] [INF] HTTP OPTIONS /api/Search/trips responded 204 in 5.5685 ms
+[2025-12-06 19:19:23.819] [INF] HTTP OPTIONS /api/Search/trips responded 204 in 7.0664 ms
+[2025-12-06 19:19:23.823] [INF] [15d59647] Incoming GET request to /api/Search/trips?start=0&len=10&destination=&startDate=&endDate=&price=2147483647&isApproved=true&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:23.924] [INF] [15d59647] GET /api/Search/trips responded 200 in 100ms | User: 1 (Admin) | IP: 0.0.0.1
+[2025-12-06 19:19:23.926] [INF] HTTP GET /api/Search/trips responded 200 in 102.9739 ms
+[2025-12-06 19:19:23.926] [INF] [f724700f] Incoming GET request to /api/Search/trips?start=0&len=10&destination=&startDate=&endDate=&price=2147483647&isApproved=true&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:23.928] [WRN] [f724700f] GET /api/Search/trips responded 429 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:23.931] [INF] HTTP GET /api/Search/trips responded 429 in 4.3772 ms
+[2025-12-06 19:19:34.674] [INF] [46a2881b] Incoming OPTIONS request to /api/Search/users?start=0&len=9&tourist=true&agency=true&admin=true&isApproved=true&q= from 0.0.0.1
+[2025-12-06 19:19:34.674] [INF] [d939fead] Incoming OPTIONS request to /api/Search/users?start=0&len=9&tourist=true&agency=true&admin=true&isApproved=true&q= from 0.0.0.1
+[2025-12-06 19:19:34.676] [WRN] [46a2881b] OPTIONS /api/Search/users responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:34.678] [WRN] [d939fead] OPTIONS /api/Search/users responded 429 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:34.680] [INF] HTTP OPTIONS /api/Search/users responded 429 in 5.7841 ms
+[2025-12-06 19:19:34.682] [INF] HTTP OPTIONS /api/Search/users responded 429 in 8.0086 ms
+[2025-12-06 19:19:36.142] [INF] [196ae6e4] Incoming OPTIONS request to /api/Search/trips?start=0&len=2147483647&destination=&startDate=&endDate=&price=2147483647&isApproved=false&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:36.142] [INF] [8913fcdf] Incoming OPTIONS request to /api/Search/trips?start=0&len=2147483647&destination=&startDate=&endDate=&price=2147483647&isApproved=false&q=&agencyId=0&sortByRating=true from 0.0.0.1
+[2025-12-06 19:19:36.144] [WRN] [196ae6e4] OPTIONS /api/Search/trips responded 429 in 2ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:36.146] [WRN] [8913fcdf] OPTIONS /api/Search/trips responded 429 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:36.148] [INF] HTTP OPTIONS /api/Search/trips responded 429 in 6.3183 ms
+[2025-12-06 19:19:36.150] [INF] HTTP OPTIONS /api/Search/trips responded 429 in 8.4168 ms
+[2025-12-06 19:19:37.690] [INF] [32700dcd] Incoming OPTIONS request to /api/Search/users?start=0&len=2147483647&tourist=false&agency=true&admin=false&isApproved=false&q= from 0.0.0.1
+[2025-12-06 19:19:37.690] [INF] [0ca03583] Incoming OPTIONS request to /api/Search/users?start=0&len=2147483647&tourist=false&agency=true&admin=false&isApproved=false&q= from 0.0.0.1
+[2025-12-06 19:19:37.692] [WRN] [32700dcd] OPTIONS /api/Search/users responded 429 in 1ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:37.693] [WRN] [0ca03583] OPTIONS /api/Search/users responded 429 in 3ms | User: anonymous (none) | IP: 0.0.0.1
+[2025-12-06 19:19:37.696] [INF] HTTP OPTIONS /api/Search/users responded 429 in 5.5412 ms
+[2025-12-06 19:19:37.698] [INF] HTTP OPTIONS /api/Search/users responded 429 in 8.2269 ms

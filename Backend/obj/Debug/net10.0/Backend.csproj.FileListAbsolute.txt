@@ -480,3 +480,12 @@ D:\project\TOUR-WebSite\Backend\obj\Debug\net10.0\refint\Backend.dll
 D:\project\TOUR-WebSite\Backend\obj\Debug\net10.0\Backend.pdb
 D:\project\TOUR-WebSite\Backend\obj\Debug\net10.0\Backend.genruntimeconfig.cache
 D:\project\TOUR-WebSite\Backend\obj\Debug\net10.0\ref\Backend.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.AspNetCore.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Extensions.Hosting.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Extensions.Logging.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Formatting.Compact.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Settings.Configuration.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Sinks.Console.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Sinks.Debug.dll
+D:\project\TOUR-WebSite\Backend\bin\Debug\net10.0\Serilog.Sinks.File.dll

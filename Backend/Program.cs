@@ -11,9 +11,24 @@ using System.Text;
 using System.Linq;
 using System.Security.Claims;
 using Backend.Models;
-using Backend.WebSockets; 
+using Backend.WebSockets;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+try
+{
+    Log.Information("Starting TOUR-WebSite Backend application");
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog from appsettings.json
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
 
 builder.Services.AddScoped<JwtTokenService>();
 
@@ -82,9 +97,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<MyWebSocketManager>(); 
 builder.Services.AddSingleton<notificationSocket>(); 
 
-builder.Logging.AddConsole();
-
 var app = builder.Build();
+
+// Use Serilog for request logging
+app.UseSerilogRequestLogging(options =>
+{
+    options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+});
 
 // One-time helper: if set, re-save existing users so the ValueConverter
 // for `User.PhoneNumber` runs and encrypts stored phone numbers.
@@ -107,6 +126,9 @@ if (Environment.GetEnvironmentVariable("ENCRYPT_EXISTING_USERS") == "true")
 }
 
 app.UseWebSockets();
+
+// Activity logging middleware: logs all HTTP requests with user info and timing
+app.UseMiddleware<Backend.Middleware.ActivityLoggingMiddleware>();
 
 // Rate limiting middleware: place before swagger/static so it catches swagger.json and static file requests
 app.UseMiddleware<Backend.Middleware.RateLimitingMiddleware>();
@@ -136,3 +158,14 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+    Log.Information("TOUR-WebSite Backend application shut down gracefully");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
